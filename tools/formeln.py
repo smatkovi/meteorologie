@@ -66,11 +66,11 @@ FARBE = "#e4e4ec"
 GROESSE = 22
 SCHAERFE = 3
 # Im Fliesstext kleiner: in der Zeile wie die Schrift, als eigene Zeile
-# etwas groesser. Eine Formel, die breiter wird als die Spalte des N9
-# (480 Punkte minus Raender), wird beim Setzen auf diese Breite gebracht.
+# etwas groesser. Die Bilder bleiben in natuerlicher Breite; was breiter
+# ist als die Seite, verkleinert erst die Oberflaeche (stil.js, style.js),
+# damit dieselbe Formel auf einem breiten Schirm gross bleibt.
 GROESSE_ZEILE = 17
 GROESSE_ABSATZ = 20
-BREITE_MAX = 400
 DUNKEL = "#1a1a22"
 
 # Was im Text als Formel gilt: $$...$$ als eigene Zeile, $...$ in der Zeile.
@@ -237,9 +237,9 @@ def main(argv):
             continue
         try:
             _, breite, hoehe = setzen(tex, pfad, groesse=groesse,
-                                      breite_max=BREITE_MAX)
+                                      breite_max=None)
             setzen(tex, pfad_dunkel, groesse=groesse, farbe=DUNKEL,
-                   breite_max=BREITE_MAX)
+                   breite_max=None)
         except Exception as fehler:          # mathtext meldet Syntaxfehler so
             print("FEHLER in %s: %s\n   %s" % (lektion, tex, fehler),
                   file=sys.stderr)
