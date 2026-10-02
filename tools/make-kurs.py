@@ -164,6 +164,19 @@ def formeln_pruefen():
     return not offen
 
 
+def rohes_tex(knoten, schluessel=None):
+    """Alle Textstellen, in denen nach dem Ersetzen noch ein $ steht."""
+    if isinstance(knoten, dict):
+        return [r for k, v in knoten.items()
+                if k not in ("tex", "code") for r in rohes_tex(v, k)]
+    if isinstance(knoten, list):
+        return [r for v in knoten for r in rohes_tex(v, schluessel)]
+    if isinstance(knoten, str) and "$" in knoten:
+        i = knoten.index("$")
+        return [knoten[max(0, i - 30):i + 30].replace("\n", " ")]
+    return []
+
+
 def main():
     if not herleitungen_pruefen() or not formeln_pruefen():
         return 1
@@ -275,6 +288,16 @@ def main():
         })
 
     items = durchgehen(items)
+    # Was jetzt noch ein Dollarzeichen traegt, hat kein Muster getroffen --
+    # meist eine Formel mit Leerzeichen am Rand ($T = $). In der App waere
+    # das ein Loch im Text, also ein Fehler und kein Hinweis.
+    roh = rohes_tex(chapters) + rohes_tex(items)
+    if roh:
+        for r in roh[:10]:
+            print("  rohes TeX: " + r, file=sys.stderr)
+        print("%d Textstellen mit ungesetztem $ -- kein kurs.json geschrieben"
+              % len(roh), file=sys.stderr)
+        return 1
     if ungesetzt:
         print("%d Textformeln ohne Bild -- tools/formeln.py auf dem Baurechner "
               "laufen lassen:" % len(set(ungesetzt)), file=sys.stderr)

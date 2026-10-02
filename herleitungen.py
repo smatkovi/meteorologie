@@ -57,7 +57,7 @@ Jetzt die Zustandsgleichung $\rho = p/(R_L T)$ einsetzen:
 
 $$\frac{dp}{p} = -\frac{g}{R_L T}\,dz$$
 
-Für $T = $ const integriert sich das zu $\ln(p/p_0) = -gz/(R_L T)$, also $p = p_0\,e^{-z/H}$ mit $H = R_L T/g$. Für beliebiges $T(z)$ bleibt
+Für $T = \mathrm{const}$ integriert sich das zu $\ln(p/p_0) = -gz/(R_L T)$, also $p = p_0\,e^{-z/H}$ mit $H = R_L T/g$. Für beliebiges $T(z)$ bleibt
 
 $$p(z) = p_0\exp\!\left(-\int_0^z \frac{g}{R_L T(z')}\,dz'\right)$$
 
@@ -80,7 +80,7 @@ Now insert the equation of state $\rho = p/(R_L T)$:
 
 $$\frac{dp}{p} = -\frac{g}{R_L T}\,dz$$
 
-For $T = $ const this integrates to $\ln(p/p_0) = -gz/(R_L T)$, so $p = p_0\,e^{-z/H}$ with $H = R_L T/g$. For arbitrary $T(z)$ what remains is
+For $T = \mathrm{const}$ this integrates to $\ln(p/p_0) = -gz/(R_L T)$, so $p = p_0\,e^{-z/H}$ with $H = R_L T/g$. For arbitrary $T(z)$ what remains is
 
 $$p(z) = p_0\exp\!\left(-\int_0^z \frac{g}{R_L T(z')}\,dz'\right)$$
 
@@ -175,7 +175,7 @@ Das ist die Poisson-Gleichung; $\kappa = 287/1004 = 0{,}286 = 2/7$ für ein zwei
 
 $$\theta = T\left(\frac{p_0}{p}\right)^{\kappa}$$
 
-**Warum das die Entropie ist:** $ds = \delta q/T = c_p\,dT/T - R_L\,dp/p = c_p\,d(\ln T - \kappa\ln p) = c_p\,d\ln\theta$. Also $s = c_p\ln\theta + $ const. Adiabatisch heißt isentrop heißt $\theta = $ const -- drei Namen für dieselbe Aussage.
+**Warum das die Entropie ist:** $ds = \delta q/T = c_p\,dT/T - R_L\,dp/p = c_p\,d(\ln T - \kappa\ln p) = c_p\,d\ln\theta$. Also $s = c_p\ln\theta + \mathrm{const}$. Adiabatisch heißt isentrop heißt $\theta = \mathrm{const}$ -- drei Namen für dieselbe Aussage.
 
 **Warum $\theta$ mit der Höhe steigt:** $\frac{1}{\theta}\frac{d\theta}{dz} = \frac{1}{T}\frac{dT}{dz} - \frac{\kappa}{p}\frac{dp}{dz} = \frac{1}{T}\left(-\Gamma + \frac{\kappa\rho g T}{p}\right) = \frac{1}{T}\left(\Gamma_d - \Gamma\right)$, weil $\kappa\rho g T/p = \kappa g/R_L = g/c_p$. Also
 
@@ -194,7 +194,7 @@ That is Poisson's relation; $\kappa = 287/1004 = 0.286 = 2/7$ for a diatomic gas
 
 $$\theta = T\left(\frac{p_0}{p}\right)^{\kappa}$$
 
-**Why that is the entropy:** $ds = \delta q/T = c_p\,dT/T - R_L\,dp/p = c_p\,d(\ln T - \kappa\ln p) = c_p\,d\ln\theta$. So $s = c_p\ln\theta + $ const. Adiabatic means isentropic means $\theta = $ const -- three names for the same statement.
+**Why that is the entropy:** $ds = \delta q/T = c_p\,dT/T - R_L\,dp/p = c_p\,d(\ln T - \kappa\ln p) = c_p\,d\ln\theta$. So $s = c_p\ln\theta + \mathrm{const}$. Adiabatic means isentropic means $\theta = \mathrm{const}$ -- three names for the same statement.
 
 **Why $\theta$ rises with height:** $\frac{1}{\theta}\frac{d\theta}{dz} = \frac{1}{T}\frac{dT}{dz} - \frac{\kappa}{p}\frac{dp}{dz} = \frac{1}{T}\left(-\Gamma + \frac{\kappa\rho g T}{p}\right) = \frac{1}{T}\left(\Gamma_d - \Gamma\right)$, because $\kappa\rho g T/p = \kappa g/R_L = g/c_p$. Hence
 
@@ -287,7 +287,7 @@ The Magnus formula is a fit to measurements that also takes care of the temperat
 # ---------------------------------------------------------------------------
 "fe-hebung": t(r"""## Herleitung: Taupunktgradient, LCL und Feuchtadiabate
 
-**Der Taupunkt beim Steigen.** Das Mischungsverhältnis bleibt erhalten, also $e/p = $ const und $de/e = dp/p = -g\,dz/(R_L T)$. Der Taupunkt ist definiert durch $e = e_s(T_d)$, also $de/e = \frac{L_v}{R_v T_d^2}\,dT_d$ (Clausius-Clapeyron). Gleichsetzen:
+**Der Taupunkt beim Steigen.** Das Mischungsverhältnis bleibt erhalten, also $e/p = \mathrm{const}$ und $de/e = dp/p = -g\,dz/(R_L T)$. Der Taupunkt ist definiert durch $e = e_s(T_d)$, also $de/e = \frac{L_v}{R_v T_d^2}\,dT_d$ (Clausius-Clapeyron). Gleichsetzen:
 
 $$\frac{dT_d}{dz} = -\frac{g\,R_v\,T_d^2}{R_L\,L_v\,T} \approx -\frac{9{,}81\cdot 461{,}5\cdot 285}{287\cdot 2{,}5\cdot 10^6} = -1{,}8\cdot 10^{-3}\,\mathrm{K/m}$$
 
@@ -303,7 +303,7 @@ $$\Gamma_s = -\frac{dT}{dz} = \frac{g}{c_p}\;\frac{1 + \dfrac{L_v\,r_s}{R_L\,T}}
 
 Der Zähler ist nahe 1 (die Druckabhängigkeit von $r_s$); der Nenner ist der eigentliche Effekt, die Wärme je Grad Abkühlung. Bei 0 °C, 1000 hPa: $r_s = 3{,}8$ g/kg, Zähler 1,12, Nenner 1,69, $\Gamma_s = 6{,}5$ K/km. Bei 20 °C: 4,2 K/km. Bei −40 °C: 9,5 K/km.
 
-**$\theta_e$.** Teilt man den feuchten ersten Hauptsatz durch $T$ und nutzt $ds = c_p\,d\ln\theta$: $c_p\,d\ln\theta = -L_v\,dr_s/T$. Mit der Näherung, dass $L_v/T$ gegenüber $r_s$ langsam variiert, integriert sich das zu $c_p\ln\theta + L_v r_s/T = $ const, also
+**$\theta_e$.** Teilt man den feuchten ersten Hauptsatz durch $T$ und nutzt $ds = c_p\,d\ln\theta$: $c_p\,d\ln\theta = -L_v\,dr_s/T$. Mit der Näherung, dass $L_v/T$ gegenüber $r_s$ langsam variiert, integriert sich das zu $c_p\ln\theta + L_v r_s/T = \mathrm{const}$, also
 
 $$\theta_e = \theta\,\exp\!\left(\frac{L_v\,r_s}{c_p\,T}\right)$$
 
@@ -312,7 +312,7 @@ ausgewertet am Kondensationsniveau. Für ungesättigte Luft nimmt man $r$ statt 
 **Wo es aufhört zu gelten:** Die Pseudoadiabate lässt das Kondensat sofort ausfallen; behält man es im Paket (reversibel), ist $\Gamma_s$ um einige Zehntel K/km kleiner. Unter 0 °C müsste $L_s$ für die Eisbildung stehen -- in der Praxis friert die Wolke verzögert, und die Schmelzwärme bringt noch einmal 1 K.""",
 r"""## Derivation: dew point lapse rate, LCL and the moist adiabat
 
-**The dew point on ascent.** The mixing ratio is conserved, so $e/p = $ const and $de/e = dp/p = -g\,dz/(R_L T)$. The dew point is defined by $e = e_s(T_d)$, so $de/e = \frac{L_v}{R_v T_d^2}\,dT_d$ (Clausius–Clapeyron). Equating:
+**The dew point on ascent.** The mixing ratio is conserved, so $e/p = \mathrm{const}$ and $de/e = dp/p = -g\,dz/(R_L T)$. The dew point is defined by $e = e_s(T_d)$, so $de/e = \frac{L_v}{R_v T_d^2}\,dT_d$ (Clausius–Clapeyron). Equating:
 
 $$\frac{dT_d}{dz} = -\frac{g\,R_v\,T_d^2}{R_L\,L_v\,T} \approx -\frac{9.81\cdot 461.5\cdot 285}{287\cdot 2.5\cdot 10^6} = -1.8\cdot 10^{-3}\,\mathrm{K/m}$$
 
@@ -328,7 +328,7 @@ $$\Gamma_s = -\frac{dT}{dz} = \frac{g}{c_p}\;\frac{1 + \dfrac{L_v\,r_s}{R_L\,T}}
 
 The numerator is close to 1 (the pressure dependence of $r_s$); the denominator is the real effect, the heat per degree of cooling. At 0 °C, 1000 hPa: $r_s = 3.8$ g/kg, numerator 1.12, denominator 1.69, $\Gamma_s = 6.5$ K/km. At 20 °C: 4.2 K/km. At −40 °C: 9.5 K/km.
 
-**$\theta_e$.** Divide the moist first law by $T$ and use $ds = c_p\,d\ln\theta$: $c_p\,d\ln\theta = -L_v\,dr_s/T$. With the approximation that $L_v/T$ varies slowly compared with $r_s$, this integrates to $c_p\ln\theta + L_v r_s/T = $ const, hence
+**$\theta_e$.** Divide the moist first law by $T$ and use $ds = c_p\,d\ln\theta$: $c_p\,d\ln\theta = -L_v\,dr_s/T$. With the approximation that $L_v/T$ varies slowly compared with $r_s$, this integrates to $c_p\ln\theta + L_v r_s/T = \mathrm{const}$, hence
 
 $$\theta_e = \theta\,\exp\!\left(\frac{L_v\,r_s}{c_p\,T}\right)$$
 
