@@ -55,7 +55,7 @@ kursformeln.py        Formelkästen: Textzeile, TeX, Zeichen, Erklärung
 tools/make-kurs.py    schreibt data/kurs.json, mischt die Antworten
 tools/formeln.py      setzt alle $...$-Formeln als PNG (matplotlib, Baurechner)
 tools/skizzen.py      zeichnet bilder/skizze-*.png
-tools/icon.py         das Squircle-Icon
+tools/icon.py         das Squircle-Icon (braucht ../meego-icon-tool/squircle.py)
 tools/build-deb.sh    packt das Harmattan-.deb
 ```
 
