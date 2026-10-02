@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=Meteorologie
+Comment=Meteorologie für Physiker
+Icon=/usr/share/icons/hicolor/80x80/apps/meteorologie.png
+Exec=/opt/meteorologie/bin/meteorologie
+Terminal=false
+Categories=Education;
+X-Osso-Type=application/x-executable

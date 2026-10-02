@@ -1,0 +1,17 @@
+Package: meteorologie
+Version: @VERSION@
+Section: user/education
+Priority: optional
+Architecture: armel
+Depends: libqt4-declarative, libqt4-script, libqt4-gui, qt-components
+Maintainer: Sebastian Matkovich <sebastian.matkovich@gmail.com>
+Description: Meteorologie fuer Physiker, deutsch oder englisch
+ Die Atmosphaere aus der Physik hergeleitet: Hydrostatik, Thermodynamik
+ trockener und feuchter Luft, Strahlungshaushalt, Wolkenphysik, Dynamik im
+ rotierenden System, Zirkulation, Fronten und Zyklonen, Foehn und Gewitter,
+ Optik des Himmels, Grenzen der Vorhersage. Jede Formel wird hergeleitet,
+ mit Skizze und Zahlenbeispiel. Einstufungstest und Wiederholung nach
+ Abstand. Die Sprache laesst sich jederzeit umschalten.
+Maemo-Display-Name: Meteorologie
+XB-Maemo-Icon-26:
+@ICON@
