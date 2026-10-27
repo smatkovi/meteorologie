@@ -1,6 +1,6 @@
 Meteorologie 1.0 — Meteorologie für Physiker
 
-Elf Kapitel, 30 Lektionen, 71 Aufgaben, deutsch und englisch. Jede Formel
+Sechzehn Kapitel, 48 Lektionen, 125 Aufgaben, deutsch und englisch. Jede Formel
 hergeleitet: von der Hydrostatik über Clausius-Clapeyron, das Emagramm und
 das Einschichtmodell des Treibhauses bis zur Coriolis-Kraft (samt Ableitung
 der Einheitsvektoren im rotierenden System), zum thermischen Wind, zur

@@ -5,7 +5,7 @@ Meteorologie für Physiker, deutsch oder englisch, auf dem Nokia N9 und N950
 
 Der Leser kann Thermodynamik, Mechanik und Elektrodynamik und braucht sie
 **angewandt**: auf eine Luftsäule von zehn Kilometern auf einer rotierenden
-Kugel mit Wasser darin. Elf Kapitel, 30 Lektionen, 71 Aufgaben:
+Kugel mit Wasser darin. Sechzehn Kapitel, 48 Lektionen, 125 Aufgaben:
 
 1. Die Atmosphäre als Gas — Zusammensetzung, Hydrostatik, Skalenhöhe,
    Standardatmosphäre und Höhenmesser
