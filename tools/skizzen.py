@@ -1849,11 +1849,404 @@ EN.update({
 
 # ===========================================================================
 
+# ===========================================================================
+#  Wolken lesen: die Wolke als Messgerät
+# ===========================================================================
+
+EN.update({
+    "Drei Messungen am Himmel": "Three measurements in the sky",
+    "Kippen": "tilt", "Scherung": "shear", "Wellen": "waves",
+    "Schichtung": "stratification", "Billows": "billows",
+    "Turbulenz": "turbulence", "Gebirgskamm": "mountain ridge",
+    "oben schnell": "fast above", "unten langsam": "slow below",
+    "ΔU": "ΔU", "λ": "λ",
+    "tan α = ΔU/w": "tan α = ΔU/w",
+    "λ = 2π·U/N": "λ = 2π·U/N",
+    "Ri = N²/(du/dz)² < 1/4": "Ri = N²/(du/dz)² < 1/4",
+})
+
+
+def wolkenlesen_sonde():
+    """Drei Ablesungen: Kippen (Scherung), Wellenabstand (Schichtung),
+    Billows (Turbulenzschwelle). Je Feld eine Zahl."""
+    bild, draw = leinwand()
+    text(draw, 220, 10, "Drei Messungen am Himmel", 12, TEXT, mitte=True)
+    for x in (148, 292):
+        gestrichelt(draw, x, 30, x, 262, DUENN, 1, 8)
+
+    # --- 1  Kippen misst die Scherung ---------------------------------------
+    text(draw, 79, 34, "Kippen", 11, BETONT, mitte=True)
+    text(draw, 79, 48, "Scherung", 9, DUENN, mitte=True)
+    bx, by = 40, 216
+    gestrichelt(draw, bx, by, bx, 84, DUENN)
+    strich(draw, bx - 18, by, bx + 18, by, DUENN, 1)
+    text(draw, bx, by + 6, "Wolkenbasis", 9, DUENN, mitte=True)
+    for i in range(8):
+        a = i / 7.0
+        kreis(draw, bx + 56 * a * a, by - 126 * a, 8 + 4 * a, WOLKE)
+    linie(draw, [(bx + 56 * (i / 12.0) ** 2, by - 126 * i / 12.0)
+                 for i in range(13)], BETONT, 1)
+    bogen(draw, bx, by, 46, -90, -40, DUENN, 1)
+    text(draw, bx + 22, by - 44, "α", 11, DUENN)
+    pfeil(draw, bx - 22, by - 24, bx - 22, by - 86, GUT, 2, 5)
+    text(draw, bx - 26, by - 62, "w", 10, GUT, rechts=True)
+    pfeil(draw, bx + 66, 92, bx + 104, 92, WARN, 2, 5)
+    text(draw, bx + 85, 74, "ΔU", 10, WARN, mitte=True)
+    text(draw, 79, 250, "tan α = ΔU/w", 10, TEXT, mitte=True)
+
+    # --- 2  Der Wellenabstand misst die Schichtung --------------------------
+    text(draw, 220, 34, "Wellen", 11, BETONT, mitte=True)
+    text(draw, 220, 48, "Schichtung", 9, DUENN, mitte=True)
+    flaeche(draw, [(156, 216), (176, 176), (196, 216)], (62, 70, 84))
+    strich(draw, 152, 216, 288, 216, DUENN, 1)
+    text(draw, 176, 224, "Gebirgskamm", 9, DUENN, mitte=True)
+    pfeil(draw, 152, 158, 174, 158, WARN, 2, 5)
+    text(draw, 178, 150, "U", 10, WARN)
+    lam = 36.0
+    linie(draw, [(176 + i, 132 - 14 * math.cos(2 * math.pi * i / lam))
+                 for i in range(0, 95)], DUENN, 1)
+    for k in (1, 2):
+        cx = 176 + lam * k
+        for j in range(5):
+            kreis(draw, cx - 14 + j * 7, 118 + abs(j - 2) * 1.6,
+                  6.5 - abs(j - 2) * 1.3, WOLKE)
+    pfeil(draw, 176 + lam, 96, 176 + 2 * lam, 96, BETONT, 1, 5)
+    pfeil(draw, 176 + 2 * lam, 96, 176 + lam, 96, BETONT, 1, 5)
+    text(draw, 176 + 1.5 * lam, 80, "λ", 10, BETONT, mitte=True)
+    text(draw, 220, 250, "λ = 2π·U/N", 10, TEXT, mitte=True)
+
+    # --- 3  Billows messen die Turbulenzschwelle ----------------------------
+    text(draw, 361, 34, "Billows", 11, BETONT, mitte=True)
+    text(draw, 361, 48, "Turbulenz", 9, DUENN, mitte=True)
+    gestrichelt(draw, 298, 172, 424, 172, DUENN)
+    pfeil(draw, 304, 122, 416, 122, WARN, 2, 5)
+    text(draw, 300, 102, "oben schnell", 9, WARN)
+    pfeil(draw, 304, 206, 344, 206, WARN, 2, 5)
+    text(draw, 300, 212, "unten langsam", 9, WARN)
+    for k in range(5):
+        cx = 310 + k * 26
+        for j in range(7):
+            a = -1.1 + j * 0.62
+            kreis(draw, cx + 11 * math.sin(a) + j * 1.1,
+                  172 - 11 * math.cos(a) - j * 0.9, 5.0, WOLKE)
+    text(draw, 361, 250, "Ri = N²/(du/dz)² < 1/4", 9, TEXT, mitte=True)
+
+    sichern(bild, "wolkenlesen-sonde")
+
+
 ALLE = [schichtung, luftsaeule, standard, paket, theta, stabilitaet,
         dampfdruck, hebung, emagramm, bilanz, einschicht, tagesgang,
         koehler, wachstum, coriolis, breite, geostrophisch, thermisch, ekman,
         zellen, rossby, fronten, zyklone, foehn, seewind, streuung,
-        regenbogen, halo, gitter, ensemble]
+        regenbogen, halo, gitter, ensemble,
+        wolkenlesen_sonde]
+
+
+# ===========================================================================
+# 5b  Das Wolkenbuch
+# ===========================================================================
+
+def wb_stockwerke():
+    """Die drei Stockwerke, nach Breite gestaffelt -- weil die Tropopause
+    nach Breite gestaffelt ist. Dazu, woran man das Stockwerk erkennt."""
+    bild, draw = leinwand()
+    ax, ay = 62, 252
+    achsen(draw, ax, ay, 424, 30, "", "Höhe (km)")
+
+    def zy(z):
+        return ay - z / 18.0 * 212
+
+    for z in (0, 5, 10, 15):
+        gestrichelt(draw, ax, zy(z), 418, zy(z), DUENN, 1, 8)
+        text(draw, ax - 5, zy(z) - 6, "%d" % z, 9, DUENN, rechts=True)
+
+    # je Breite: tief, mittel, hoch als eigene Saeule, damit die amtliche
+    # Ueberlappung von mittel und hoch nichts verdeckt
+    FARBEN = ((76, 84, 100), (58, 96, 140), (120, 132, 158))
+    gruppen = (("polar", 96, ((0, 2), (2, 4), (3, 8)), 8.0),
+               ("gemäßigt", 206, ((0, 2), (2, 7), (5, 13)), 11.0),
+               ("tropisch", 316, ((0, 2), (2, 8), (6, 18)), 17.0))
+    tropo = []
+    for name, x0, baender, zt in gruppen:
+        for i, (unten, oben) in enumerate(baender):
+            x = x0 + i * 26
+            draw.rectangle([x * S, zy(oben) * S, (x + 20) * S, zy(unten) * S],
+                           fill=FARBEN[i])
+            text(draw, x + 10, zy(oben) - 12, "%d" % oben, 8, DUENN, mitte=True)
+        text(draw, x0 + 36, ay + 6, name, 10, TEXT, mitte=True)
+        tropo.append((x0 - 6, zy(zt)))
+        tropo.append((x0 + 78, zy(zt)))
+    linie(draw, tropo, WARN, 1)
+    text(draw, 68, zy(8.0) - 19, "Tropopause", 9, WARN)
+
+    # Legende, damit die drei Baender nicht im Balken beschriftet werden
+    for i, name in enumerate(("tief", "mittel", "hoch")):
+        x = 92 + i * 78
+        draw.rectangle([x * S, 42 * S, (x + 14) * S, 52 * S], fill=FARBEN[i])
+        text(draw, x + 19, 41, name, 9, TEXT)
+
+    gestrichelt(draw, ax, zy(8.5), 418, zy(8.5), GUT, 1, 6)
+    text(draw, 416, zy(8.5) - 15, "−40 °C: nur noch Eis", 9, GUT, rechts=True)
+    text(draw, 240, 278, "scharfer Rand und Korona heißt Wasser, "
+         "faserig und Halo heißt Eis", 9, TEXT, mitte=True)
+    sichern(bild, "wolkenbuch-stockwerke")
+
+
+def wb_sonderformen():
+    """Drei Sonderformen als Schnitt: Amboss mit mammatus, pileus ueber
+    dem steigenden Turm, virga unter der Basis."""
+    bild, draw = leinwand()
+    strich(draw, 14, 258, 426, 258, DUENN, 1)
+    text(draw, 426, 262, "Boden", 9, DUENN, rechts=True)
+    gestrichelt(draw, 14, 58, 426, 58, WARN, 1, 7)
+    text(draw, 14, 42, "Tropopause", 9, WARN)
+
+    # 1  Cumulonimbus: Amboss, ueberschiessende Kuppel, mammatus
+    flaeche(draw, [(18, 88), (142, 88), (128, 60), (34, 60)], WOLKE)
+    kreis(draw, 80, 54, 11, WOLKE)
+    flaeche(draw, [(56, 258), (64, 90), (96, 90), (104, 258)], WOLKE)
+    for x in (26, 40, 112, 126, 138):
+        kreis(draw, x, 92, 5, (168, 174, 190))
+    for i in range(4):
+        gestrichelt(draw, 70 + i * 7, 180, 64 + i * 7, 256, DUENN, 1, 5)
+    text(draw, 80, 68, "incus", 10, GRUND, mitte=True)
+    text(draw, 80, 32, "Kuppel", 9, GUT, mitte=True)
+    text(draw, 18, 104, "mammatus", 9, BETONT)
+    text(draw, 80, 268, "Cumulonimbus", 9, TEXT, mitte=True)
+
+    # 2  pileus ueber dem schnell steigenden Turm
+    flaeche(draw, [(186, 258), (198, 152), (240, 152), (254, 258)], WOLKE)
+    for x, y, r in ((202, 150, 10), (220, 144, 12), (236, 150, 9)):
+        kreis(draw, x, y, r, WOLKE)
+    draw.ellipse([178 * S, 124 * S, 262 * S, 136 * S], fill=(224, 230, 242))
+    pfeil(draw, 220, 160, 220, 142, GUT, 2, 6)
+    text(draw, 220, 94, "pileus", 10, GUT, mitte=True)
+    text(draw, 220, 110, "am LCL der gehobenen Schicht", 8, DUENN,
+         mitte=True)
+    text(draw, 220, 268, "Cumulus congestus", 9, TEXT, mitte=True)
+
+    # 3  virga: Fallstreifen, die in der Luft aufhoeren
+    wolke(draw, 360, 150, 104, 26)
+    for i in range(6):
+        x = 318 + i * 17
+        gestrichelt(draw, x, 152, x + 14, 196, BETONT, 1, 5)
+    text(draw, 360, 206, "virga", 10, BETONT, mitte=True)
+    text(draw, 360, 220, "rund 120 m, dann verdunstet", 8, DUENN, mitte=True)
+    text(draw, 360, 268, "Altocumulus", 9, TEXT, mitte=True)
+    text(draw, 220, 282, "Jede Sonderform ist ein Mechanismus", 9, TEXT,
+         mitte=True)
+    sichern(bild, "wolkenbuch-sonderformen")
+
+
+def wb_kondensstreifen():
+    """Die Mischungsgerade des Abgases an der Saettigungskurve: Beruehrung
+    heisst Schwellentemperatur."""
+    bild, draw = leinwand()
+    ax, ay = 70, 250
+    achsen(draw, ax, ay, 420, 34, "Temperatur (°C)", "e (Pa)")
+
+    def tx(T):
+        return ax + (T + 62) / 32.0 * 330
+
+    def ey(e):
+        return ay - e / 60.0 * 206
+
+    def ew(T):
+        return 611.2 * math.exp(17.62 * T / (243.12 + T))
+
+    def ei(T):
+        return 611.2 * math.exp(22.46 * T / (272.62 + T))
+
+    for T in (-60, -50, -40, -30):
+        gestrichelt(draw, tx(T), ay, tx(T), 36, DUENN, 1, 9)
+        text(draw, tx(T), ay + 6, "%d" % T, 9, DUENN, mitte=True)
+    linie(draw, [(tx(T / 2.0), ey(ew(T / 2.0))) for T in range(-124, -59)],
+          WARN, 2)
+    linie(draw, [(tx(T / 2.0), ey(ei(T / 2.0))) for T in range(-124, -59)],
+          BETONT, 2)
+
+    # Die Gerade, die die Kurve beruehrt: Steigung G, Fusspunkt trocken
+    Gsa = 1.25 * 1004.0 * 25000.0 / (0.622 * 43.0e6 * 0.70)
+    Tc = -41.73
+    eC = ew(Tc)
+    T0 = Tc - eC / Gsa
+    linie(draw, [(tx(T0), ey(0)), (tx(-31.5), ey(eC + Gsa * (-31.5 - Tc)))],
+          GUT, 2)
+    kreis(draw, tx(Tc), ey(eC), 4, GUT)
+    kreis(draw, tx(T0), ey(0), 3, GUT)
+    # und eine, die sie nicht erreicht: zu warme Umgebung
+    linie(draw, [(tx(-36.0), ey(0)), (tx(-31.0), ey(Gsa * 5.0))], ROT, 2)
+
+    text(draw, 398, 60, "über Wasser", 9, WARN, rechts=True)
+    text(draw, 398, 104, "über Eis", 9, BETONT, rechts=True)
+    text(draw, tx(Tc) + 8, ey(eC) - 8, "Berührung: de_s/dT = G", 9, GUT)
+    text(draw, tx(T0), 270, "trockene Umgebung", 8, DUENN, mitte=True)
+    text(draw, 356, 226, "zu warm: kein Streifen", 8, ROT, rechts=True)
+    text(draw, 100, 62, "Mischungsgerade, Steigung G = 1,68 Pa/K", 10, GUT)
+    text(draw, 100, 78, "T_c = −41,7 °C, also 8,7 km", 10, TEXT)
+    sichern(bild, "wolkenbuch-kondensstreifen")
+
+
+EN.update({
+    "Höhe (km)": "height (km)", "polar": "polar", "gemäßigt": "temperate",
+    "tropisch": "tropical", "tief": "low", "mittel": "middle",
+    "hoch": "high", "−40 °C: nur noch Eis": "−40 °C: ice only",
+    "incus": "incus", "Kuppel": "overshooting top", "mammatus": "mammatus",
+    "Cumulonimbus": "cumulonimbus", "pileus": "pileus",
+    "am LCL der gehobenen Schicht": "at the LCL of the lifted layer",
+    "Cumulus congestus": "cumulus congestus", "virga": "virga",
+    "rund 120 m, dann verdunstet": "about 120 m, then evaporated",
+    "Altocumulus": "altocumulus",
+    "Jede Sonderform ist ein Mechanismus":
+        "every supplementary feature is a mechanism",
+    "über Wasser": "over water", "über Eis": "over ice",
+    "Berührung: de_s/dT = G": "tangency: de_s/dT = G",
+    "trockene Umgebung": "dry environment",
+    "zu warm: kein Streifen": "too warm: no trail",
+    "Mischungsgerade, Steigung G = 1,68 Pa/K":
+        "mixing line, slope G = 1.68 Pa/K",
+    "T_c = −41,7 °C, also 8,7 km": "T_c = −41.7 °C, hence 8.7 km",
+    "e (Pa)": "e (Pa)",
+    "scharfer Rand und Korona heißt Wasser, faserig und Halo heißt Eis":
+        "a sharp edge and a corona mean water, fibres and a halo mean ice",
+})
+
+ALLE = ALLE + [wb_stockwerke, wb_sonderformen, wb_kondensstreifen]
+
+# ===========================================================================
+# Spuren am Boden, Den Himmel lesen, Selbst messen
+# ===========================================================================
+
+def bo_mischungsnebel():
+    """Die Sehne zwischen zwei gesaettigten Paketen liegt ueber der Kurve."""
+    bild, draw = leinwand()
+    ax, ay = 76, 258
+    achsen(draw, ax, ay, 420, 30, "Temperatur (°C)", "e (hPa)")
+    def tx(T): return ax + (T + 5) / 32.0 * 330
+    def ey(e): return ay - e / 27.0 * 215
+    linie(draw, [(tx(T / 2.0), ey(e_s(T / 2.0))) for T in range(-10, 53)], WARN, 2)
+    p0 = (tx(0), ey(e_s(0)))
+    p2 = (tx(20), ey(e_s(20)))
+    strich(draw, p0[0], p0[1], p2[0], p2[1], BETONT, 2)
+    pm = (tx(10), ey((e_s(0) + e_s(20)) / 2.0))
+    ps = (tx(10), ey(e_s(10)))
+    kreis(draw, p0[0], p0[1], 4, GELB)
+    kreis(draw, p2[0], p2[1], 4, GELB)
+    kreis(draw, pm[0], pm[1], 4, BETONT)
+    kreis(draw, ps[0], ps[1], 3, DUENN)
+    pfeil(draw, pm[0], ps[1], pm[0], pm[1], ROT, 2, 6)
+    gestrichelt(draw, ax, pm[1], pm[0], pm[1], DUENN)
+    gestrichelt(draw, ax, ps[1], pm[0], ps[1], DUENN)
+    for T in (0, 10, 20):
+        text(draw, tx(T), ay + 6, "%d" % T, 9, DUENN, mitte=True)
+    text(draw, p0[0] + 8, p0[1] - 2, "gesättigt, 0 °C", 9, GELB)
+    text(draw, p2[0] - 10, p2[1] + 10, "gesättigt, 20 °C", 9, GELB, rechts=True)
+    text(draw, pm[0] + 8, pm[1] - 14, "Mischung: 10 °C, 14,7 hPa", 9, BETONT)
+    text(draw, ps[0] + 8, ps[1] + 4, "e_s (10 °C) = 12,3 hPa", 9, DUENN)
+    text(draw, pm[0] + 10, (pm[1] + ps[1]) / 2 - 4, "Δe = 2,5 hPa", 9, ROT)
+    text(draw, 150, 48, "Mischungsgerade über der Kurve", 11, BETONT)
+    text(draw, 150, 64, "e_s ist konvex, die Sehne liegt darüber", 9, DUENN)
+    text(draw, 150, 230, "120 % Feuchte, 1,5 g/kg Nebel", 11, GUT)
+    sichern(bild, "boden-mischungsnebel")
+
+
+def hi_luftmasse():
+    """Weg des Sehstrahls durch die Luftsaeule: 1/sin h."""
+    bild, draw = leinwand()
+    bodeny, obenx = 258, 430
+    deckel = 118
+    x0 = 92
+    flaeche(draw, [(60, deckel), (obenx, deckel), (obenx, bodeny), (60, bodeny)],
+            (22, 30, 46))
+    strich(draw, 54, bodeny, obenx, bodeny, LINIE, 2)
+    gestrichelt(draw, 54, deckel, obenx, deckel, DUENN)
+    text(draw, 58, bodeny + 6, "Boden", 9, DUENN)
+    text(draw, 58, deckel - 14, "Luftsäule, 10 330 kg/m²", 9, DUENN)
+    kreis(draw, x0, bodeny - 3, 4, KOERPER)
+    text(draw, x0 - 6, bodeny - 20, "Auge", 9, TEXT, rechts=True)
+    d = bodeny - deckel
+    pfeil(draw, x0, bodeny, x0, deckel, GUT, 2, 6)
+    text(draw, x0 + 6, deckel + 10, "Luftmasse 1", 10, GUT)
+    for h, farbe in ((30.0, BETONT), (10.0, WARN)):
+        dx = d / math.tan(math.radians(h))
+        xe = min(obenx - 6, x0 + dx)
+        ye = bodeny - (xe - x0) * math.tan(math.radians(h))
+        pfeil(draw, x0, bodeny, xe, ye, farbe, 2, 6)
+        text(draw, xe - 6, ye - 14, "1/sin h = %.0f" % (1.0 / math.sin(math.radians(h))),
+             9, farbe, rechts=True)
+    bogen(draw, x0, bodeny, 40, -32, 0, DUENN, 1)
+    text(draw, x0 + 46, bodeny - 14, "h", 10, DUENN)
+    text(draw, 150, 44, "Am Horizont: 38 Luftmassen", 11, ROT)
+    text(draw, 150, 60, "die Krümmung begrenzt den Weg", 9, DUENN)
+    text(draw, 120, 268, "Transmission: grün 2,5 %, rot 16 %", 10, TEXT)
+    text(draw, 120, 283, "Verhältnis 6,4 — deshalb rot", 11, GELB)
+    sichern(bild, "himmel-luftmasse")
+
+
+def sb_stock():
+    """Sonnenhoehe aus Stock und Schatten."""
+    bild, draw = leinwand()
+    bodeny = 250
+    fuss = 150
+    hoehe = 120
+    h = 50.0
+    laenge = hoehe / math.tan(math.radians(h))
+    strich(draw, 40, bodeny, 420, bodeny, LINIE, 2)
+    strich(draw, fuss, bodeny, fuss, bodeny - hoehe, KOERPER, 2)
+    strich(draw, fuss, bodeny, fuss + laenge, bodeny, ROT, 2)
+    for i in range(4):
+        y = bodeny - hoehe + i * 26
+        pfeil(draw, fuss - 86 + i * 6, y - 78, fuss - 6 + i * 6, y, GELB, 1, 5)
+    strich(draw, fuss, bodeny - hoehe, fuss + laenge, bodeny, GELB, 1)
+    bogen(draw, fuss + laenge, bodeny, 44, 180, 180 + h, DUENN, 1)
+    text(draw, fuss + laenge - 50, bodeny - 26, "h = 50°", 10, DUENN)
+    text(draw, fuss - 8, bodeny - hoehe / 2, "Stock L", 10, KOERPER, rechts=True)
+    text(draw, fuss + laenge / 2, bodeny + 6, "Schatten S", 10, ROT, mitte=True)
+    text(draw, fuss - 108, bodeny - hoehe - 84, "Sonne", 10, GELB)
+    text(draw, 240, 60, "tan h = L / S", 13, GUT)
+    text(draw, 240, 84, "1,20 m / 1,00 m → h = 50°", 9, DUENN)
+    text(draw, 240, 112, "S = S₀ · sin h · τ", 12, TEXT)
+    text(draw, 240, 134, "60°, τ = 0,75: 884 W/m²", 9, GELB)
+    text(draw, 240, 148, "19°, τ = 0,6: 263 W/m²", 9, BETONT)
+    text(draw, 40, 284, "Mittagshöhe und Datum geben die Breite", 9, DUENN)
+    sichern(bild, "selbstmessen-stock")
+
+
+EN.update({
+    "e (hPa)": "e (hPa)",
+    "gesättigt, 0 °C": "saturated, 0 °C",
+    "gesättigt, 20 °C": "saturated, 20 °C",
+    "Mischung: 10 °C, 14,7 hPa": "mixture: 10 °C, 14.7 hPa",
+    "e_s (10 °C) = 12,3 hPa": "e_s (10 °C) = 12.3 hPa",
+    "Δe = 2,5 hPa": "Δe = 2.5 hPa",
+    "Mischungsgerade über der Kurve": "the mixing line lies above the curve",
+    "e_s ist konvex, die Sehne liegt darüber":
+        "e_s is convex, so the chord lies above it",
+    "120 % Feuchte, 1,5 g/kg Nebel": "120 % humidity, 1.5 g/kg of fog",
+    "Luftsäule, 10 330 kg/m²": "column of air, 10 330 kg/m²",
+    "Auge": "eye",
+    "Luftmasse 1": "air mass 1",
+    "1/sin h = 2": "1/sin h = 2",
+    "1/sin h = 6": "1/sin h = 6",
+    "h": "h",
+    "Am Horizont: 38 Luftmassen": "at the horizon: 38 air masses",
+    "die Krümmung begrenzt den Weg": "curvature limits the path",
+    "Transmission: grün 2,5 %, rot 16 %": "transmission: green 2.5 %, red 16 %",
+    "Verhältnis 6,4 — deshalb rot": "ratio 6.4 — hence red",
+    "Stock L": "stick L",
+    "Schatten S": "shadow S",
+    "Sonne": "sun",
+    "h = 50°": "h = 50°",
+    "tan h = L / S": "tan h = L / S",
+    "1,20 m / 1,00 m → h = 50°": "1.20 m / 1.00 m → h = 50°",
+    "S = S₀ · sin h · τ": "S = S₀ · sin h · τ",
+    "60°, τ = 0,75: 884 W/m²": "60°, τ = 0.75: 884 W/m²",
+    "19°, τ = 0,6: 263 W/m²": "19°, τ = 0.6: 263 W/m²",
+    "Mittagshöhe und Datum geben die Breite":
+        "noon elevation and date give the latitude",
+})
+
+ALLE = ALLE + [bo_mischungsnebel, hi_luftmasse, sb_stock]
 
 
 def main():

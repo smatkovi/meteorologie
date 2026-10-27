@@ -1179,4 +1179,240 @@ with $\sigma = 10$, $\beta = 8/3$, $\rho = 28$. $x$ is the strength of the conve
 **The ensemble** turns the distribution of initial errors into a distribution of forecasts. The spread of the members after $t$ days should equal the mean error after $t$ days -- if it is smaller, the ensemble is "overconfident", and the perturbations are sharpened (stochastic physics). Reliability is checked on the reliability diagram: of all cases with "70 %", 70 % should occur.
 
 **Where it stops holding:** the Lyapunov exponent is an average; on some days (blocking) the error hardly grows, on others (cyclogenesis) within hours. Predictability is itself predictable -- that is the second use of the ensemble."""),
+# ---------------------------------------------------------------------------
+"wb-sonde": t(r"""## Herleitung: drei Ablesungen am Himmel
+
+**1  Das Kippen.** Ein Paket verlässt die Wolkenbasis bei $x = 0$, $z = 0$ und steigt mit konstantem $w$ (Aufwind, m/s); horizontal treibt es mit dem Wind $u(z)$ seiner jeweiligen Höhe. Mit $z = w\,t$ ist die Steigung der Bahn
+
+$$\frac{dx}{dz} = \frac{dx/dt}{dz/dt} = \frac{u(z) - u(0)}{w}$$
+
+Die *lokale* Neigung der Wolkenachse gegen die Senkrechte ist also $\tan\alpha(z) = (u(z) - u(0))/w$; am Oberrand mit $\Delta U = u(z) - u(0)$ eben $\tan\alpha = \Delta U/w$. Das ist die erste Formel. Integriert man dieselbe Bahn bei linearer Scherung, $u(z) - u(0) = S\,z$ mit $S = \Delta U/z$:
+
+$$\Delta x = \int_0^{z} \frac{S\,z'}{w}\,dz' = \frac{S\,z^2}{2w} = \frac{\Delta U\,z}{2w}$$
+
+Der Versatz der Spitze ist also nur halb so groß, wie die Neigung am Oberrand vermuten lässt -- die Achse ist eine Parabel und keine Gerade. **Zahlen:** $z = 4$ km, $w = 8$ m/s, $\Delta U = 16$ m/s geben $\tan\alpha = 2$, $\alpha = 63{,}4^\circ$ und $\Delta x = 4$ km.
+
+**2  Der Wellenabstand.** Aus der Herleitung zu th-stabilitaet: ein ausgelenktes Paket schwingt mit der Brunt-Väisälä-Frequenz $N$, also mit der Periode $2\pi/N$. Steht die Welle im Grundstrom $U$ still, so wird das Paket während einer Schwingung um $U\cdot 2\pi/N$ versetzt, und das ist die Wellenlänge $\lambda = 2\pi U/N$. Diese Kette lässt sich umdrehen, und damit wird der Wolkenabstand zum Messwert:
+
+$$N = \frac{2\pi U}{\lambda}, \qquad \frac{d\theta}{dz} = \frac{N^2\,\theta}{g}$$
+
+Die zweite Gleichung ist die Definition von $N$ aus th-stabilitaet, nach $d\theta/dz$ aufgelöst. **Zahlen:** $\lambda = 8{,}6$ km und $U = 15$ m/s geben $N = 2\pi\cdot 15/8600 = 0{,}01096$ /s, also $N^2 = 1{,}20\cdot 10^{-4}$ /s² und mit $\theta = 290$ K
+
+$$\frac{d\theta}{dz} = \frac{1{,}20\cdot 10^{-4}\cdot 290}{9{,}81} = 3{,}55\cdot 10^{-3}\ \mathrm{K/m} = 3{,}55\ \mathrm{K/km}$$
+
+**3  Die Richardson-Zahl.** Ein Wirbel der Dicke $\ell$ in einer Schicht mit der Scherung $S = du/dz$ hat zwischen Ober- und Unterseite die Geschwindigkeitsdifferenz $S\,\ell$ und damit je Volumen die kinetische Energie $\frac{1}{2}\rho\,(S\ell)^2$, die ihm die Scherung liefern kann. Vertauscht derselbe Wirbel zwei Pakete über $\ell$ hinweg, so muss er sie gegen den Auftrieb heben: die Rückstellkraft je Masse ist $N^2\,\delta z$ (th-stabilitaet), die Arbeit über $\ell$ also $\frac{1}{2}N^2\ell^2$ je Masse und $\frac{1}{2}\rho\,N^2\ell^2$ je Volumen. Das Verhältnis von nötiger Arbeit zu verfügbarer Energie ist
+
+$$\frac{\frac{1}{2}\rho N^2\ell^2}{\frac{1}{2}\rho S^2\ell^2} = \frac{N^2}{S^2} = \mathrm{Ri}$$
+
+und die Dicke $\ell$ fällt heraus: die Schwelle ist eine reine Zahl, unabhängig davon, wie dick die Schicht ist. Miles und Howard haben 1961 bewiesen, dass eine stationäre, reibungsfreie, stabil geschichtete Parallelströmung stabil ist, wenn $\mathrm{Ri} > 1/4$ **überall** gilt. Billows verlangen also $S > 2N$; mit $N = 0{,}011$ /s sind das $0{,}022$ /s, das heißt 22 m/s je Kilometer. Ihre Wellenlänge ist das Fünf- bis Zehnfache der Schichtdicke: bei einer 300 m dicken Scherschicht 1,5 bis 3 km, am Himmel abzählbar.
+
+**Wo es aufhört zu gelten:** Die Kippformel setzt konstantes $w$ und ein Paket ohne Einmischung voraus; in Wirklichkeit bremst die Einmischung den Aufwind nach oben, und die Achse ist stärker gekrümmt als die Parabel. $\lambda = 2\pi U/N$ gilt für kleine Amplituden und für über die Schicht konstante $N$ und $U$; wechselt die Schichtung mit der Höhe, bleibt die Welle in der Lage mit dem größten $N$ hängen und misst dann nur diese. Und $\mathrm{Ri} > 1/4$ ist ein *hinreichendes* Kriterium für Stabilität, kein notwendiges für Instabilität: $\mathrm{Ri} < 1/4$ irgendwo heißt nur, dass Instabilität nicht ausgeschlossen ist -- sichtbare Billows sind der Beweis, dass sie eingetreten ist.""",
+r"""## Derivation: three readings in the sky
+
+**1  The tilt.** A parcel leaves the cloud base at $x = 0$, $z = 0$ and rises at constant $w$ (updraught, m/s); horizontally it drifts with the wind $u(z)$ at its own height. With $z = w\,t$ the slope of its trajectory is
+
+$$\frac{dx}{dz} = \frac{dx/dt}{dz/dt} = \frac{u(z) - u(0)}{w}$$
+
+The *local* tilt of the cloud axis from the vertical is therefore $\tan\alpha(z) = (u(z) - u(0))/w$; at the top, with $\Delta U = u(z) - u(0)$, simply $\tan\alpha = \Delta U/w$. That is the first formula. Integrating the same trajectory for linear shear, $u(z) - u(0) = S\,z$ with $S = \Delta U/z$:
+
+$$\Delta x = \int_0^{z} \frac{S\,z'}{w}\,dz' = \frac{S\,z^2}{2w} = \frac{\Delta U\,z}{2w}$$
+
+The offset of the top is thus only half of what the slope at the top suggests -- the axis is a parabola, not a straight line. **Numbers:** $z = 4$ km, $w = 8$ m/s, $\Delta U = 16$ m/s give $\tan\alpha = 2$, $\alpha = 63.4^\circ$ and $\Delta x = 4$ km.
+
+**2  The wave spacing.** From the derivation attached to th-stabilitaet: a displaced parcel oscillates at the Brunt–Väisälä frequency $N$, hence with period $2\pi/N$. If the wave stands still in a mean flow $U$, the parcel is carried $U\cdot 2\pi/N$ during one oscillation, and that is the wavelength $\lambda = 2\pi U/N$. The chain can be run backwards, which turns the spacing of clouds into a measurement:
+
+$$N = \frac{2\pi U}{\lambda}, \qquad \frac{d\theta}{dz} = \frac{N^2\,\theta}{g}$$
+
+The second equation is the definition of $N$ from th-stabilitaet, solved for $d\theta/dz$. **Numbers:** $\lambda = 8.6$ km and $U = 15$ m/s give $N = 2\pi\cdot 15/8600 = 0.01096$ /s, hence $N^2 = 1.20\cdot 10^{-4}$ /s² and with $\theta = 290$ K
+
+$$\frac{d\theta}{dz} = \frac{1.20\cdot 10^{-4}\cdot 290}{9.81} = 3.55\cdot 10^{-3}\ \mathrm{K/m} = 3.55\ \mathrm{K/km}$$
+
+**3  The Richardson number.** An eddy of thickness $\ell$ in a layer with shear $S = du/dz$ spans a velocity difference $S\,\ell$ between its top and bottom, so the shear can supply it the kinetic energy $\frac{1}{2}\rho\,(S\ell)^2$ per volume. If that same eddy exchanges two parcels across $\ell$, it must lift them against buoyancy: the restoring force per mass is $N^2\,\delta z$ (th-stabilitaet), so the work over $\ell$ is $\frac{1}{2}N^2\ell^2$ per mass and $\frac{1}{2}\rho\,N^2\ell^2$ per volume. The ratio of work required to energy available is
+
+$$\frac{\frac{1}{2}\rho N^2\ell^2}{\frac{1}{2}\rho S^2\ell^2} = \frac{N^2}{S^2} = \mathrm{Ri}$$
+
+and the thickness $\ell$ drops out: the threshold is a pure number, independent of how thick the layer is. Miles and Howard proved in 1961 that a steady, inviscid, stably stratified parallel flow is stable if $\mathrm{Ri} > 1/4$ holds **everywhere**. Billows therefore require $S > 2N$; with $N = 0.011$ /s that is $0.022$ /s, i.e. 22 m/s per kilometre. Their wavelength is five to ten times the thickness of the layer: for a 300 m shear layer, 1.5 to 3 km -- countable in the sky.
+
+**Where it stops holding:** the tilt formula assumes constant $w$ and a parcel without entrainment; in reality entrainment slows the updraught with height, and the axis is more strongly curved than the parabola. $\lambda = 2\pi U/N$ holds for small amplitudes and for $N$ and $U$ constant across the layer; if the stratification changes with height, the wave is trapped in the slab with the largest $N$ and then measures only that one. And $\mathrm{Ri} > 1/4$ is a *sufficient* criterion for stability, not a necessary one for instability: $\mathrm{Ri} < 1/4$ somewhere only means that instability is not ruled out -- visible billows are the proof that it has occurred."""),
+
+# ---------------------------------------------------------------------------
+"hi-windzeichen": t(r"""## Herleitung: das logarithmische Windprofil und die Beaufort-Leiter
+
+**Die Schicht konstanten Impulsflusses.** In den untersten Dekametern ändert sich der vertikale Impulsfluss kaum -- was der Boden an Impuls aufnimmt, geht durch jede Fläche darüber. Diesen Fluss schreibt man als $\tau = \rho\,u_*^2$ und nennt $u_*$ die **Schubspannungsgeschwindigkeit** (m/s). Prandtls Mischungsweg sagt: Das größte Wirbelmaß in der Höhe $z$ ist $z$ selbst, also $l = \kappa z$ mit $\kappa = 0{,}4$ (von Kármán, gemessen). Mit $\tau = \rho\,l^2 (du/dz)^2$ folgt
+
+$$\frac{du}{dz} = \frac{u_*}{\kappa z} \quad\Rightarrow\quad u(z) = \frac{u_*}{\kappa}\,\ln\frac{z}{z_0}$$
+
+Die Integrationskonstante steckt in der **Rauhigkeitslänge** $z_0$, der Höhe, in der das Profil formal null wird: 0,0002 m über glattem Wasser, 0,03 m über Wiese, 0,1 m über Feldern, 0,5 bis 1 m über Vorstadt und Wald.
+
+**Was das draußen heißt.** Das Verhältnis zweier Höhen hängt nicht mehr von $u_*$ ab:
+
+$$\frac{u(10\,\mathrm{m})}{u(2\,\mathrm{m})} = \frac{\ln(10/z_0)}{\ln(2/z_0)}$$
+
+Über Gras ($z_0 = 0{,}03$ m): $\ln 333/\ln 66{,}7 = 5{,}81/4{,}20 = 1{,}38$. Über Vorstadt ($z_0 = 0{,}5$ m): $\ln 20/\ln 4 = 3{,}00/1{,}39 = 2{,}16$. Die Meldung gilt für 10 m über freiem Gelände; wer im Garten 6 m/s fühlt, hat 8 m/s gemeldet bekommen, und in der Stadt ist der Vergleich sinnlos.
+
+**Beaufort.** Die Skala von 1805 ist eine Liste von **Beobachtungen** (Blätter bewegen sich, Zweige schwanken, Bäume biegen sich, Äste brechen), und die Geschwindigkeiten sind erst später angepasst worden. Die amtliche Umrechnung
+
+$$v = 0{,}836\ \mathrm{m/s}\cdot B^{3/2}$$
+
+ist genau deshalb keine Physik, sondern eine Anpassung -- aber der Exponent ist einer: Was ein Beobachter sieht, ist die **Kraft** auf Blatt, Zweig und Segel,
+
+$$F = \tfrac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
+
+Die Skala ist also in der Kraft annähernd gleichabständig, nicht in der Geschwindigkeit. B 6 ($12{,}3$ m/s): $q = \rho v^2/2 = 92$ Pa, auf 1 m² 92 N. B 12 ($34{,}8$ m/s): 740 Pa, achtmal so viel. Deshalb reißt der Sturm, was der frische Wind nur biegt.
+
+**Wo es aufhört zu gelten:** Das logarithmische Profil setzt neutrale Schichtung voraus. In einer Bodeninversion ist der Wind stärker gestaucht (Monin-Obukhov-Korrektur), in labiler Schichtung flacher. Über Wald und Stadt muss man zusätzlich eine Verdrängungshöhe $d$ abziehen ($u \propto \ln((z-d)/z_0)$, $d \approx 0{,}7$ der Bestandshöhe), sonst ist $z_0$ eine Erfindung. Und oberhalb von etwa 50 m endet die Schicht konstanten Flusses; dort übernimmt die Ekman-Spirale.""",
+r"""## Derivation: the logarithmic wind profile and the Beaufort ladder
+
+**The constant-flux layer.** In the lowest tens of metres the vertical momentum flux barely changes -- what the ground absorbs passes through every level above it. That flux is written $\tau = \rho\,u_*^2$, and $u_*$ is called the **friction velocity** (m/s). Prandtl's mixing length says: the largest eddy at height $z$ is $z$ itself, so $l = \kappa z$ with $\kappa = 0.4$ (von Kármán, measured). With $\tau = \rho\,l^2 (du/dz)^2$ it follows that
+
+$$\frac{du}{dz} = \frac{u_*}{\kappa z} \quad\Rightarrow\quad u(z) = \frac{u_*}{\kappa}\,\ln\frac{z}{z_0}$$
+
+The constant of integration sits in the **roughness length** $z_0$, the height at which the profile formally vanishes: 0.0002 m over smooth water, 0.03 m over meadow, 0.1 m over fields, 0.5 to 1 m over suburb and forest.
+
+**What that means outdoors.** The ratio of two heights no longer depends on $u_*$:
+
+$$\frac{u(10\,\mathrm{m})}{u(2\,\mathrm{m})} = \frac{\ln(10/z_0)}{\ln(2/z_0)}$$
+
+Over grass ($z_0 = 0.03$ m): $\ln 333/\ln 66.7 = 5.81/4.20 = 1.38$. Over suburb ($z_0 = 0.5$ m): $\ln 20/\ln 4 = 3.00/1.39 = 2.16$. The report applies to 10 m over open terrain; whoever feels 6 m/s in the garden was told 8 m/s, and in a city the comparison is meaningless.
+
+**Beaufort.** The scale of 1805 is a list of **observations** (leaves move, branches sway, trees bend, boughs break), and the speeds were fitted to it only later. The official conversion
+
+$$v = 0.836\ \mathrm{m/s}\cdot B^{3/2}$$
+
+is for that very reason not physics but a fit -- yet the exponent is physics: what an observer sees is the **force** on leaf, branch and sail,
+
+$$F = \tfrac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
+
+The scale is thus roughly equidistant in force, not in speed. B 6 ($12.3$ m/s): $q = \rho v^2/2 = 92$ Pa, 92 N on 1 m². B 12 ($34.8$ m/s): 740 Pa, eight times as much. That is why the gale tears what a fresh breeze merely bends.
+
+**Where it stops holding:** the logarithmic profile assumes neutral stratification. In a surface inversion the wind is more compressed (Monin-Obukhov correction), in unstable air flatter. Over forest and city a displacement height $d$ must be subtracted as well ($u \propto \ln((z-d)/z_0)$, $d \approx 0.7$ of the canopy height), otherwise $z_0$ is an invention. And above about 50 m the constant-flux layer ends; from there the Ekman spiral takes over."""),
+
+
+# ---------------------------------------------------------------------------
+"bo-nebel": t(r"""## Herleitung: die Mischungsgerade und die Krümmung von $e_s(T)$
+
+**Was beim Mischen linear ist.** Zwei Luftpakete der Massen $m_1$ und $m_2$ werden vermischt. Die innere Energie addiert sich, also mischt sich die Temperatur massengewichtet linear: $T_m = (m_1 T_1 + m_2 T_2)/(m_1+m_2)$ (konstantes $c_p$ und kein Wärmeaustausch nach außen). Dasselbe gilt für die Masse des Dampfes, also für das Mischungsverhältnis $r$, und bei annähernd gleichem Druck damit auch für den Dampfdruck: $e_m = (m_1 e_1 + m_2 e_2)/(m_1+m_2)$. Im Diagramm $e$ über $T$ liegt die Mischung also auf der **Geraden** zwischen den Ausgangspunkten.
+
+**Warum daraus Nebel wird.** Waren beide Pakete gesättigt, so liegen beide Endpunkte **auf** der Kurve $e_s(T)$. Clausius-Clapeyron gibt
+
+$$\frac{de_s}{dT} = \frac{L_v\,e_s}{R_v\,T^2} \quad\Rightarrow\quad \frac{d^2 e_s}{dT^2} > 0$$
+
+also ist $e_s(T)$ konvex, und die Sehne einer konvexen Kurve liegt über ihr: $e_m > e_s(T_m)$. Die Mischung ist **übersättigt**, ohne dass irgendetwas gehoben oder abgekühlt worden wäre.
+
+**Die Größe des Effekts.** Schreibt man $e_s \approx e_s(T_m)\,e^{k(T-T_m)}$ mit $k = L_v/(R_v T^2)$ (bei 283 K: $k = 0{,}068$/K), dann ist für gleiche Massen und $\Delta T = T_2 - T_1$
+
+$$\Delta e = e_m - e_s(T_m) = e_s(T_m)\left[\cosh\!\left(\frac{k\,\Delta T}{2}\right) - 1\right] \approx \frac{1}{2}\,e_s''\left(\frac{\Delta T}{2}\right)^2$$
+
+Mit $\Delta T = 20$ K gibt die $\cosh$-Form 2,9 hPa, die Taylor-Form 2,8 hPa. Beide liegen zu hoch, weil $k$ selbst mit $T$ fällt; die ehrliche Zahl kommt aus Magnus: $e_m = (6{,}11+23{,}33)/2 = 14{,}72$ hPa gegen $e_s(10\,^\circ\mathrm{C}) = 12{,}26$ hPa, also $\Delta e = 2{,}46$ hPa. Kondensiert wird, bis die Sättigung erreicht ist; die Flüssigwassermenge folgt aus der Definition des Mischungsverhältnisses:
+
+$$\Delta r = 0{,}622\,\frac{\Delta e}{p} = 0{,}622\cdot\frac{2{,}46}{1000} = 1{,}5\ \mathrm{g/kg}$$
+
+Zum Vergleich: Eine gewöhnliche Cumulus-Wolke trägt 0,5 bis 1 g/kg. Der Effekt wächst quadratisch mit $\Delta T$: bei 10 K Unterschied sind es 0,6 hPa, bei 40 K über 10 hPa -- deshalb raucht offenes Wasser bei strengem Frost so heftig.
+
+**Wo es aufhört zu gelten:** Die Rechnung nimmt beide Pakete als gesättigt und gleich schwer an. Ist eines ungesättigt, liegt sein Punkt unter der Kurve, und die Sehne kann die Kurve ganz verfehlen -- dann löst das Mischen den Nebel auf, statt ihn zu machen; genau so trocknet eine einmischende Böe den Strahlungsnebel weg. Außerdem wird die freiwerdende Kondensationswärme vernachlässigt, die $T_m$ um einige Zehntel Kelvin hebt und $\Delta r$ entsprechend verkleinert.""",
+r"""## Derivation: the mixing line and the curvature of $e_s(T)$
+
+**What is linear in mixing.** Two air parcels of masses $m_1$ and $m_2$ are mixed. Internal energies add, so temperature mixes linearly by mass: $T_m = (m_1 T_1 + m_2 T_2)/(m_1+m_2)$ (constant $c_p$, no heat exchange with the outside). The same holds for the mass of vapour, hence for the mixing ratio $r$, and at nearly equal pressure therefore for the vapour pressure: $e_m = (m_1 e_1 + m_2 e_2)/(m_1+m_2)$. In a diagram of $e$ against $T$ the mixture thus lies on the **straight line** between the two starting points.
+
+**Why that makes fog.** If both parcels were saturated, both endpoints lie **on** the curve $e_s(T)$. Clausius–Clapeyron gives
+
+$$\frac{de_s}{dT} = \frac{L_v\,e_s}{R_v\,T^2} \quad\Rightarrow\quad \frac{d^2 e_s}{dT^2} > 0$$
+
+so $e_s(T)$ is convex, and the chord of a convex curve lies above it: $e_m > e_s(T_m)$. The mixture is **supersaturated** without anything having been lifted or cooled.
+
+**The size of the effect.** Writing $e_s \approx e_s(T_m)\,e^{k(T-T_m)}$ with $k = L_v/(R_v T^2)$ (at 283 K: $k = 0.068$/K), then for equal masses and $\Delta T = T_2 - T_1$
+
+$$\Delta e = e_m - e_s(T_m) = e_s(T_m)\left[\cosh\!\left(\frac{k\,\Delta T}{2}\right) - 1\right] \approx \frac{1}{2}\,e_s''\left(\frac{\Delta T}{2}\right)^2$$
+
+With $\Delta T = 20$ K the $\cosh$ form gives 2.9 hPa, the Taylor form 2.8 hPa. Both are too high, because $k$ itself falls with $T$; the honest number comes from Magnus: $e_m = (6.11+23.33)/2 = 14.72$ hPa against $e_s(10\,^\circ\mathrm{C}) = 12.26$ hPa, hence $\Delta e = 2.46$ hPa. Condensation proceeds until saturation is reached; the liquid water content follows from the definition of the mixing ratio:
+
+$$\Delta r = 0.622\,\frac{\Delta e}{p} = 0.622\cdot\frac{2.46}{1000} = 1.5\ \mathrm{g/kg}$$
+
+For comparison: an ordinary cumulus carries 0.5 to 1 g/kg. The effect grows quadratically with $\Delta T$: for a 10 K difference it is 0.6 hPa, for 40 K more than 10 hPa -- which is why open water smokes so violently in hard frost.
+
+**Where it stops holding:** the calculation takes both parcels as saturated and equally heavy. If one is unsaturated its point lies below the curve, and the chord may miss the curve entirely -- then mixing dissolves the fog instead of making it; that is exactly how an entraining gust dries radiation fog away. The latent heat released is also neglected; it raises $T_m$ by a few tenths of a kelvin and reduces $\Delta r$ accordingly."""),
+
+# ---------------------------------------------------------------------------
+"wb-kondensstreifen": t(r"""## Herleitung: die Mischungsgerade und Schmidt-Appleman
+
+**1. Warum Mischen eine Gerade ist.** Zwei Luftmassen, die Masse $M_1$ mit $T_1, e_1$ und die Masse $M_2$ mit $T_2, e_2$, werden ohne Wärme- und Stoffaustausch mit der Umgebung gemischt. Erhalten sind die Enthalpie $c_p\,M\,T$ (bei konstantem Druck) und die Wasserdampfmasse $M\,r$ mit dem Mischungsverhältnis $r$. Mit dem Massenanteil $\mu = M_1/(M_1 + M_2)$ folgt daher
+
+$$T = \mu\,T_1 + (1-\mu)\,T_2, \qquad r = \mu\,r_1 + (1-\mu)\,r_2$$
+
+Beide sind **linear in $\mu$**. Der Dampfdruck hängt am Mischungsverhältnis über $r = \varepsilon\,e/(p-e) \approx \varepsilon\,e/p$ mit $\varepsilon = M_v/M_L = 0{,}622$; bei festem Druck ist $e$ also proportional zu $r$ und damit ebenfalls linear in $\mu$. Trägt man die Mischung in der Ebene $(T, e)$ auf, läuft sie auf der **Verbindungsgeraden** der beiden Endpunkte -- und zwar mit der Steigung
+
+$$G = \frac{e_1 - e_2}{T_1 - T_2}$$
+
+unabhängig davon, wie weit das Mischen fortgeschritten ist.
+
+**2. Warum das eine Wolke machen kann.** Die Sättigungskurve $e_s(T)$ ist nach Clausius-Clapeyron (fe-dampf) exponentiell, also **konvex**: $e_s^{\prime\prime} > 0$. Für eine konvexe Funktion liegt jede Sehne über der Kurve (Jensen). Sind beide Ausgangszustände gesättigt, $e_{1,2} = e_s(T_{1,2})$, dann ist die Mischung also **übersättigt**, obwohl keiner der beiden es war. Der Überschuss in der Mitte ist nach Taylor
+
+$$\Delta e \approx \frac{1}{8}\,e_s^{\prime\prime}(\bar T)\,(\Delta T)^2$$
+
+**Zahlenbeispiel Mischungsnebel.** Zwei gesättigte Pakete, 0 °C mit $e_s = 6{,}11$ hPa und 20 °C mit $e_s = 23{,}33$ hPa, halb und halb: $T = 10$ °C, $e = 14{,}72$ hPa. Aber $e_s(10) = 12{,}26$ hPa -- das sind **120 % relative Feuchte**. Es *muss* kondensieren, und zwar $\Delta r = \varepsilon\,\Delta e/p = 0{,}622\cdot 246/100000 = 1{,}5$ g/kg. Die Taylor-Abschätzung liefert mit $e_s^{\prime\prime}(10) = 4{,}83$ Pa/K² und $\Delta T = 20$ K genau $242$ Pa gegen die exakten $246$ Pa. Das ist der Seerauch über offenem Wasser, der eigene Atem im Winter und die Wolke über dem Kühlturm -- und derselbe Satz trägt den Kondensstreifen.
+
+**3. Die Steigung aus dem Treibstoff.** Pro Kilogramm verbranntem Kerosin gibt das Triebwerk $EI = 1{,}25$ kg Wasser und $Q\,(1-\eta)$ Joule Wärme in den Abgasstrahl ab; $Q = 43$ MJ/kg ist der Heizwert und $\eta$ der Vortriebswirkungsgrad, also der Anteil der Energie, der als Schub das Flugzeug beschleunigt statt die Luft zu heizen (0,2 bis 0,4, moderne Turbofans 0,3). Mischt sich der Strahl mit der Luftmasse $M$, so ist
+
+$$\Delta T = \frac{Q\,(1-\eta)}{M\,c_p}, \qquad \Delta r = \frac{EI}{M}, \qquad \Delta e = \frac{p}{\varepsilon}\,\Delta r = \frac{EI\,p}{\varepsilon\,M}$$
+
+und im Quotienten kürzt sich $M$ heraus:
+
+$$G = \frac{\Delta e}{\Delta T} = \frac{EI\,c_p\,p}{\varepsilon\,Q\,(1-\eta)}$$
+
+Das ist der eigentliche Grund, warum die Bedingung so sauber ist: Die Steigung hängt **nicht** davon ab, wie stark der Strahl verdünnt ist, sondern nur an Treibstoff und Flugdruck. Bei $p = 250$ hPa: $G = 1{,}25\cdot 1004\cdot 25000/(0{,}622\cdot 43\cdot 10^6\cdot 0{,}70) = 1{,}68$ Pa/K. (Gegenrechnung, um zu sehen, dass $M$ wirklich herausfällt: bei $M = 1000$ kg je kg Treibstoff sind $\Delta T = 30$ K und $\Delta e = 50$ Pa, Quotient 1,67 Pa/K.)
+
+**4. Die Schwellentemperatur.** Die Gerade startet im Umgebungszustand $(T_U, e_U)$ und steigt nach rechts mit $G$. Sie erreicht die Sättigungskurve genau dann, wenn $e_U + G\,(T - T_U) \geq e_s(T)$ für ein $T$ zwischen $T_U$ und der Abgastemperatur gilt. Der günstigste Fall ist eine gesättigte Umgebung; dann ist der Grenzfall die **Tangente**:
+
+$$\left.\frac{de_s}{dT}\right|_{T_c} = G$$
+
+Mit der Magnus-Formel $e_s = 611{,}2\,\exp\!\left(\frac{a\,t}{b+t}\right)$ Pa und $a = 17{,}62$, $b = 243{,}12$ ist
+
+$$\frac{de_s}{dT} = e_s(t)\,\frac{a\,b}{(b+t)^2}$$
+
+Numerisch gelöst für $G = 1{,}68$ Pa/K: $t_c = -41{,}7$ °C, dort $e_s = 15{,}9$ Pa. Mit der Standardatmosphäre (at-standard, $T = 15 - 6{,}5\,z$) liegt diese Temperatur bei $z = 8{,}7$ km. Ist die Umgebung trockener als gesättigt, muss sie kälter sein als $t_c$, damit die Gerade die Kurve noch schneidet -- deshalb macht dasselbe Flugzeug im Winter in 9 km einen Streifen und im Sommer nicht.
+
+**5. Warum er bleibt oder nicht.** Nach dem Mischen friert das Tröpfchen (unter −40 °C sofort) und ist Eis. Es verdunstet wieder, sobald die Umgebung gegenüber **Eis** untersättigt ist. Der Sättigungsdampfdruck über Eis folgt derselben Magnus-Form mit $a = 22{,}46$, $b = 272{,}62$ -- steiler, weil $L_s = L_v + L_f = 2{,}83$ MJ/kg eingeht. Das Verhältnis $e_i/e_w$ ist 0,89 bei −12 °C (der Bergeron-Wert aus fe-dampf), 0,86 bei −15 °C, 0,68 bei −40 °C und 0,65 bei −45 °C. Eine Höhenluft mit 65 % relativer Feuchte über Wasser ist dort also eissättigt: Der Streifen bleibt, wächst sogar, und die Luftmasse würde auch ohne Flugzeug Cirrus bilden, sobald sie noch ein Stück gehoben wird.
+
+**Wo es aufhört zu gelten:** Die Rechnung nimmt an, dass sich der Strahl nur mit unverbrauchter Umgebungsluft mischt -- in einer Formation mischt er sich mit dem Abgas des Vorgängers. $\eta$ ist keine Konstante, sondern hängt an Schubeinstellung und Fluggeschwindigkeit; die Schwelle wandert damit um ein bis zwei Kelvin. Die Magnus-Anpassung wird unter −45 °C ungenau, und genau dort liegt die Schwelle. Und die Konvexitätsaussage gilt nur, solange beim Mischen noch nichts kondensiert ist: Sobald Tröpfchen da sind, folgt der Zustand nicht mehr der Geraden, sondern wird von der Latentwärme nach rechts gezogen.""",
+r"""## Derivation: the mixing line and Schmidt-Appleman
+
+**1. Why mixing is a straight line.** Two air masses, $M_1$ with $T_1, e_1$ and $M_2$ with $T_2, e_2$, are mixed without exchanging heat or matter with their surroundings. The conserved quantities are the enthalpy $c_p\,M\,T$ (at constant pressure) and the water vapour mass $M\,r$ with mixing ratio $r$. With the mass fraction $\mu = M_1/(M_1 + M_2)$ it follows that
+
+$$T = \mu\,T_1 + (1-\mu)\,T_2, \qquad r = \mu\,r_1 + (1-\mu)\,r_2$$
+
+Both are **linear in $\mu$**. The vapour pressure is tied to the mixing ratio by $r = \varepsilon\,e/(p-e) \approx \varepsilon\,e/p$ with $\varepsilon = M_v/M_L = 0.622$; at fixed pressure $e$ is therefore proportional to $r$ and so also linear in $\mu$. Plotted in the $(T, e)$ plane, the mixture runs along the **chord** joining the two end points -- with the slope
+
+$$G = \frac{e_1 - e_2}{T_1 - T_2}$$
+
+independently of how far the mixing has progressed.
+
+**2. Why that can make a cloud.** The saturation curve $e_s(T)$ is exponential by Clausius-Clapeyron (fe-dampf), hence **convex**: $e_s^{\prime\prime} > 0$. For a convex function every chord lies above the curve (Jensen). So if both original states are saturated, $e_{1,2} = e_s(T_{1,2})$, the mixture is **supersaturated** although neither of them was. The excess at the midpoint is, by Taylor,
+
+$$\Delta e \approx \frac{1}{8}\,e_s^{\prime\prime}(\bar T)\,(\Delta T)^2$$
+
+**Worked example: mixing fog.** Two saturated parcels, 0 °C with $e_s = 6.11$ hPa and 20 °C with $e_s = 23.33$ hPa, half and half: $T = 10$ °C, $e = 14.72$ hPa. But $e_s(10) = 12.26$ hPa -- that is **120 % relative humidity**. It *must* condense, by $\Delta r = \varepsilon\,\Delta e/p = 0.622\cdot 246/100000 = 1.5$ g/kg. The Taylor estimate with $e_s^{\prime\prime}(10) = 4.83$ Pa/K² and $\Delta T = 20$ K gives exactly $242$ Pa against the exact $246$ Pa. This is the steam fog over open water, your own breath in winter and the plume above a cooling tower -- and the same statement carries the contrail.
+
+**3. The slope from the fuel.** Per kilogram of kerosene burnt the engine releases $EI = 1.25$ kg of water and $Q\,(1-\eta)$ joules of heat into the exhaust plume; $Q = 43$ MJ/kg is the heating value and $\eta$ the propulsion efficiency, i.e. the fraction of the energy that leaves as thrust accelerating the aircraft instead of heating the air (0.2 to 0.4, modern turbofans 0.3). If the plume mixes with an air mass $M$, then
+
+$$\Delta T = \frac{Q\,(1-\eta)}{M\,c_p}, \qquad \Delta r = \frac{EI}{M}, \qquad \Delta e = \frac{p}{\varepsilon}\,\Delta r = \frac{EI\,p}{\varepsilon\,M}$$
+
+and in the quotient $M$ cancels:
+
+$$G = \frac{\Delta e}{\Delta T} = \frac{EI\,c_p\,p}{\varepsilon\,Q\,(1-\eta)}$$
+
+That is the real reason the condition comes out so cleanly: the slope does **not** depend on how far the plume has been diluted, only on the fuel and the flight pressure. At $p = 250$ hPa: $G = 1.25\cdot 1004\cdot 25000/(0.622\cdot 43\cdot 10^6\cdot 0.70) = 1.68$ Pa/K. (A check that $M$ really does drop out: with $M = 1000$ kg per kg of fuel, $\Delta T = 30$ K and $\Delta e = 50$ Pa, quotient 1.67 Pa/K.)
+
+**4. The threshold temperature.** The line starts at the ambient state $(T_U, e_U)$ and rises to the right with slope $G$. It reaches the saturation curve exactly when $e_U + G\,(T - T_U) \geq e_s(T)$ has a solution for some $T$ between $T_U$ and the exhaust temperature. The most favourable case is a saturated environment; then the limiting case is **tangency**:
+
+$$\left.\frac{de_s}{dT}\right|_{T_c} = G$$
+
+With the Magnus formula $e_s = 611.2\,\exp\!\left(\frac{a\,t}{b+t}\right)$ Pa and $a = 17.62$, $b = 243.12$,
+
+$$\frac{de_s}{dT} = e_s(t)\,\frac{a\,b}{(b+t)^2}$$
+
+Solved numerically for $G = 1.68$ Pa/K: $t_c = -41.7$ °C, where $e_s = 15.9$ Pa. With the standard atmosphere (at-standard, $T = 15 - 6.5\,z$) that temperature sits at $z = 8.7$ km. If the environment is drier than saturated it has to be colder than $t_c$ for the line still to cut the curve -- which is why the same aircraft makes a trail at 9 km in winter and none in summer.
+
+**5. Why it persists, or does not.** After mixing, the droplet freezes (instantly below −40 °C) and is ice. It evaporates again as soon as the environment is subsaturated with respect to **ice**. The saturation vapour pressure over ice follows the same Magnus form with $a = 22.46$, $b = 272.62$ -- steeper, because $L_s = L_v + L_f = 2.83$ MJ/kg enters. The ratio $e_i/e_w$ is 0.89 at −12 °C (the Bergeron value from fe-dampf), 0.86 at −15 °C, 0.68 at −40 °C and 0.65 at −45 °C. Upper air at 65 % relative humidity over water is therefore ice-saturated up there: the trail stays, even grows, and the air mass would make cirrus without any aircraft as soon as it is lifted a little further.
+
+**Where it stops holding:** the calculation assumes the plume mixes only with fresh ambient air -- in a formation it mixes with the predecessor's exhaust. $\eta$ is not a constant but depends on throttle setting and airspeed; the threshold moves by one or two kelvin with it. The Magnus fit becomes inaccurate below −45 °C, and that is precisely where the threshold lies. And the convexity argument holds only while nothing has condensed yet: once droplets are present the state no longer follows the straight line but is dragged to the right by the latent heat."""),
 }

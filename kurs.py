@@ -3784,12 +3784,3243 @@ K_VORHERSAGE = kapitel(
 
 
 # ===========================================================================
+# 12  Den Himmel lesen
+# ===========================================================================
+
+LUFTMASSE_HORIZONT = 38.0        # Rayleigh-Luftmasse bei h = 0 (gekrümmte Schicht)
+TAU_GRUEN = 0.097                # optische Dicke der reinen Luft, 550 nm
+TAU_ROT = 0.048                  # 650 nm
+TRANS_GRUEN = math.exp(-LUFTMASSE_HORIZONT * TAU_GRUEN)
+TRANS_ROT = math.exp(-LUFTMASSE_HORIZONT * TAU_ROT)
+ROTVERHAELTNIS = TRANS_ROT / TRANS_GRUEN                  # 6,4
+KORONA_20UM = math.degrees(1.22 * 550e-9 / 20e-6)         # Grad
+BETA_40KM = 3.9 / 40000.0                                 # 1/m
+BETA_10KM = 3.9 / 10000.0
+Z0_GRAS = 0.03                                            # m
+PROFIL_GRAS = math.log(10.0 / Z0_GRAS) / math.log(2.0 / Z0_GRAS)
+PROFIL_VORSTADT = math.log(10.0 / 0.5) / math.log(2.0 / 0.5)
+BEAUFORT_A = 0.836
+
+def beaufort_v(b):
+    """Windgeschwindigkeit zur Beaufort-Stufe, m/s."""
+    return BEAUFORT_A * b ** 1.5
+
+V_B6 = beaufort_v(6.0)
+STAUDRUCK_B6 = 0.5 * 1.225 * V_B6 ** 2                    # Pa
+V_B12 = beaufort_v(12.0)
+STAUDRUCK_B12 = 0.5 * 1.225 * V_B12 ** 2
+ETA_LUFT = 1.8e-5                                         # Pa s
+
+def v_stokes(r_m):
+    return 2.0 / 9.0 * 1000.0 * G * r_m ** 2 / ETA_LUFT   # m/s
+
+RE_40UM = v_stokes(40e-6) * 80e-6 / 1.5e-5                # ≈ 1
+V_REGEN_1MM = 6.5                                         # m/s, gemessen
+FALLZEIT_1MM = 2000.0 / V_REGEN_1MM / 60.0                # min aus 2 km
+FALLZEIT_NIESEL = 2000.0 / 0.72 / 60.0                    # min, 0,2-mm-Tropfen
+
+K_HIMMEL = kapitel(
+    "himmel", t("Den Himmel lesen", "Reading the sky"), 9,
+    t("Streuung, Brechung, Ekman-Spirale und Tropfenwachstum sind "
+      "hergeleitet. Hier werden sie eingelöst: vier Lektionen, die beim "
+      "Hinsehen anfangen, beim Mechanismus weitergehen und bei einer "
+      "Zahl aufhören, die man draußen abschätzen kann.",
+      "Scattering, refraction, the Ekman spiral and drop growth have "
+      "been derived. Here they are cashed in: four lessons that start "
+      "from what is visible, go on to the mechanism and end at a number "
+      "one can estimate outdoors."), [
+
+    lektion("hi-farben",
+        t("Himmelsfarben und Lichterscheinungen, Stunde für Stunde",
+          "Colours and lights of the sky, hour by hour"),
+        ["luftmasse", "daemmerung", "halo-korona"],
+        t("**Was zu sehen ist.** Mittags ist der Himmel im Zenit tief "
+          "blau und am Horizont milchig weiß; die Grenze ist nicht "
+          "scharf, aber jeder sieht sie. Am Nachmittag stehen bei "
+          "Wolkenlücken **Dämmerungsstrahlen** -- Schattenbahnen in "
+          "staubiger Luft, perspektivisch gefächert, in Wirklichkeit "
+          "parallel. Nach Sonnenuntergang steigt im Osten ein dunkles, "
+          "nach oben scharf begrenztes Band: der **Erdschatten**, und "
+          "darüber der rosa **Venusgürtel**, in dem Luft beleuchtet "
+          "wird, die der Schatten noch nicht erreicht hat. Dann die "
+          "blaue Stunde, in der kein direktes Sonnenlicht mehr da ist "
+          "und nur noch die zweifach gestreute, kurzwellige Strahlung "
+          "übrig bleibt. Und mit Glück, über einer scharfen "
+          "Horizontlinie, eine halbe Sekunde **grüner Blitz**: der "
+          "Rand der Sonne, von der Refraktion farbig zerlegt.\n\n"
+          "**Was das ist.** Alles folgt aus der einen Zahl, die "
+          "op-streuung geliefert hat: Rayleigh streut mit $1/\\lambda^4$. Blau "
+          "wird herausgestreut, deshalb ist der Himmel blau und die "
+          "Sonne gelb. Der Zenit ist dunkelblau, weil der Sehstrahl nur "
+          "durch eine Luftmasse geht; zum Horizont hin wächst der Weg "
+          "wie $1/\\sin h$, und bei vielen Streuungen hintereinander "
+          "verliert das Licht seine Farbe: Vielfachstreuung macht weiß. "
+          "Der milchige Horizont **ist** die Sättigung der Streuung. "
+          "Die Säulenmasse über uns steht in at-hydrostatik: $p_0/g = 10\\,330$ "
+          "kg/m² ist die Luftmasse 1, senkrecht nach oben.\n\n"
+          "**Die Zahl.** Am Horizont trägt die Krümmung der Schicht die "
+          "Luftmasse nicht ins Unendliche, sondern auf etwa **38**. Mit "
+          "der optischen Dicke der reinen Luft (0,097 bei 550 nm, 0,048 "
+          "bei 650 nm) bleibt an Transmission $e^{-38\\cdot 0{,}097} = 2{,}5$ % "
+          "im Grün gegen $e^{-38\\cdot 0{,}048} = 16$ % im Rot: ein "
+          "Verhältnis von **6,4**. Deshalb ist die untergehende Sonne "
+          "nicht einfach blasser, sondern rot -- und deshalb kann man "
+          "ihr ins Gesicht sehen.\n\n"
+          "**Und die Erscheinungen?** Welche Farbfigur am Himmel steht, "
+          "verrät, aus was die Wolke besteht, und das verrät das "
+          "Wetter. Ein Ring von 22° Radius um Sonne oder Mond, innen "
+          "rot, kommt vom 60°-Prisma des Eiskristalls (op-regenbogen): "
+          "Cirrostratus, also Warmfront in 12 bis 24 Stunden. Eng um "
+          "die Sonne, innen weiß, in bunten Ringen: **Korona**, und das "
+          "ist Beugung an Wassertröpfchen, keine Brechung. Der erste "
+          "Ring steht bei $\\theta \\approx 1{,}22\\,\\lambda/d$, für $d = 20$ μm "
+          "also bei 1,9° -- ein Viertel der Faustbreite am "
+          "ausgestreckten Arm (gut 8°). Je größer die Tröpfchen, desto "
+          "enger der Ring: Die Korona ist ein Messgerät für die "
+          "Tropfengröße. **Irisieren** am Rand einer dünnen Wolke ist "
+          "dasselbe in Unordnung, die **Glorie** um den eigenen "
+          "Flugzeugschatten dasselbe in Rückwärtsrichtung.\n\n"
+          "**Was man daraus schließt.** Ring weit und innen rot heißt "
+          "Eis und heißt Vorwarnung; Ring eng und innen weiß heißt "
+          "Wasser und heißt nichts über morgen, aber alles über die "
+          "Wolke, in der er steht.",
+          "**What is visible.** At noon the sky is deep blue at the "
+          "zenith and milky white at the horizon; the boundary is not "
+          "sharp, but everyone sees it. In the afternoon, where the "
+          "cloud deck breaks, **crepuscular rays** stand out -- lanes "
+          "of shadow in dusty air, splayed by perspective, in fact "
+          "parallel. After sunset a dark band with a sharp upper edge "
+          "rises in the east: the **shadow of the Earth**, and above it "
+          "the pink **belt of Venus**, where air is still lit that the "
+          "shadow has not yet reached. Then the blue hour, when no "
+          "direct sunlight is left and only the twice-scattered, "
+          "short-wave light remains. And with luck, over a crisp "
+          "horizon, half a second of **green flash**: the limb of the "
+          "sun, dispersed by refraction.\n\n"
+          "**What it is.** All of it follows from the one number "
+          "op-streuung supplied: Rayleigh scattering goes as $1/\\lambda^4$. Blue "
+          "is scattered out, so the sky is blue and the sun yellow. The "
+          "zenith is dark blue because the line of sight crosses only "
+          "one air mass; towards the horizon the path grows as $1/\\sin h$, "
+          "and after many successive scatterings the light loses its "
+          "colour: multiple scattering makes white. The milky horizon "
+          "**is** scattering gone saturated. The column mass above us "
+          "stands in at-hydrostatik: $p_0/g = 10\\,330$ kg/m² is air mass 1, "
+          "straight up.\n\n"
+          "**The number.** At the horizon the curvature of the layer "
+          "keeps the air mass finite -- about **38**. With the optical "
+          "depth of clean air (0.097 at 550 nm, 0.048 at 650 nm) the "
+          "transmission left is $e^{-38\\cdot 0.097} = 2.5$ % in the green "
+          "against $e^{-38\\cdot 0.048} = 16$ % in the red: a ratio of "
+          "**6.4**. That is why the setting sun is not merely paler but "
+          "red -- and why one can look straight at it.\n\n"
+          "**And the optical figures?** Which coloured figure stands in "
+          "the sky tells what the cloud is made of, and that tells the "
+          "weather. A ring of 22° radius around sun or moon, red on the "
+          "inside, comes from the 60° prism of an ice crystal "
+          "(op-regenbogen): cirrostratus, hence a warm front 12 to 24 "
+          "hours out. Tight around the sun, white on the inside, in "
+          "coloured rings: a **corona**, and that is diffraction by "
+          "water droplets, not refraction. The first ring sits at "
+          "$\\theta \\approx 1{.}22\\,\\lambda/d$, so for $d = 20$ μm at 1.9° -- a "
+          "quarter of a fist at arm's length (a good 8°). The larger "
+          "the droplets, the tighter the ring: a corona is an "
+          "instrument for droplet size. **Iridescence** at the edge of "
+          "a thin cloud is the same thing in disorder, the **glory** "
+          "around one's own aircraft shadow the same thing "
+          "backwards.\n\n"
+          "**What follows.** A wide ring with red inside means ice and "
+          "means advance warning; a tight ring with white inside means "
+          "water and says nothing about tomorrow, but everything about "
+          "the cloud it stands in."),
+        "himmel-luftmasse", [
+        zahl(t("Luftmasse 38 am Horizont: Um welchen Faktor kommt mehr "
+               "Rot (τ = 0,048) durch als Grün (τ = 0,097)? (eine "
+               "Nachkommastelle)",
+               "Air mass 38 at the horizon: by what factor does more "
+               "red (τ = 0.048) get through than green (τ = 0.097)? "
+               "(one decimal)"),
+             rund(ROTVERHAELTNIS, 1), t("", ""),
+             t("`exp(−38 × 0,048) / exp(−38 × 0,097) = exp(38 × 0,049) "
+               "= 6,4`. Das ist die Rotverschiebung des Sonnenlichts am "
+               "Horizont, und sie steckt allein im Weg.",
+               "`exp(−38 × 0.048) / exp(−38 × 0.097) = exp(38 × 0.049) "
+               "= 6.4`. That is the reddening of sunlight at the "
+               "horizon, and it lies entirely in the path length."),
+             toleranz=0.05),
+        zahl(t("Korona: Radius des ersten Rings bei Tröpfchen von 20 μm "
+               "Durchmesser, λ = 550 nm? (in Grad, eine "
+               "Nachkommastelle)",
+               "Corona: radius of the first ring for droplets of 20 μm "
+               "diameter, λ = 550 nm? (in degrees, one decimal)"),
+             rund(KORONA_20UM, 1), t("°", "°"),
+             t("`θ = 1,22 λ/d = 1,22 × 550·10⁻⁹ / 20·10⁻⁶ = 0,0336 rad "
+               "= 1,9°`. Beugung an der Kreisscheibe, dieselbe Formel "
+               "wie beim Teleskop -- nur umgekehrt benutzt: Hier ist "
+               "der Winkel bekannt und die Tropfengröße gesucht.",
+               "`θ = 1.22 λ/d = 1.22 × 550·10⁻⁹ / 20·10⁻⁶ = 0.0336 rad "
+               "= 1.9°`. Diffraction at a circular disc, the same "
+               "formula as for a telescope -- used backwards: here the "
+               "angle is known and the droplet size wanted."),
+             toleranz=0.05),
+        mc(t("Um den Mond steht ein enger, bunter Ring von etwa 2° "
+             "Radius, innen weiß. Was folgt daraus?",
+             "A tight, coloured ring of about 2° radius stands around "
+             "the moon, white on the inside. What follows?"),
+           [t("Eiskristalle in 8 km Höhe, eine Warmfront ist im "
+              "Anmarsch.",
+              "Ice crystals at 8 km, a warm front is approaching."),
+            t("Eine Korona: Beugung an Wassertröpfchen von etwa 20 μm, "
+              "also eine dünne Wasserwolke dicht über uns -- über das "
+              "Wetter von morgen sagt sie nichts.",
+              "A corona: diffraction by water droplets of about 20 μm, "
+              "so a thin water cloud close above -- it says nothing "
+              "about tomorrow's weather."),
+            t("Dunst am Boden.", "Haze at the ground."),
+            t("Der Mond selbst steht im Nebel des Erdschattens.",
+              "The moon itself stands in the shadow of the Earth.")], 1,
+           t("Der 22°-Halo ist Brechung an Eis und innen rot, die "
+             "Korona ist Beugung an Wasser und innen weiß. Zwei "
+             "Erscheinungen, zwei Phasen, zwei Vorhersagen: Der Halo "
+             "ist eine Warnung, die Korona eine Messung.",
+             "The 22° halo is refraction in ice and red inside, the "
+             "corona is diffraction by water and white inside. Two "
+             "phenomena, two phases, two forecasts: the halo is a "
+             "warning, the corona a measurement."),
+           bild="skizze-halo"),
+        ]),
+
+    lektion("hi-dunst",
+        t("Dunst, Sichtweite und die blauen Berge",
+          "Haze, visibility and the blue mountains"),
+        ["dunstschicht", "luftlicht", "mischungshoehe"],
+        t("**Was zu sehen ist.** Von einem Berg aus liegt der Dunst als "
+          "Schicht im Tal, und sie hat eine **Oberkante** -- oft so "
+          "scharf, dass man sie mit der Hand abdecken könnte. Von unten "
+          "sieht man dieselbe Grenze als die Höhe, in der der Himmel "
+          "aufhört, trüb zu sein. Ferne Berge werden mit der Entfernung "
+          "nicht dunkler, sondern blasser und blauer, bis der letzte "
+          "Kamm nur noch eine Tönung des Himmels ist. Nach einer "
+          "Kaltfront reißt die Fernsicht auf; nach drei Hochdrucktagen "
+          "ist derselbe Kamm verschwunden.\n\n"
+          "**Was das ist.** Die Oberkante der Dunstschicht ist die "
+          "**Mischungshöhe**: Darunter verteilt die Turbulenz das "
+          "Aerosol, darüber liegt eine stabile Schicht, und die mischt "
+          "nicht (th-stabilitaet). Die Grenze ist deshalb keine Grenze "
+          "des Staubs, sondern eine Grenze des Austauschs -- sie macht "
+          "die Inversion sichtbar, in genau der Höhe, in der sie liegt. "
+          "Dass die Berge blau werden und nicht schwarz, ist das "
+          "**Luftlicht**: Zwischen Auge und Berg wird Sonnenlicht in "
+          "den Sehstrahl hineingestreut, und was hineingestreut wird, "
+          "ist blau (op-streuung). Der dunkle Wald liefert über die "
+          "Entfernung $x$ nur noch $e^{-\\beta x}$ seiner eigenen Helligkeit, "
+          "das Luftlicht aber den Rest: Der Kontrast geht gegen null, "
+          "die Farbe gegen Himmelsblau.\n\n"
+          "**Die Zahl.** Koschmieder umgekehrt gelesen: Wer weiß, wie "
+          "weit der entfernteste noch erkennbare Gipfel steht, hat den "
+          "Extinktionskoeffizienten gemessen, $\\beta = 3{,}9/V$. Ein "
+          "Gipfel in 40 km heißt $\\beta = 9{,}75\\cdot 10^{-5}$ /m; wenn "
+          "dieselbe Landmarke am nächsten Tag verschwunden ist und nur "
+          "noch die 10-km-Kirche steht, ist $\\beta = 3{,}9\\cdot 10^{-4}$ /m -- "
+          "**viermal mehr Aerosol in derselben Luftsäule, binnen eines "
+          "Tages**. Deshalb lohnt es sich, drei Landmarken in "
+          "bekannter Entfernung auszusuchen und die Sichtweite nicht "
+          "zu schätzen, sondern abzulesen.\n\n"
+          "**Was man daraus schließt.** Dunst ist kein Wetter, sondern "
+          "ein Anzeiger: Er steht im Hoch, weil Absinken die "
+          "Mischungshöhe drückt und das Aerosol in eine dünnere Schicht "
+          "presst, und er verschwindet mit der Kaltfront, weil "
+          "Hebung und Durchmischung die Säule auf 3 km aufziehen. Wer "
+          "morgens die Oberkante tief sieht, weiß, dass die Thermik "
+          "flach bleibt -- und dass am Abend der Horizont wieder "
+          "orange wird.",
+          "**What is visible.** From a mountain the haze lies as a "
+          "layer in the valley, and it has an **upper edge** -- often "
+          "so sharp one could cover it with a hand. From below the same "
+          "boundary appears as the height at which the sky stops being "
+          "turbid. Distant mountains do not get darker with distance "
+          "but paler and bluer, until the last ridge is no more than a "
+          "shade of the sky. After a cold front the long view opens up; "
+          "after three days of high pressure the same ridge has "
+          "vanished.\n\n"
+          "**What it is.** The top of the haze layer is the **mixing "
+          "height**: below it turbulence spreads the aerosol, above it "
+          "lies a stable layer, and that does not mix "
+          "(th-stabilitaet). The boundary is therefore not a boundary "
+          "of dust but a boundary of exchange -- it makes the inversion "
+          "visible, at exactly the height where it sits. That the "
+          "mountains turn blue and not black is **airlight**: between "
+          "eye and mountain sunlight is scattered into the line of "
+          "sight, and what is scattered in is blue (op-streuung). Over "
+          "the distance $x$ the dark forest delivers only $e^{-\\beta x}$ of its "
+          "own brightness, while airlight supplies the remainder: the "
+          "contrast tends to zero, the colour to sky blue.\n\n"
+          "**The number.** Koschmieder read backwards: anyone who "
+          "knows how far away the most distant recognisable summit "
+          "stands has measured the extinction coefficient, "
+          "$\\beta = 3{.}9/V$. A summit at 40 km means "
+          "$\\beta = 9{.}75\\cdot 10^{-5}$ /m; if the same landmark has gone the "
+          "next day and only the church at 10 km is left, "
+          "$\\beta = 3{.}9\\cdot 10^{-4}$ /m -- **four times as much aerosol in "
+          "the same column of air, within one day**. Hence it pays to "
+          "pick three landmarks at known distances and to read the "
+          "visibility off rather than guess it.\n\n"
+          "**What follows.** Haze is not weather but an indicator: it "
+          "builds under a high, because subsidence presses the mixing "
+          "height down and squeezes the aerosol into a thinner layer, "
+          "and it clears with the cold front, because lifting and "
+          "mixing stretch the column to 3 km. Whoever sees a low upper "
+          "edge in the morning knows the thermals will stay shallow -- "
+          "and that the horizon will be orange again in the evening."),
+        "skizze-streuung", [
+        zahl(t("Der entfernteste erkennbare Gipfel steht 40 km weit. "
+               "Wie groß ist β? (in 10⁻⁵ /m, zwei Nachkommastellen)",
+               "The most distant recognisable summit stands 40 km "
+               "away. How large is β? (in 10⁻⁵ /m, two decimals)"),
+             rund(BETA_40KM / 1e-5, 2), t("10⁻⁵ /m", "10⁻⁵ /m"),
+             t("`β = 3,9/V = 3,9 / 40 000 m = 9,75·10⁻⁵ /m`. Knapp "
+               "zehnmal der Wert reiner Luft -- 40 km Sicht sind schon "
+               "ein guter Tag, keine saubere Atmosphäre.",
+               "`β = 3.9/V = 3.9 / 40 000 m = 9.75·10⁻⁵ /m`. Nearly ten "
+               "times the value for clean air -- 40 km of visibility "
+               "is already a good day, not a clean atmosphere."),
+             toleranz=0.05),
+        zahl(t("Am nächsten Tag reicht die Sicht nur noch 10 km. Um "
+               "welchen Faktor hat β zugenommen?",
+               "The next day the view reaches only 10 km. By what "
+               "factor has β risen?"),
+             rund(BETA_10KM / BETA_40KM, 1), t("", ""),
+             t("β geht wie `1/V`, also genau Faktor 4. Die Luftsäule "
+               "ist dieselbe; was sich geändert hat, ist die "
+               "Aerosolbeladung und meist auch die Feuchte, die das "
+               "Aerosol anschwellen lässt.",
+               "β goes as `1/V`, hence exactly a factor of 4. The "
+               "column of air is the same; what changed is the aerosol "
+               "load and usually the humidity, which makes the aerosol "
+               "swell."),
+             toleranz=0.03),
+        mc(t("Warum wird ein dunkler Bergrücken mit der Entfernung "
+             "heller und blauer statt dunkler?",
+             "Why does a dark ridge become brighter and bluer with "
+             "distance instead of darker?"),
+           [t("Weil die Luft dazwischen Blau absorbiert.",
+              "Because the air in between absorbs blue."),
+            t("Weil die Erdkrümmung den Fuß des Bergs verdeckt.",
+              "Because the Earth's curvature hides the foot of the "
+              "mountain."),
+            t("Sein eigenes Licht wird mit e^(−βx) geschwächt, "
+              "gleichzeitig wird blaues Luftlicht in den Sehstrahl "
+              "gestreut -- der Kontrast geht gegen null, die Farbe "
+              "gegen Himmelsblau.",
+              "Its own light is attenuated as e^(−βx) while blue "
+              "airlight is scattered into the line of sight -- the "
+              "contrast tends to zero, the colour to sky blue."),
+            t("Weil ferne Berge höher liegen und mehr Sonne bekommen.",
+              "Because distant mountains are higher and get more "
+              "sun.")], 2,
+           t("Kontrast ist eine Differenz, und das Luftlicht addiert "
+             "sich zu beiden Seiten der Differenz. Deshalb ist die "
+             "Sichtweite eine Kontrastschwelle (2 %) und keine "
+             "Helligkeitsschwelle.",
+             "Contrast is a difference, and airlight adds to both sides "
+             "of that difference. That is why visibility is a contrast "
+             "threshold (2 %) and not a brightness threshold.")),
+        ]),
+
+    lektion("hi-windzeichen",
+        t("Windzeichen: Rauch, Bäume, Wellen, Böen",
+          "Signs of wind: smoke, trees, waves, gusts"),
+        ["beaufort", "logarithmisches-profil", "boeigkeit"],
+        t("**Was zu sehen ist.** Eine Rauchfahne, die als dünnes Band "
+          "kilometerweit waagrecht liegt und sich kaum verdünnt. Eine "
+          "zweite, die in Schlaufen auf und ab schlägt und manchmal den "
+          "Boden berührt. Blattunterseiten, die umklappen; Gras, das in "
+          "Wellen läuft; auf dem Wasser erst Kräuselung, dann "
+          "Schaumkämme, dann Schaumstreifen **in** der Windrichtung. "
+          "Und oben: tiefe Wolken, die sichtbar anders ziehen als der "
+          "Wind am Boden weht.\n\n"
+          "**Was das ist.** Die beiden Rauchfahnen sind die beiden "
+          "Vorzeichen von $d\\theta/dz$. In einer Inversion steigt der Rauch "
+          "bis zu seinem Auftriebsniveau und breitet sich dort flach "
+          "aus: stabil, keine Vermischung, schlechte Luft. In labiler "
+          "Schichtung reißen die Thermikblasen die Fahne auf und holen "
+          "sie bis zum Boden: labil und böig. **Böigkeit ist "
+          "heruntergemischter Impuls** -- dieselbe Turbulenz, die "
+          "Wärme nach oben trägt, trägt schnellen Wind nach unten. "
+          "Dass der Bodenwind schräg zum Wolkenzug steht, ist die "
+          "Ekman-Spirale aus dy-reibung: In der Reibungsschicht ist die "
+          "Druckgradientkraft nicht mehr durch Coriolis allein "
+          "ausgeglichen, der Wind dreht zum tiefen Druck hin, über Land "
+          "um 20 bis 30°, über See um 10 bis 15°, und die Schicht ist "
+          "$D = \\pi\\sqrt{2K/f} \\approx 1400$ m dick. Mit Buys-Ballot "
+          "(dy-geostrophisch) wird daraus eine Richtungsangabe: Rücken "
+          "zum Wind, dann liegt das Tief links -- und ein Tief links "
+          "vorne heißt, die Front kommt noch.\n\n"
+          "**Die Zahlen.** Zwei, und beide braucht man draußen. Erstens "
+          "das logarithmische Profil: Über Gras ($z_0 = 3$ cm) ist der "
+          "Wind in 10 m um den Faktor $\\ln(10/z_0)/\\ln(2/z_0) = 1{,}38$ "
+          "stärker als der, den man im Gesicht hat; über einem Vorort "
+          "($z_0 = 0{,}5$ m) sind es 2,2. Die Wettermeldung gilt für 10 m "
+          "über freiem Gras -- gefühlter Wind ist nicht derselbe Wind. "
+          "Zweitens Beaufort als Widerstandsleiter: $v = 0{,}836\\,B^{1{,}5}$ "
+          "m/s. B 6 sind 12,3 m/s, Staudruck $\\rho v^2/2 = 92$ Pa, auf "
+          "einen Quadratmeter 92 N -- 9,4 kg Zug. Weil $q \\propto v^2$ und "
+          "$v \\propto B^{1{,}5}$, geht der Druck wie $B^3$: B 12 ist nicht "
+          "doppelt so stark wie B 6, sondern **achtmal** (740 Pa).\n\n"
+          "**Was man daraus schließt.** Rauch, Bäume und Wellen geben "
+          "nicht nur die Stärke, sondern die Schichtung; die Differenz "
+          "zwischen Bodenwind und Wolkenzug gibt die Lage des Tiefs; "
+          "und die dritte Potenz erklärt, warum zwischen \"frisch\" und "
+          "\"Sturm\" nicht ein Unterschied im Gefühl liegt, sondern "
+          "einer im Schaden.",
+          "**What is visible.** A smoke plume that lies flat as a thin "
+          "ribbon for kilometres and hardly spreads. A second one that "
+          "loops up and down and now and then touches the ground. "
+          "Undersides of leaves turning over; grass running in waves; "
+          "on water first ripples, then whitecaps, then streaks of foam "
+          "**along** the wind. And above: low clouds visibly moving "
+          "differently from the wind at the ground.\n\n"
+          "**What it is.** The two plumes are the two signs of $d\\theta/dz$. "
+          "In an inversion the smoke rises to its level of buoyancy and "
+          "spreads out flat there: stable, no mixing, bad air. In "
+          "unstable stratification thermals tear the plume apart and "
+          "bring it down to the ground: unstable and gusty. "
+          "**Gustiness is momentum mixed down** -- the same turbulence "
+          "that carries heat up carries fast wind down. That the "
+          "surface wind stands at an angle to the cloud motion is the "
+          "Ekman spiral from dy-reibung: in the friction layer the "
+          "pressure gradient force is no longer balanced by Coriolis "
+          "alone, the wind turns towards low pressure, by 20 to 30° "
+          "over land, 10 to 15° over sea, and the layer is "
+          "$D = \\pi\\sqrt{2K/f} \\approx 1400$ m deep. With Buys-Ballot "
+          "(dy-geostrophisch) that becomes a bearing: back to the wind, "
+          "and the low lies to your left -- and a low to the left and "
+          "ahead means the front is still to come.\n\n"
+          "**The numbers.** Two, and both are needed outdoors. First "
+          "the logarithmic profile: over grass ($z_0 = 3$ cm) the wind at "
+          "10 m is stronger than the one in your face by the factor "
+          "$\\ln(10/z_0)/\\ln(2/z_0) = 1{.}38$; over a suburb ($z_0 = 0{.}5$ m) it is "
+          "2.2. The weather report applies to 10 m over open grass -- "
+          "felt wind is not the same wind. Second, Beaufort as a drag "
+          "ladder: $v = 0{.}836\\,B^{1{.}5}$ m/s. B 6 is 12.3 m/s, dynamic "
+          "pressure $\\rho v^2/2 = 92$ Pa, on one square metre 92 N -- a pull "
+          "of 9.4 kg. Because $q \\propto v^2$ and $v \\propto B^{1{.}5}$, the "
+          "pressure goes as $B^3$: B 12 is not twice as strong as B 6 but "
+          "**eight times** (740 Pa).\n\n"
+          "**What follows.** Smoke, trees and waves give not only the "
+          "strength but the stratification; the difference between "
+          "surface wind and cloud motion gives the position of the low; "
+          "and the third power explains why the step from \"fresh\" to "
+          "\"gale\" is not a difference in feel but a difference in "
+          "damage."),
+        "skizze-ekman", [
+        zahl(t("Windgeschwindigkeit bei Beaufort 6? (in m/s, eine "
+               "Nachkommastelle)",
+               "Wind speed at Beaufort 6? (in m/s, one decimal)"),
+             rund(V_B6, 1), t("m/s", "m/s"),
+             t("`v = 0,836 × 6^1,5 = 0,836 × 14,70 = 12,3 m/s` -- "
+               "44 km/h, 'starker Wind', große Zweige in Bewegung.",
+               "`v = 0.836 × 6^1.5 = 0.836 × 14.70 = 12.3 m/s` -- "
+               "44 km/h, 'strong breeze', large branches in motion."),
+             toleranz=0.03),
+        zahl(t("Staudruck dieses Winds auf eine Fläche quer dazu "
+               "(ρ = 1,225 kg/m³)? (in Pa)",
+               "Dynamic pressure of that wind on a surface across it "
+               "(ρ = 1.225 kg/m³)? (in Pa)"),
+             rund(STAUDRUCK_B6), t("Pa", "Pa"),
+             t("`q = ρv²/2 = 1,225 × 12,3² / 2 = 92 Pa`, auf 1 m² also "
+               "92 N. Bei B 12 sind es 740 Pa: achtmal, weil `q ∝ B³`.",
+               "`q = ρv²/2 = 1.225 × 12.3² / 2 = 92 Pa`, hence 92 N on "
+               "1 m². At B 12 it is 740 Pa: eight times, because "
+               "`q ∝ B³`."),
+             toleranz=0.05),
+        mc(t("Zwei Schornsteine, gleicher Wind: Der eine Rauch liegt "
+             "als dünnes Band kilometerweit flach, der andere schlägt "
+             "in Schlaufen und erreicht den Boden. Was unterscheidet "
+             "die beiden Luftmassen?",
+             "Two chimneys, the same wind: one plume lies flat as a "
+             "thin ribbon for kilometres, the other loops and reaches "
+             "the ground. What distinguishes the two air masses?"),
+           [t("Der erste Rauch ist wärmer.",
+              "The first plume is warmer."),
+            t("Der zweite Schornstein ist höher.",
+              "The second chimney is taller."),
+            t("Das flache Band steht in stabiler Schichtung (dθ/dz > 0, "
+              "keine vertikale Vermischung), die Schlaufen in labiler "
+              "-- Thermikblasen reißen die Fahne auf und mischen sie "
+              "bis zum Boden.",
+              "The flat ribbon sits in stable stratification "
+              "(dθ/dz > 0, no vertical mixing), the loops in unstable "
+              "-- thermals tear the plume apart and mix it down to the "
+              "ground."),
+            t("Beim zweiten weht es in der Höhe aus einer anderen "
+              "Richtung.",
+              "Above the second one the wind comes from a different "
+              "direction.")], 2,
+           t("Dieselbe Diagnose wie am Emagramm, nur mit Rauch statt "
+             "Radiosonde: Das flache Band ist eine Inversion, die "
+             "Schlaufen sind eine durchmischte Grenzschicht -- und "
+             "deshalb ist die zweite Luft böig und die erste schlecht.",
+             "The same diagnosis as on the emagram, with smoke instead "
+             "of a radiosonde: the flat ribbon is an inversion, the "
+             "loops are a mixed boundary layer -- which is why the "
+             "second air is gusty and the first is foul.")),
+        ]),
+
+    lektion("hi-niederschlag",
+        t("Niederschlag am Aussehen erkennen",
+          "Telling precipitation by its look"),
+        ["niederschlagsarten", "fallgeschwindigkeit", "virga"],
+        t("**Was zu sehen ist.** Nieseln: Tropfen, die man einzeln "
+          "nicht sieht, ein Vorhang ohne Struktur, aus einer tiefen "
+          "grauen Schicht, die Sicht unter 2 km. Landregen: "
+          "gleichmäßig, stundenlang, kein Rand. Schauer: ein Vorhang "
+          "mit **scharfem Rand**, der über die Landschaft wandert, "
+          "dahinter wieder Sonne. Graupel: weiße, weiche Körner, die "
+          "hüpfen. Hagel: harte Körner mit Schalen. Und **Fallstreifen** "
+          "(Virga), die unter der Wolkenbasis anfangen und in der Luft "
+          "aufhören.\n\n"
+          "**Was das ist.** Die Form folgt dem Wachstumsweg aus "
+          "wo-wachstum: Diffusion bringt einen Tropfen in zwanzig "
+          "Minuten auf 10 μm und dann nicht weiter, weil $r^2$ linear mit "
+          "der Zeit geht; auf 1 mm kommt nur die **Koaleszenz**, und "
+          "die braucht eine dicke Wolke und Zeit. Deshalb heißt feiner "
+          "Niesel: flache Wolke, lange Verweilzeit, keine Eisphase. "
+          "Deshalb heißt Schauer mit scharfem Rand: eine einzelne Zelle "
+          "mit kräftigem Aufwind, in der große Tropfen in Minuten "
+          "entstehen. Graupel ist bereifter Schnee (Eis sammelt "
+          "unterkühlte Tröpfchen ein), Hagel ist derselbe Vorgang "
+          "mehrfach in einem Aufwind, der die Körner trägt, bis sie zu "
+          "schwer sind. Und die Flockengröße ist ein Thermometer: Große "
+          "nasse Flocken gibt es nur knapp unter 0 °C, weil ein "
+          "Wasserfilm die Kristalle verklebt; bei −15 °C sind sie "
+          "trocken und fallen als Griesel.\n\n"
+          "**Die Zahl, und ihre Grenze.** Die Stokes-Geschwindigkeit "
+          "$v = 2\\rho_w g r^2/(9\\eta)$ gibt für 10 μm Radius 1,2 cm/s -- "
+          "deshalb schwebt eine Wolke. Sie gilt aber nur, solange "
+          "$Re = 2rv/\\nu < 1$, und das ist bei etwa **40 μm** vorbei "
+          "(v = 0,19 m/s, Re = 1). Für einen Regentropfen von 1 mm "
+          "Durchmesser liefert Stokes 30 m/s, gemessen sind 6,5 m/s: "
+          "Faktor 4,7 daneben, weil die Nachlaufströmung längst "
+          "turbulent ist. Das ist die Fußnote, die wo-wachstum fehlt. "
+          "Mit den gemessenen Werten gerechnet: aus 2 km Basishöhe "
+          "braucht der 1-mm-Tropfen 5,1 Minuten, ein 0,2-mm-Nieseltropfen "
+          "bei 0,72 m/s aber 46 Minuten -- und in 46 Minuten verdunstet "
+          "er in trockener Luft. **Deshalb erreicht Niesel nur aus "
+          "tiefen Wolken den Boden, und deshalb ist jede Virga ein "
+          "Hinweis auf trockene Luft unter der Wolke.**\n\n"
+          "**Was man daraus schließt.** Tropfengröße, Randschärfe und "
+          "Fallstreifenlänge sagen zusammen, was für eine Wolke oben "
+          "steht und wie trocken die Luft darunter ist -- ohne Radar, "
+          "aus dem Fenster.",
+          "**What is visible.** Drizzle: drops one cannot see "
+          "individually, a curtain without structure, out of a low grey "
+          "layer, visibility below 2 km. Steady rain: even, for hours, "
+          "no edge. A shower: a curtain with a **sharp edge** that "
+          "travels across the landscape, sunshine behind it. Soft hail: "
+          "white, soft grains that bounce. Hail: hard stones with "
+          "shells. And **fall streaks** (virga) that begin below the "
+          "cloud base and end in mid-air.\n\n"
+          "**What it is.** The form follows the growth path from "
+          "wo-wachstum: diffusion takes a drop to 10 μm in twenty "
+          "minutes and no further, because $r^2$ grows linearly with time; "
+          "to 1 mm only **coalescence** gets there, and that needs a "
+          "deep cloud and time. Hence fine drizzle means: shallow "
+          "cloud, long residence time, no ice phase. Hence a shower "
+          "with a sharp edge means a single cell with a strong updraught "
+          "in which large drops form within minutes. Soft hail is rimed "
+          "snow (ice collecting supercooled droplets), hail is the same "
+          "process repeated in an updraught that carries the stones "
+          "until they are too heavy. And flake size is a thermometer: "
+          "large wet flakes occur only just below 0 °C, because a film "
+          "of water glues the crystals together; at −15 °C they are dry "
+          "and fall as grains.\n\n"
+          "**The number, and where it stops.** The Stokes velocity "
+          "$v = 2\\rho_w g r^2/(9\\eta)$ gives 1.2 cm/s for a 10 μm radius -- "
+          "which is why a cloud floats. But it holds only while "
+          "$Re = 2rv/\\nu < 1$, and that is over at about **40 μm** "
+          "(v = 0.19 m/s, Re = 1). For a raindrop of 1 mm diameter "
+          "Stokes gives 30 m/s where 6.5 m/s is measured: a factor of "
+          "4.7 out, because the wake has long gone turbulent. That is "
+          "the footnote wo-wachstum lacks. Computed with the measured "
+          "values: from a 2 km cloud base the 1 mm drop takes 5.1 "
+          "minutes, a 0.2 mm drizzle drop at 0.72 m/s takes 46 minutes "
+          "-- and in 46 minutes it evaporates in dry air. **That is why "
+          "drizzle reaches the ground only from low clouds, and why "
+          "every virga points to dry air below the cloud.**\n\n"
+          "**What follows.** Drop size, edge sharpness and the length "
+          "of the fall streaks together say what kind of cloud stands "
+          "above and how dry the air beneath it is -- without radar, "
+          "from the window."),
+        "skizze-wachstum", [
+        zahl(t("Stokes: Fallgeschwindigkeit eines Wolkentropfens von "
+               "10 μm Radius? (in cm/s, eine Nachkommastelle)",
+               "Stokes: terminal velocity of a cloud drop of 10 μm "
+               "radius? (in cm/s, one decimal)"),
+             rund(STOKES_10UM * 100.0, 1), t("cm/s", "cm/s"),
+             t("`v = 2 × 1000 × 9,81 × (10⁻⁵)² / (9 × 1,8·10⁻⁵) = "
+               "0,012 m/s = 1,2 cm/s`. Ein Aufwind von 2 cm/s hält ihn "
+               "oben -- das kann jede Wolke.",
+               "`v = 2 × 1000 × 9.81 × (10⁻⁵)² / (9 × 1.8·10⁻⁵) = "
+               "0.012 m/s = 1.2 cm/s`. An updraught of 2 cm/s holds it "
+               "up -- any cloud can manage that."),
+             toleranz=0.05),
+        zahl(t("Wie lange fällt ein 1-mm-Regentropfen (6,5 m/s) aus "
+               "einer Basis in 2 km Höhe? (in min, eine "
+               "Nachkommastelle)",
+               "How long does a 1 mm raindrop (6.5 m/s) fall from a "
+               "base at 2 km? (in min, one decimal)"),
+             rund(FALLZEIT_1MM, 1), t("min", "min"),
+             t("`2000 / 6,5 = 308 s = 5,1 min`. Der Nieseltropfen mit "
+               "0,72 m/s braucht 46 Minuten und kommt in trockener Luft "
+               "nicht an: Das ist die Virga.",
+               "`2000 / 6.5 = 308 s = 5.1 min`. The drizzle drop at "
+               "0.72 m/s needs 46 minutes and does not arrive in dry "
+               "air: that is virga."),
+             toleranz=0.05),
+        mc(t("Warum fallen große nasse Flocken nur knapp unter 0 °C "
+             "und bei −15 °C feiner Griesel?",
+             "Why do large wet flakes fall only just below 0 °C and "
+             "fine grains at −15 °C?"),
+           [t("Knapp unter 0 °C trägt jeder Kristall einen Wasserfilm "
+              "und verklebt beim Zusammenstoß mit anderen; bei −15 °C "
+              "sind die Kristalle trocken und prallen ab.",
+              "Just below 0 °C every crystal carries a film of water "
+              "and sticks on collision; at −15 °C the crystals are dry "
+              "and bounce off."),
+            t("Bei −15 °C ist weniger Dampf da, deshalb bleiben die "
+              "Kristalle klein.",
+              "At −15 °C there is less vapour, so the crystals stay "
+              "small."),
+            t("Kalte Luft ist dichter und bremst das Wachstum.",
+              "Cold air is denser and slows the growth."),
+            t("Bei −15 °C fällt der Schnee schneller und hat weniger "
+              "Zeit.",
+              "At −15 °C the snow falls faster and has less time.")], 0,
+           t("Aggregation ist Klebstoff, nicht Wachstum: Die einzelnen "
+             "Kristalle sind bei −15 °C sogar größer (dort ist die "
+             "Differenz der Dampfdrücke über Eis und Wasser maximal, "
+             "wo-wachstum), aber sie haften nicht. Deshalb ist "
+             "Flockengröße ein Thermometer für die Schicht knapp über "
+             "dem Boden.",
+             "Aggregation is glue, not growth: at −15 °C the individual "
+             "crystals are in fact larger (that is where the difference "
+             "in vapour pressure over ice and water is greatest, "
+             "wo-wachstum), but they do not stick. Flake size is "
+             "therefore a thermometer for the layer just above the "
+             "ground.")),
+        ]),
+    ])
+
+
+# ===========================================================================
+# 13  Spuren am Boden
+# ===========================================================================
+
+SIGMA_283 = SIGMA * 283.15 ** 4                 # W/m², Boden bei 10 °C
+L_AB_KLAR = 294.0                               # W/m², Gegenstrahlung klar
+NETTO_FREI = SIGMA_283 - L_AB_KLAR              # W/m², freies Feld, ψ = 1
+HIMMELSFAKTOR_KRONE = 0.3                       # ψ unter einer Baumkrone
+NETTO_KRONE = HIMMELSFAKTOR_KRONE * NETTO_FREI  # W/m²
+TAU_GRENZE_MM = 60.0 * 8 * 3600.0 / L_V         # mm: alle Energie in Tau
+MULDE_OHNE_AUSTAUSCH = 60.0 * 6 * 3600.0 / (1.2 * C_P * 10.0)   # K
+MULDE_MISCHHOEHE = 60.0 * 6 * 3600.0 / (1.2 * C_P * 8.0)        # m bei 8 K
+E_MISCH = (e_s(0.0) + e_s(20.0)) / 2.0          # hPa, halb und halb
+RH_MISCH = 100.0 * E_MISCH / e_s(10.0)          # %
+FLUESSIG_MISCH = 0.622 * (E_MISCH - e_s(10.0)) / 1000.0 * 1000.0  # g/kg
+AUTOKONVEKTIV = G / R_L * 1000.0                # K/km
+ASPHALT_FAKTOR = 10000.0 / AUTOKONVEKTIV        # 10 K/m, in Vielfachen
+
+K_BODEN = kapitel(
+    "boden", t("Spuren am Boden: Tau, Reif, Nebel, Flimmern",
+               "Traces at the ground: dew, frost, fog, shimmer"), 4,
+    t("Die Strahlungsbilanz des Bodens steht in st-tagesgang. Hier wird "
+      "sie besichtigt: Jedes nasse Grasblatt, jede Reifnadel, jeder "
+      "Nebelfetzen und jedes Flimmern über dem Asphalt ist ein Glied "
+      "dieser Bilanz -- und jedes lässt sich nachrechnen.",
+      "The surface radiation budget stands in st-tagesgang. Here it is "
+      "inspected: every wet blade of grass, every needle of frost, "
+      "every patch of fog and every shimmer over the asphalt is a term "
+      "of that budget -- and each one can be checked by "
+      "calculation."), [
+
+    lektion("bo-tau",
+        t("Tau, Reif und der Kaltluftsee in der Senke",
+          "Dew, frost and the cold pool in the hollow"),
+        ["tau", "reif", "himmelsblickfaktor"],
+        t("**Was zu sehen ist.** Am Morgen ist das Gras nass und der "
+          "Gehsteig daneben trocken. Das Autodach ist beschlagen, die "
+          "Motorhaube weniger, der große Stein im Garten gar nicht. "
+          "Unter dem Apfelbaum steht eine trockene Insel im nassen "
+          "Rasen, und unter einer Wolkendecke gibt es überhaupt keinen "
+          "Tau. Im Winter ist die Brücke weiß, während die Straße davor "
+          "und dahinter schwarz bleibt. Reif liegt als **Nadeln** auf "
+          "dem Blatt, gefrorener Tau als **Perlen**; nach einer "
+          "Nebelnacht sitzt Rauhreif in Fahnen an den Zweigen, immer "
+          "gegen den Wind. Und im Frühjahr ist der Frost in der Senke, "
+          "während es fünfzig Meter höher am Hang frostfrei bleibt.\n\n"
+          "**Was das ist.** Alles sind Glieder der Bilanz aus "
+          "st-tagesgang, aber mit einem Faktor, der dort fehlt: Der "
+          "Boden verliert nicht gegen den ganzen Himmel, sondern gegen "
+          "den Teil, den er **sieht**. Mit dem Himmelsblickfaktor $\\psi$ "
+          "(1 im freien Feld, 0,3 unter einer Krone, 0 in der Garage) "
+          "ist der Verlust $L_{netto} = \\psi\\,(\\sigma T_s^4 - L_\\downarrow)$. Bei 10 °C "
+          "strahlt der Boden 364 W/m², die klare Atmosphäre 294 W/m² "
+          "zurück: im Freien **70 W/m²**, unter dem Baum **21 W/m²**. "
+          "Deshalb die trockene Insel. Der zweite Faktor ist die "
+          "Ankopplung nach unten: Ein Grasblatt hat fast keine "
+          "Wärmekapazität und steckt in stehender Luft, es folgt der "
+          "Strahlung sofort; Asphalt und Stein ziehen Wärme aus dem "
+          "Erdboden nach (der Bodenwärmestrom `G`) und bleiben wärmer. "
+          "Die Brücke hat gar kein Erdreich unter sich: $G = 0$, und "
+          "deshalb friert sie zuerst. Ob **Reif** oder gefrorener Tau "
+          "entsteht, entscheidet die Reihenfolge: Fällt die Temperatur "
+          "erst unter 0 °C und dann unter den Taupunkt, geht der Dampf "
+          "direkt in Eis über (Resublimation, Nadeln), weil $e_s$ über Eis "
+          "kleiner ist als über Wasser (wo-wachstum); umgekehrt "
+          "gefriert ein schon gebildeter Tautropfen (Perlen). Rauhreif "
+          "ist etwas Drittes: unterkühlte **Nebeltröpfchen**, die beim "
+          "Anprall festfrieren -- deshalb wächst er dem Wind "
+          "entgegen.\n\n"
+          "**Die Zahlen.** Erstens eine Obergrenze: Wenn die ganze "
+          "Ausstrahlung einer Nacht in Kondensation ginge, gäbe "
+          "60 W/m² über 8 Stunden gerade $1{,}73$ MJ/m², geteilt durch "
+          "$L_v = 2{,}5$ MJ/kg sind das 0,69 kg/m², also **0,69 mm Tau**. "
+          "Gemessen werden 0,1 bis 0,3 mm -- der Rest des Verlusts geht "
+          "in den Boden und in die Luft. Die Abschätzung nagelt die "
+          "Größenordnung fest und sagt gleich, wo sie zu hoch liegt. "
+          "Zweitens die Senke: eine Mulde von 100 m Breite und 10 m "
+          "Tiefe, 60 W/m² über 6 Stunden. Ohne jeden Austausch gäbe das "
+          "$\\Delta T = Q t/(\\rho c_p h) = 108$ K -- absurd, also **muss** "
+          "ausgetauscht werden. Umgekehrt gerechnet: Die gemessenen 8 K "
+          "brauchen eine Schicht von $Q t/(\\rho c_p \\Delta T) = 134$ m. So dick "
+          "ist der Kaltluftsee, und so weit reicht die Bodeninversion.\n\n"
+          "**Was man daraus schließt.** Kalte Luft hat ein kleineres θ "
+          "(th-theta) und fließt wie Wasser hangabwärts; deshalb liegt "
+          "der Frost unten, deshalb legt man Obstgärten an den Hang und "
+          "nicht in die Mulde. Und wer in der Meldung \"Bodenfrost\" "
+          "liest, soll wissen, dass die in 5 cm Höhe gemeint ist: In "
+          "klarer Nacht sind es dort 3 bis 5 K weniger als in der "
+          "Hütte in 2 m.",
+          "**What is visible.** In the morning the grass is wet and the "
+          "pavement beside it dry. The car roof is fogged, the bonnet "
+          "less so, the large stone in the garden not at all. Under the "
+          "apple tree a dry island stands in the wet lawn, and under a "
+          "cloud deck there is no dew at all. In winter the bridge is "
+          "white while the road before and after it stays black. Frost "
+          "sits as **needles** on the leaf, frozen dew as **beads**; "
+          "after a foggy night hoar frost sits in vanes on the twigs, "
+          "always into the wind. And in spring the frost is in the "
+          "hollow while fifty metres higher up the slope it stays "
+          "frost-free.\n\n"
+          "**What it is.** All of it belongs to the budget of "
+          "st-tagesgang, but with a factor that is missing there: the "
+          "ground does not lose against the whole sky, only against "
+          "the part it **sees**. With the sky view factor $\\psi$ (1 in the "
+          "open field, 0.3 under a canopy, 0 in a garage) the loss is "
+          "$L_{net} = \\psi\\,(\\sigma T_s^4 - L_\\downarrow)$. At 10 °C the ground emits "
+          "364 W/m² and the clear atmosphere returns 294 W/m²: in the "
+          "open **70 W/m²**, under the tree **21 W/m²**. Hence the dry "
+          "island. The second factor is the coupling downward: a blade "
+          "of grass has almost no heat capacity and sits in still air, "
+          "so it follows the radiation at once; asphalt and stone draw "
+          "heat up from the soil (the ground heat flux `G`) and stay "
+          "warmer. A bridge has no soil beneath it at all: $G = 0$, and "
+          "that is why it freezes first. Whether **frost** or frozen "
+          "dew forms is decided by the order of events: if the "
+          "temperature drops below 0 °C before it drops below the dew "
+          "point, the vapour goes straight to ice (deposition, "
+          "needles), because $e_s$ over ice is lower than over water "
+          "(wo-wachstum); the other way round, an existing dew drop "
+          "freezes (beads). Hoar frost is a third thing: supercooled "
+          "**fog droplets** that freeze on impact -- which is why it "
+          "grows into the wind.\n\n"
+          "**The numbers.** First an upper bound: if a whole night's "
+          "radiative loss went into condensation, 60 W/m² over 8 hours "
+          "would give $1{.}73$ MJ/m², divided by $L_v = 2{.}5$ MJ/kg that is "
+          "0.69 kg/m², hence **0.69 mm of dew**. Measured values are "
+          "0.1 to 0.3 mm -- the rest of the loss goes into the soil and "
+          "into the air. The estimate pins the order of magnitude and "
+          "says at once where it is too high. Second the hollow: a "
+          "depression 100 m across and 10 m deep, 60 W/m² over 6 hours. "
+          "Without any exchange that would give "
+          "$\\Delta T = Q t/(\\rho c_p h) = 108$ K -- absurd, so exchange "
+          "**must** happen. Read backwards: the measured 8 K require a "
+          "layer of $Q t/(\\rho c_p \\Delta T) = 134$ m. That is how deep the cold "
+          "pool is, and how far the surface inversion reaches.\n\n"
+          "**What follows.** Cold air has a smaller θ (th-theta) and "
+          "drains downhill like water; that is why the frost lies at "
+          "the bottom, and why orchards are planted on the slope and "
+          "not in the hollow. And whoever reads \"ground frost\" in a "
+          "forecast should know it means 5 cm above the soil: on a "
+          "clear night it is 3 to 5 K colder there than in the screen "
+          "at 2 m."),
+        "skizze-tagesgang", [
+        zahl(t("Obergrenze der Taumenge: 60 W/m² über 8 Stunden, alles "
+               "in Kondensation (L_v = 2,5 MJ/kg). Wie viel mm? (zwei "
+               "Nachkommastellen)",
+               "Upper bound for the amount of dew: 60 W/m² over 8 "
+               "hours, all of it into condensation (L_v = 2.5 MJ/kg). "
+               "How many mm? (two decimals)"),
+             rund(TAU_GRENZE_MM, 2), t("mm", "mm"),
+             t("`60 × 28 800 = 1,73 MJ/m²`, geteilt durch 2,5 MJ/kg "
+               "gibt 0,69 kg/m² -- und 1 kg/m² ist 1 mm. Gemessen sind "
+               "0,1 bis 0,3 mm: Der Boden gibt nur einen Teil seines "
+               "Verlusts an den Dampf ab.",
+               "`60 × 28 800 = 1.73 MJ/m²`, divided by 2.5 MJ/kg gives "
+               "0.69 kg/m² -- and 1 kg/m² is 1 mm. Measured: 0.1 to "
+               "0.3 mm, so the ground passes only part of its loss on "
+               "to the vapour."),
+             toleranz=0.05),
+        zahl(t("In der Mulde kühlt es über 6 Stunden bei 60 W/m² um "
+               "8 K ab. Wie dick ist die Luftschicht, die diese "
+               "Kühlung trägt? (in m)",
+               "In the hollow it cools by 8 K over 6 hours at 60 W/m². "
+               "How deep is the layer of air that carries this "
+               "cooling? (in m)"),
+             rund(MULDE_MISCHHOEHE), t("m", "m"),
+             t("`h = Q·t/(ρ·c_p·ΔT) = 60 × 21 600 / (1,2 × 1004 × 8) = "
+               "134 m`. Zehn Meter Mulde würden 108 K ergeben -- die "
+               "Luft wird also über die Mulde hinaus gemischt, und "
+               "genau diese 134 m sind die Dicke der Bodeninversion.",
+               "`h = Q·t/(ρ·c_p·ΔT) = 60 × 21 600 / (1.2 × 1004 × 8) = "
+               "134 m`. Ten metres of hollow would give 108 K -- so the "
+               "air is mixed well beyond the hollow, and those 134 m "
+               "are the depth of the surface inversion."),
+             toleranz=0.05),
+        mc(t("Warum ist die Brücke weiß, während die Straße davor und "
+             "dahinter schwarz bleibt?",
+             "Why is the bridge white while the road before and after "
+             "it stays black?"),
+           [t("Beton strahlt stärker ab als Asphalt.",
+              "Concrete radiates more strongly than asphalt."),
+            t("Unter der Brücke ist es windiger.",
+              "It is windier under the bridge."),
+            t("Die Brücke liegt höher und damit in kälterer Luft.",
+              "The bridge is higher up and therefore in colder air."),
+            t("Unter der Fahrbahn ist kein Erdreich: Der "
+              "Bodenwärmestrom G fehlt, der Verlust muss allein aus der "
+              "dünnen Platte kommen, und die kühlt viel schneller unter "
+              "den Gefrierpunkt.",
+              "There is no soil under the deck: the ground heat flux G "
+              "is missing, the loss has to come out of the thin slab "
+              "alone, and that cools below freezing far faster.")], 3,
+           t("Dieselbe Bilanz, nur ohne den Nachschub von unten. "
+             "Deshalb warnen Schilder vor Brücken und nicht vor "
+             "Straßen -- und deshalb gefriert eine Pfütze auf einer "
+             "Holzterrasse vor der auf dem Erdweg.",
+             "The same budget, only without the supply from below. "
+             "That is why warning signs stand on bridges and not on "
+             "roads -- and why a puddle on a wooden deck freezes "
+             "before one on bare earth.")),
+        ]),
+
+    lektion("bo-nebel",
+        t("Vier Nebel und wie jeder vergeht",
+          "Four kinds of fog, and how each one goes"),
+        ["strahlungsnebel", "advektionsnebel", "mischungsnebel"],
+        t("**Was zu sehen ist.** Vier Nebel, und man unterscheidet sie "
+          "nicht am Aussehen, sondern am **Verhalten**.\n\n"
+          "**Strahlungsnebel** entsteht in der zweiten Nachthälfte, "
+          "liegt in Senken und Flusstälern, ist oft nur 20 bis 100 m "
+          "dick, und er löst sich vormittags **von den Rändern her** "
+          "auf, sobald die Sonne den Boden erreicht. Von einer Brücke "
+          "sieht man dann die Dächer herausschauen. "
+          "**Advektionsnebel** zieht mit dem Wind heran, wenn warme "
+          "feuchte Luft über kalten Grund läuft -- über schmelzendem "
+          "Schnee, über kaltem Meerwasser; er hält sich bei 5 m/s Wind "
+          "und mittags genauso, und er ist der Nebel, der Tage dauert. "
+          "**Mischungsnebel** steht dort, wo zwei gesättigte Luftmassen "
+          "zusammenkommen: Seerauch über offenem Wasser bei "
+          "Frost, der eigene Atem, die Fahne über dem Kühlturm. "
+          "**Hochnebel** schließlich ist gehobener Nebel: eine "
+          "Stratusdecke mit scharfer Oberkante, von oben strahlend "
+          "weiß, von unten grau, und sie hält sich den ganzen Winter"
+          "tag, weil die Sonne nicht an den Boden kommt.\n\n"
+          "**Was das ist.** Strahlungsnebel ist die Bilanz von "
+          "st-tagesgang, nur bis unter den Taupunkt weitergeführt; er "
+          "verschwindet von den Rändern, weil dort zuerst Boden "
+          "freiliegt, der Wärme liefert. Advektionsnebel lebt vom "
+          "**Kontakt**, nicht von der Strahlung: Die Luft kühlt an der "
+          "Unterlage, und solange die Unterlage kalt bleibt, hilft die "
+          "Sonne nichts -- sie heizt ja nicht die Luft, sondern den "
+          "Boden, und der ist hier die Senke. Hochnebels Oberkante "
+          "**ist** die Inversion (fe-hebung): Darüber sinkt die Luft ab "
+          "und ist trocken, darunter ist alles gesättigt.\n\n"
+          "**Die Zahl -- und die neue Physik.** Warum macht Mischen "
+          "Nebel? Weil $e_s(T)$ **konvex** ist. Mischt man zwei gesättigte "
+          "Pakete, so mischen sich Temperatur und Dampfdruck linear, "
+          "also liegt der Mischpunkt auf der **Sehne** zwischen den "
+          "beiden Punkten der Sättigungskurve -- und die Sehne einer "
+          "konvexen Kurve liegt **über** ihr. Konkret: 0 °C mit "
+          "6,11 hPa und 20 °C mit 23,33 hPa, halb und halb gemischt, "
+          "gibt 10 °C und $e = 14{,}72$ hPa, während $e_s(10) = 12{,}26$ hPa "
+          "ist: **120 % relative Feuchte**. Die überschüssigen 2,46 hPa "
+          "müssen kondensieren, das sind $0{,}622\\,\\Delta e/p = 1{,}5$ g/kg "
+          "flüssiges Wasser -- dichter Nebel. Genau das ist der "
+          "Atem im Winter, und genau das ist der Grund, warum "
+          "Kondensstreifen entstehen.\n\n"
+          "**Was man daraus schließt.** Wer wissen will, wann der "
+          "Nebel weggeht, muss wissen, welcher es ist: Der "
+          "Strahlungsnebel geht mit der Sonne, der Advektionsnebel mit "
+          "dem Wind, der Mischungsnebel mit der Trennung der beiden "
+          "Luftmassen, und der Hochnebel erst mit der nächsten Front.",
+          "**What is visible.** Four kinds of fog, and they are told "
+          "apart not by their looks but by their **behaviour**.\n\n"
+          "**Radiation fog** forms in the second half of the night, "
+          "lies in hollows and river valleys, is often only 20 to 100 m "
+          "deep, and in the morning it dissolves **from its edges "
+          "inward** as soon as the sun reaches the ground. From a "
+          "bridge one then sees the roofs sticking out. **Advection "
+          "fog** arrives with the wind, when warm moist air runs over "
+          "cold ground -- over melting snow, over cold sea water; it "
+          "survives a 5 m/s wind and noon alike, and it is the fog that "
+          "lasts for days. **Mixing fog** stands where two saturated "
+          "air masses meet: sea smoke over open water in frost, one's "
+          "own breath, the plume over a cooling tower. **High fog**, "
+          "finally, is lifted fog: a stratus deck with a sharp top, "
+          "brilliant white from above, grey from below, and it holds "
+          "all winter's day because the sun never reaches the "
+          "ground.\n\n"
+          "**What it is.** Radiation fog is the budget of st-tagesgang "
+          "carried on below the dew point; it disappears from the edges "
+          "because that is where bare ground is exposed first and "
+          "delivers heat. Advection fog lives on **contact**, not on "
+          "radiation: the air cools at the surface, and as long as the "
+          "surface stays cold the sun is no help -- it heats the "
+          "ground, not the air, and here the ground is the sink. The "
+          "top of high fog **is** the inversion (fe-hebung): above it "
+          "the air subsides and is dry, below it everything is "
+          "saturated.\n\n"
+          "**The number -- and the new physics.** Why does mixing make "
+          "fog? Because $e_s(T)$ is **convex**. Mix two saturated parcels "
+          "and temperature and vapour pressure mix linearly, so the "
+          "mixture lies on the **chord** between the two points of the "
+          "saturation curve -- and the chord of a convex curve lies "
+          "**above** it. Concretely: 0 °C with 6.11 hPa and 20 °C with "
+          "23.33 hPa, mixed half and half, give 10 °C and $e = 14{.}72$ hPa, "
+          "while $e_s(10) = 12{.}26$ hPa: **120 % relative humidity**. The "
+          "excess 2.46 hPa must condense, which is "
+          "$0{.}622\\,\\Delta e/p = 1{.}5$ g/kg of liquid water -- dense fog. That "
+          "is exactly one's breath in winter, and exactly the reason "
+          "contrails exist.\n\n"
+          "**What follows.** Whoever wants to know when the fog will "
+          "go must know which fog it is: radiation fog goes with the "
+          "sun, advection fog with the wind, mixing fog when the two "
+          "air masses part, and high fog not before the next front."),
+        "boden-mischungsnebel", [
+        zahl(t("Zwei gesättigte Pakete, 0 °C und 20 °C, halb und halb "
+               "gemischt. Relative Feuchte der Mischung? (in %)",
+               "Two saturated parcels, 0 °C and 20 °C, mixed half and "
+               "half. Relative humidity of the mixture? (in %)"),
+             rund(RH_MISCH), t("%", "%"),
+             t("`e = (6,11 + 23,33)/2 = 14,72 hPa` bei `T = 10 °C`, und "
+               "`e_s(10) = 12,26 hPa`: `120 %`. Die Sehne liegt über der "
+               "Kurve, weil e_s(T) exponentiell ist.",
+               "`e = (6.11 + 23.33)/2 = 14.72 hPa` at `T = 10 °C`, and "
+               "`e_s(10) = 12.26 hPa`: `120 %`. The chord lies above "
+               "the curve because e_s(T) is exponential."),
+             toleranz=0.03),
+        zahl(t("Wie viel Wasser kondensiert dabei je Kilogramm Luft? "
+               "(in g/kg, eine Nachkommastelle, p = 1000 hPa)",
+               "How much water condenses per kilogram of air? (in "
+               "g/kg, one decimal, p = 1000 hPa)"),
+             rund(FLUESSIG_MISCH, 1), t("g/kg", "g/kg"),
+             t("`Δr = 0,622 · Δe/p = 0,622 × 2,46/1000 = 1,5·10⁻³` "
+               "oder 1,5 g/kg. Zum Vergleich: Eine gewöhnliche Wolke "
+               "trägt 0,5 bis 1 g/kg -- Mischungsnebel ist dicht.",
+               "`Δr = 0.622 · Δe/p = 0.622 × 2.46/1000 = 1.5·10⁻³` or "
+               "1.5 g/kg. For comparison: an ordinary cloud carries 0.5 "
+               "to 1 g/kg -- mixing fog is dense."),
+             toleranz=0.05),
+        mc(t("Ein Nebel steht um 13 Uhr noch genauso dicht wie um "
+             "7 Uhr, bei schwachem Wind vom Meer. Welcher ist es, und "
+             "warum hilft die Sonne nicht?",
+             "At 13:00 a fog is still as dense as at 07:00, with a "
+             "light wind off the sea. Which fog is it, and why does the "
+             "sun not help?"),
+           [t("Advektionsnebel: Die Luft kühlt am kalten Untergrund, "
+              "und der bleibt kalt -- die Sonne heizt den Boden, aber "
+              "hier ist der Boden die Senke, nicht die Quelle.",
+              "Advection fog: the air cools at the cold surface, and "
+              "that stays cold -- the sun heats the ground, but here "
+              "the ground is the sink, not the source."),
+            t("Strahlungsnebel: Er ist zu dick geworden.",
+              "Radiation fog: it has simply grown too thick."),
+            t("Mischungsnebel: Zwei Luftmassen mischen sich dauernd.",
+              "Mixing fog: two air masses keep mixing."),
+            t("Hochnebel: Die Inversion liegt zu hoch.",
+              "High fog: the inversion lies too high.")], 0,
+           t("Strahlungsnebel verschwindet, weil der Boden zur Quelle "
+             "wird; über kaltem Wasser oder Schnee wird er das nie. "
+             "Deshalb liegt Seenebel auch im Juli und löst sich erst "
+             "auf, wenn der Wind dreht.",
+             "Radiation fog goes because the ground turns into a "
+             "source; over cold water or snow it never does. That is "
+             "why sea fog lies there in July as well and clears only "
+             "when the wind shifts.")),
+        ]),
+
+    lektion("bo-flimmern",
+        t("Hitzeflimmern, Luftspiegelung und die ersten Thermiken",
+          "Shimmer, mirage and the first thermals"),
+        ["autokonvektiv", "luftspiegelung", "thermikbeginn"],
+        t("**Was zu sehen ist.** Über dem heißen Asphalt zittert der "
+          "Hintergrund, Kanten verlaufen, und am Ende der Straße "
+          "spiegelt sich der Himmel als silberne Pfütze. Über dem "
+          "Stoppelfeld steht eine Staubfahne und dreht sich. Gras "
+          "bewegt sich für einen Augenblick, obwohl es windstill ist. "
+          "Vögel kreisen, ohne zu schlagen, und steigen dabei.\n\n"
+          "**Was das ist.** Alles dasselbe: Die unterste Luftschicht "
+          "ist nicht nur labil, sie ist **weit jenseits** jedes "
+          "adiabatischen Maßes labil. In den ersten Millimetern über "
+          "dem Boden gibt es keine Turbulenz mehr, dort trägt nur noch "
+          "Wärmeleitung, und Luft leitet miserabel -- also baut sich "
+          "ein gewaltiger Gradient auf. Jede Dichteschwankung ist "
+          "damit auch eine Schwankung der Brechzahl ($n - 1 \\approx 2{,}9\\cdot 10^{-4}$ "
+          "bei Normaldruck, proportional zur Dichte): Deshalb flimmert "
+          "es. Weil die Brechzahl **nach oben zunimmt**, werden flach "
+          "einfallende Strahlen nach oben weggekrümmt; ein Strahl vom "
+          "Himmel erreicht das Auge, nachdem er über dem Asphalt "
+          "umgelenkt wurde -- die Pfütze ist der Himmel, nicht Wasser. "
+          "Und die Schicht ist nicht stabil zu halten: Sie bricht in "
+          "Blasen auf, und das sind die ersten Thermiken des Tages "
+          "(th-stabilitaet). Der Staubteufel ist eine solche Blase mit "
+          "Drehimpuls.\n\n"
+          "**Die Zahl.** Es gibt eine harte Grenze, und sie folgt aus "
+          "zwei Konstanten, die der Kurs schon hat. Aus der Hydrostatik "
+          "(at-hydrostatik) und dem Gasgesetz folgt: Die Dichte nimmt "
+          "mit der Höhe genau dann **zu**, wenn die Temperatur "
+          "schneller fällt als\n\n"
+          "$$\\left|\\frac{dT}{dz}\\right|_{autokonv} = \\frac{g}{R_L} = \\frac{9{,}81}{287} = 34{,}2\\ \\frac{\\mathrm{K}}{\\mathrm{km}}$$"
+          "\n\n"
+          "Das ist der **autokonvektive Gradient**: dreieinhalbmal der "
+          "Trockenadiabate (th-adiabate), und oberhalb davon steht "
+          "schwere Luft über leichter -- unhaltbar. Über heißem Asphalt "
+          "misst man in den ersten Zentimetern 10 K je Meter, also "
+          "10 000 K/km: **293-mal** der autokonvektive Wert. Eine "
+          "Schicht in diesem Zustand hält keine Sekunde; sie flimmert, "
+          "weil sie dauernd zusammenbricht.\n\n"
+          "**Was man daraus schließt.** Flimmern und Spiegelung sind "
+          "keine Kuriosität, sondern die Anzeige, dass die Konvektion "
+          "läuft: Wer um 10 Uhr die Straße zittern sieht, weiß, dass "
+          "die Thermik eingesetzt hat, bevor die erste Wolke am "
+          "Kondensationsniveau steht (fe-hebung).",
+          "**What is visible.** Over hot asphalt the background "
+          "trembles, edges blur, and at the end of the road the sky is "
+          "mirrored as a silver puddle. Over the stubble field a plume "
+          "of dust stands and turns. Grass moves for a moment although "
+          "the air is calm. Birds circle without a wingbeat and gain "
+          "height doing it.\n\n"
+          "**What it is.** All of it the same thing: the lowest layer "
+          "of air is not merely unstable, it is unstable **far beyond** "
+          "any adiabatic measure. In the first few millimetres above "
+          "the ground there is no turbulence left, only conduction "
+          "carries heat there, and air conducts miserably -- so an "
+          "enormous gradient builds up. Every fluctuation of density is "
+          "thereby a fluctuation of refractive index "
+          "($n - 1 \\approx 2{.}9\\cdot 10^{-4}$ at standard pressure, proportional to "
+          "density): hence the shimmer. Because the refractive index "
+          "**increases upward**, grazing rays are bent away upward; a "
+          "ray from the sky reaches the eye after being turned over the "
+          "asphalt -- the puddle is the sky, not water. And the layer "
+          "cannot be held: it breaks up into bubbles, and those are the "
+          "first thermals of the day (th-stabilitaet). A dust devil is "
+          "such a bubble with angular momentum.\n\n"
+          "**The number.** There is a hard limit, and it follows from "
+          "two constants the course already has. From hydrostatics "
+          "(at-hydrostatik) and the gas law: density increases with "
+          "height exactly when temperature falls faster than\n\n"
+          "$$\\left|\\frac{dT}{dz}\\right|_{autoconv} = \\frac{g}{R_L} = \\frac{9{.}81}{287} = 34{.}2\\ \\frac{\\mathrm{K}}{\\mathrm{km}}$$"
+          "\n\n"
+          "That is the **autoconvective lapse rate**: three and a half "
+          "times the dry adiabat (th-adiabate), and above it heavy air "
+          "stands on light -- untenable. Over hot asphalt one measures "
+          "10 K per metre in the first centimetres, i.e. 10 000 K/km: "
+          "**293 times** the autoconvective value. A layer in that "
+          "state does not last a second; it shimmers because it keeps "
+          "collapsing.\n\n"
+          "**What follows.** Shimmer and mirage are not a curiosity "
+          "but an indicator that convection is running: whoever sees "
+          "the road tremble at 10:00 knows the thermals have started, "
+          "before the first cloud stands at the condensation level "
+          "(fe-hebung)."),
+        "skizze-stabilitaet", [
+        zahl(t("Autokonvektiver Gradient g/R_L? (in K/km, eine "
+               "Nachkommastelle)",
+               "Autoconvective lapse rate g/R_L? (in K/km, one "
+               "decimal)"),
+             rund(AUTOKONVEKTIV, 1), t("K/km", "K/km"),
+             t("`9,81 / 287,05 = 0,0342 K/m = 34,2 K/km`. Oberhalb "
+               "dieses Gradienten nimmt die Dichte mit der Höhe zu -- "
+               "ein Zustand, der sich nur in den untersten Zentimetern "
+               "über heißem Boden halten lässt, und dort auch nur "
+               "zitternd.",
+               "`9.81 / 287.05 = 0.0342 K/m = 34.2 K/km`. Above this "
+               "lapse rate density increases with height -- a state "
+               "that can only exist in the lowest centimetres over hot "
+               "ground, and even there only in a shimmer."),
+             toleranz=0.03),
+        zahl(t("Über heißem Asphalt werden 10 K je Meter gemessen. Wie "
+               "viele autokonvektive Gradienten sind das?",
+               "Over hot asphalt 10 K per metre is measured. How many "
+               "autoconvective lapse rates is that?"),
+             rund(ASPHALT_FAKTOR), t("", ""),
+             t("`10 K/m = 10 000 K/km`, geteilt durch 34,2 K/km gibt "
+               "293. Deshalb ist die Luft über dem Asphalt kein "
+               "Gleichgewicht, sondern eine Kette platzender Blasen.",
+               "`10 K/m = 10 000 K/km`, divided by 34.2 K/km gives "
+               "293. That is why the air over asphalt is not an "
+               "equilibrium but a chain of bursting bubbles."),
+             toleranz=0.05),
+        mc(t("Warum spiegelt sich der Himmel am Ende einer heißen "
+             "Straße?",
+             "Why is the sky mirrored at the end of a hot road?"),
+           [t("Der Asphalt wird glänzend, wenn der Bitumen weich "
+              "wird.", "The asphalt turns glossy when the bitumen "
+              "softens."),
+            t("In der heißen Schicht ist die Luft dünner, die Brechzahl "
+              "also kleiner als oben; flach einfallende Strahlen werden "
+              "nach oben weggekrümmt und erreichen das Auge aus der "
+              "Richtung der Straße.",
+              "In the hot layer the air is thinner, so the refractive "
+              "index is smaller than above; grazing rays are bent away "
+              "upward and reach the eye from the direction of the "
+              "road."),
+            t("Wasserdampf über dem Asphalt bildet eine spiegelnde "
+              "Schicht.",
+              "Water vapour above the asphalt forms a reflecting "
+              "layer."),
+            t("Der Horizont ist durch die Erdkrümmung gehoben.",
+              "The horizon is lifted by the curvature of the "
+              "Earth.")], 1,
+           t("Es ist derselbe Mechanismus wie bei der Refraktion am "
+             "Horizont, nur mit umgekehrtem Vorzeichen des Gradienten: "
+             "Normalerweise nimmt die Dichte nach oben ab und krümmt "
+             "Strahlen nach unten; im heißen Bodenfilm ist es "
+             "umgekehrt.",
+             "It is the same mechanism as refraction at the horizon, "
+             "with the sign of the gradient reversed: normally density "
+             "decreases upward and bends rays downward; in the hot "
+             "surface film it is the other way round.")),
+        ]),
+    ])
+
+
+# ===========================================================================
+# 14  Selbst beobachten und messen
+# ===========================================================================
+
+E_GLAS = e_s(11.0)                              # hPa, Beschlag bei 11 °C
+RH_GLAS = 100.0 * E_GLAS / e_s(22.0)            # %
+R_GLAS = 0.622 * E_GLAS / (1000.0 - E_GLAS) * 1000.0   # g/kg
+LCL_26_11 = 125.0 * (26.0 - 11.0)               # m
+SCHATTEN_H40 = 1.8 * math.tan(math.radians(40.0))      # km bei 1,8 km Abstand
+GAMMA_LUFT = 1.4                                # c_p/c_v der Luft
+C_SCHALL = math.sqrt(GAMMA_LUFT * R_L * T_0)    # m/s bei 15 °C
+SEK_JE_KM = 1000.0 / C_SCHALL                   # s
+S_H60 = S_0 * math.sin(math.radians(60.0)) * 0.75      # W/m²
+S_H19 = S_0 * math.sin(math.radians(18.8)) * 0.6       # W/m², Wien im Dezember
+# Schallkrümmung: dc/dz = (c/2T)·dT/dz, Standardgradient 6,5 K/km
+DC_DZ = C_SCHALL / (2 * T_0) * (-6.5e-3)        # 1/s
+SCHALL_RADIUS = C_SCHALL / abs(DC_DZ)           # m
+HOERWEITE_1KM = math.sqrt(2 * SCHALL_RADIUS * 1000.0)  # m
+DRUCKFALL = 20.0 / 500000.0 * 12.0 * 3600.0     # hPa/h
+METER_JE_HPA = 100.0 / (1.2 * G)                # m
+TAU_ZELLE = 20000.0 / 12.0 / 60.0               # min
+
+K_SELBSTMESSEN = kapitel(
+    "selbstmessen", t("Selbst beobachten und messen",
+                      "Observing and measuring for yourself"), 10,
+    t("Der Kurs beginnt jedes Kapitel bei einer bekannten Gleichung und "
+      "endet bei einer Beobachtung am Fenster. Dieses Kapitel ist "
+      "dieser Satz: vier Messungen mit Glas, Stock, Stoppuhr und "
+      "Barometer -- und am Schluss die Frage, warum das eigene Auge "
+      "unter einer Stunde besser ist als jedes Modell.",
+      "Every chapter of this course starts from an equation the reader "
+      "knows and ends at an observation he can check from the window. "
+      "This chapter is that sentence: four measurements with a glass, a "
+      "stick, a stopwatch and a barometer -- and at the end the "
+      "question why one's own eye beats any model below one hour."), [
+
+    lektion("sb-taupunkt",
+        t("Taupunkt mit einem Glas Wasser",
+          "Dew point with a glass of water"),
+        ["taupunktmessung", "feuchtemass"],
+        t("**Der Versuch.** Ein dünnwandiges Glas, Wasser, ein paar "
+          "Eiswürfel, ein Thermometer im Wasser, und rühren. Die "
+          "Temperatur, bei der die Außenwand gerade **anläuft**, ist "
+          "der Taupunkt der Luft im Zimmer. Sie ist überraschend scharf "
+          "zu treffen: ein halbes Kelvin, wenn man langsam kühlt und in "
+          "schrägem Licht gegen eine dunkle Fläche schaut.\n\n"
+          "**Warum das der Taupunkt ist.** Die Wand nimmt die "
+          "Temperatur des gerührten Wassers an; die Luft unmittelbar an "
+          "der Wand wird auf diese Temperatur abgekühlt, bei "
+          "unverändertem Dampfdruck. Sie kondensiert in dem Moment, in "
+          "dem $e$ den Sättigungsdampfdruck dieser Temperatur erreicht -- "
+          "und das ist die Definition des Taupunkts (fe-dampf). Drei "
+          "Fehlerquellen muss man mitdenken: **ohne Rühren** ist die "
+          "Wand unten kälter als das Thermometer oben anzeigt, und man "
+          "misst zu warm; **dickwandiges Glas oder Keramik** hinkt der "
+          "Wassertemperatur nach; und der **eigene Atem** hebt den "
+          "Dampfdruck lokal um Millibar, also nicht über das Glas "
+          "beugen.\n\n"
+          "**Die Rechnung.** Aus $T$ und $T_d$ folgt alles. Beispiel: "
+          "Zimmer 22 °C, erster Beschlag bei 11 °C. Magnus gibt "
+          "$e = e_s(11\\,^\\circ\\mathrm{C}) = 13{,}1$ hPa und $e_s(22\\,^\\circ\\mathrm{C}) = 26{,}4$ hPa, also\n\n"
+          "$$\\mathrm{RH} = \\frac{e}{e_s(T)} = \\frac{13{,}1}{26{,}4} = 50\\ \\%, \\qquad r = 0{,}622\\,\\frac{e}{p-e} = 8{,}3\\ \\frac{\\mathrm{g}}{\\mathrm{kg}}$$"
+          "\n\n"
+          "Acht Gramm Wasser in jedem Kilogramm Zimmerluft, bei einem "
+          "Zimmer von 40 m³ also ein halbes Kilo. Und die Spreizung "
+          "$T - T_d = 11$ K heißt nach fe-hebung: Stünde diese Luft "
+          "draußen und würde gehoben, läge ihre Wolkenbasis bei "
+          "1375 m.\n\n"
+          "**Die Gegenprobe.** Dieselbe Messung an der Fensterscheibe "
+          "sagt etwas anderes: Beschlägt sie innen, ist ihre Oberfläche "
+          "kälter als 11 °C, und die Wand in der kalten Ecke daneben "
+          "liegt kaum darüber. Schimmel wächst ab 80 % relativer Feuchte "
+          "an der Wandoberfläche, und das ist bei $e = 13{,}1$ hPa schon bei "
+          "einer Wandtemperatur von 14 °C erreicht -- nicht erst am "
+          "Taupunkt. Lüften hilft im Winter immer, weil kalte Außenluft "
+          "selbst bei 100 % Feuchte wenig Dampf mitbringt: bei −5 °C sind "
+          "es 4,2 hPa gegen die 13,1 hPa im Zimmer.\n\n"
+          "**Was man daraus schließt.** Der Taupunkt ist die eine "
+          "Zahl, die man draußen nicht sieht und ohne die nichts geht: "
+          "Er gibt die Wolkenbasis, die Frostgefahr der Nacht, die "
+          "Nebelwahrscheinlichkeit und über $\\theta_e$ die Energie, die in "
+          "einem Gewitter steckt. Ein Glas Wasser ersetzt das "
+          "Psychrometer.",
+          "**The experiment.** A thin-walled glass, water, a few ice "
+          "cubes, a thermometer in the water, and stir. The temperature "
+          "at which the outer wall just **mists over** is the dew point "
+          "of the air in the room. It can be caught surprisingly "
+          "sharply: half a kelvin, if one cools slowly and looks at a "
+          "grazing angle against a dark background.\n\n"
+          "**Why that is the dew point.** The wall takes on the "
+          "temperature of the stirred water; the air right at the wall "
+          "is cooled to that temperature at unchanged vapour pressure. "
+          "It condenses the moment $e$ reaches the saturation vapour "
+          "pressure of that temperature -- and that is the definition "
+          "of the dew point (fe-dampf). Three sources of error have to "
+          "be kept in mind: **without stirring** the wall is colder at "
+          "the bottom than the thermometer reads at the top, and the "
+          "measurement comes out too warm; **thick glass or ceramic** "
+          "lags behind the water temperature; and **one's own breath** "
+          "raises the local vapour pressure by millibars, so do not "
+          "lean over the glass.\n\n"
+          "**The calculation.** From $T$ and $T_d$ everything follows. "
+          "Example: room at 22 °C, first misting at 11 °C. Magnus gives "
+          "$e = e_s(11\\,^\\circ\\mathrm{C}) = 13{.}1$ hPa and $e_s(22\\,^\\circ\\mathrm{C}) = 26{.}4$ hPa, hence\n\n"
+          "$$\\mathrm{RH} = \\frac{e}{e_s(T)} = \\frac{13{.}1}{26{.}4} = 50\\ \\%, \\qquad r = 0{.}622\\,\\frac{e}{p-e} = 8{.}3\\ \\frac{\\mathrm{g}}{\\mathrm{kg}}$$"
+          "\n\n"
+          "Eight grams of water in every kilogram of room air, so half "
+          "a kilogram in a 40 m³ room. And the spread $T - T_d = 11$ K means, "
+          "by fe-hebung: were this air outside and lifted, its cloud "
+          "base would lie at 1375 m.\n\n"
+          "**The counter-check.** The same measurement on a window "
+          "pane says something else: if it mists over on the inside, its "
+          "surface is colder than 11 °C, and the wall in the cold corner "
+          "beside it is barely warmer. Mould grows from 80 % relative "
+          "humidity at the wall surface upward, and at $e = 13{.}1$ hPa that "
+          "is reached at a wall temperature of 14 °C already -- not only "
+          "at the dew point. Airing always helps in winter, because cold "
+          "outside air brings little vapour even at 100 % humidity: at "
+          "−5 °C it is 4.2 hPa against the 13.1 hPa indoors.\n\n"
+          "**What follows.** The dew point is the one number one "
+          "cannot see outdoors and without which nothing works: it "
+          "gives the cloud base, the night's frost risk, the "
+          "likelihood of fog, and through $\\theta_e$ the energy stored in a "
+          "thunderstorm. A glass of water replaces the "
+          "psychrometer."),
+        "skizze-dampfdruck", [
+        zahl(t("Zimmer 22 °C, erster Beschlag bei 11 °C. Relative "
+               "Feuchte? (in %)",
+               "Room at 22 °C, first misting at 11 °C. Relative "
+               "humidity? (in %)"),
+             rund(RH_GLAS), t("%", "%"),
+             t("`e = e_s(11) = 13,1 hPa`, `e_s(22) = 26,4 hPa`, "
+               "`RH = 13,1/26,4 = 50 %`. Die Faustregel '7 % je "
+               "Kelvin' gibt bei 11 K Spreizung ebenfalls etwa die "
+               "Hälfte.",
+               "`e = e_s(11) = 13.1 hPa`, `e_s(22) = 26.4 hPa`, "
+               "`RH = 13.1/26.4 = 50 %`. The rule of thumb '7 % per "
+               "kelvin' also gives about one half for an 11 K "
+               "spread."),
+             toleranz=0.03),
+        zahl(t("Und das Mischungsverhältnis bei p = 1000 hPa? (in "
+               "g/kg, eine Nachkommastelle)",
+               "And the mixing ratio at p = 1000 hPa? (in g/kg, one "
+               "decimal)"),
+             rund(R_GLAS, 1), t("g/kg", "g/kg"),
+             t("`r = 0,622 × 13,1 / (1000 − 13,1) = 8,26·10⁻³` oder "
+               "8,3 g/kg. Diese Zahl bleibt beim Heben und Senken "
+               "erhalten, die relative Feuchte nicht -- deshalb "
+               "rechnet der Meteorologe mit r.",
+               "`r = 0.622 × 13.1 / (1000 − 13.1) = 8.26·10⁻³` or "
+               "8.3 g/kg. This number is conserved on lifting and "
+               "sinking, relative humidity is not -- which is why the "
+               "meteorologist works with r."),
+             toleranz=0.03),
+        mc(t("Warum muss man das Eiswasser rühren?",
+             "Why must the iced water be stirred?"),
+           [t("Damit das Eis schneller schmilzt.",
+              "So that the ice melts faster."),
+            t("Damit die Luft am Glas nicht gesättigt bleibt.",
+              "So that the air at the glass does not stay saturated."),
+            t("Ungerührt schichtet sich das Wasser: unten kalt, oben "
+              "wärmer. Die Wand läuft dann unten an, während das "
+              "Thermometer oben eine zu hohe Temperatur zeigt -- der "
+              "gemessene Taupunkt wäre zu hoch.",
+              "Unstirred, the water stratifies: cold at the bottom, "
+              "warmer at the top. The wall then mists over at the "
+              "bottom while the thermometer at the top reads too high "
+              "-- the measured dew point would come out too high."),
+            t("Damit sich die Eiswürfel nicht an die Wand legen.",
+              "So that the ice cubes do not rest against the "
+              "wall.")], 2,
+           t("Der Versuch misst eine **Wandtemperatur** und nennt sie "
+             "Wassertemperatur. Jede Abweichung zwischen beiden geht "
+             "voll in den Fehler, und 1 K Fehler im Taupunkt sind "
+             "nach fe-hebung schon 125 m Wolkenbasis.",
+             "The experiment measures a **wall temperature** and calls "
+             "it the water temperature. Any difference between the two "
+             "goes straight into the error, and 1 K of error in the dew "
+             "point is already 125 m of cloud base by fe-hebung.")),
+        ]),
+
+    lektion("sb-wolkenbasis",
+        t("Die Wolkenbasis vom Boden aus",
+          "Cloud base from the ground"),
+        ["wolkenbasis", "fehlerrechnung"],
+        t("**Drei Wege.** Erstens die **125-m-Regel**: Thermometer und "
+          "Taupunkt, Differenz mal 125 m je Kelvin (fe-hebung). Bei "
+          "26 °C und einem Taupunkt von 11 °C sind das "
+          "$15 \\times 125 = 1875$ m über Grund. Zweitens der **Vergleich**: "
+          "Ein Berg, ein Sendeturm, ein Hochhaus bekannter Höhe, in das "
+          "die Wolke hineinreicht oder das sie freilässt, gibt eine "
+          "Schranke, die nicht zu schlagen ist. Drittens der "
+          "**Schattenwurf**: Sieht man eine Wolke und ihren Schatten "
+          "auf dem Boden, ist bei der Sonnenhöhe $h$ und dem waagrechten "
+          "Abstand $s$ zwischen Wolke und Schatten\n\n"
+          "$$z = s\\,\\tan h$$"
+          "\n\n"
+          "Bei $s = 1{,}8$ km und $h = 40^\\circ$ also 1,51 km -- in "
+          "hügeligem Gelände von einem Aussichtspunkt gut zu "
+          "schätzen.\n\n"
+          "**Was die Regel wirklich kann.** Die 125 m je Kelvin sind "
+          "kein Messwert, sondern das Ergebnis einer Division: Die "
+          "Trockenadiabate fällt mit 9,8 K/km, der Taupunkt mit "
+          "1,7 K/km, die Spreizung schließt sich also mit 8,1 K/km, und "
+          "$1/8{,}1$ K/km sind 123 m/K. Daraus folgt gleich die "
+          "Fehlerrechnung: **1 K Unsicherheit im Taupunkt sind 125 m "
+          "Unsicherheit in der Basis.** Ein Taupunkt auf 0,5 K ist "
+          "schon gut gemessen, also taugt die Regel für \"1900 m\" und "
+          "nicht für \"1875 m\". Und sie gilt nur für Cumulus aus der "
+          "durchmischten Schicht: Deren Basis **ist** das "
+          "Kondensationsniveau der Bodenluft. Für Stratus, Hochnebel "
+          "oder eine aufgeglittene Warmfrontwolke gilt sie nicht, denn "
+          "deren Basis liegt dort, wo eine Inversion oder die "
+          "Gleitfläche sitzt, und nicht dort, wo die Bodenluft "
+          "gesättigt wäre.\n\n"
+          "**Der Tagesgang.** Die Basis steigt im Laufe des "
+          "Nachmittags, und zwar nicht, weil es wärmer wird, sondern "
+          "weil die wachsende Grenzschicht trockene Luft von oben "
+          "einmischt: Der Taupunkt am Boden **fällt** um 2 bis 4 K "
+          "zwischen 10 und 16 Uhr, und die Spreizung öffnet sich von "
+          "beiden Seiten. Wer morgens 1200 m rechnet, hat am Abend "
+          "1800 m.\n\n"
+          "**Was man daraus schließt.** Drei Wege, drei "
+          "Fehlerquellen, eine Kontrolle: Stimmen Regel und "
+          "Schattenwurf auf 20 % überein, ist die Luft durchmischt und "
+          "die Wolke eine Cumulus-Wolke. Weichen sie stark ab, ist es "
+          "keine, und das ist die interessantere Auskunft.",
+          "**Three ways.** First the **125 m rule**: thermometer and "
+          "dew point, difference times 125 m per kelvin (fe-hebung). At "
+          "26 °C with a dew point of 11 °C that is "
+          "$15 \\times 125 = 1875$ m above ground. Second, **comparison**: a "
+          "mountain, a mast, a tower of known height that the cloud "
+          "reaches into or leaves clear gives a bound that cannot be "
+          "beaten. Third, the **shadow**: if one can see a cloud and "
+          "its shadow on the ground, then with the solar elevation $h$ and "
+          "the horizontal distance $s$ between cloud and shadow\n\n"
+          "$$z = s\\,\\tan h$$"
+          "\n\n"
+          "So for $s = 1{.}8$ km and $h = 40^\\circ$, 1.51 km -- in hilly "
+          "country this is easy to estimate from a viewpoint.\n\n"
+          "**What the rule can really do.** The 125 m per kelvin are "
+          "not a measurement but the result of a division: the dry "
+          "adiabat falls at 9.8 K/km, the dew point at 1.7 K/km, so the "
+          "spread closes at 8.1 K/km, and $1/8{.}1$ K/km is 123 m/K. The "
+          "error budget follows at once: **1 K of uncertainty in the "
+          "dew point is 125 m of uncertainty in the base.** A dew point "
+          "measured to 0.5 K is already good, so the rule is good for "
+          "\"1900 m\" and not for \"1875 m\". And it holds only for "
+          "cumulus out of the mixed layer: their base **is** the "
+          "condensation level of the surface air. For stratus, high fog "
+          "or a warm-front cloud that has glided up it does not hold, "
+          "because their base sits where an inversion or the gliding "
+          "surface sits, and not where the surface air would be "
+          "saturated.\n\n"
+          "**The daily course.** The base rises through the afternoon, "
+          "and not because it gets warmer but because the growing "
+          "boundary layer mixes dry air down from above: the surface "
+          "dew point **falls** by 2 to 4 K between 10:00 and 16:00, and "
+          "the spread opens from both sides. Whoever computes 1200 m in "
+          "the morning has 1800 m by evening.\n\n"
+          "**What follows.** Three ways, three sources of error, one "
+          "check: if the rule and the shadow agree to within 20 %, the "
+          "air is mixed and the cloud is a cumulus. If they differ "
+          "strongly, it is not -- and that is the more interesting "
+          "piece of information."),
+        "skizze-hebung", [
+        zahl(t("26 °C, Taupunkt 11 °C. Wolkenbasis nach der "
+               "125-m-Regel? (in m)",
+               "26 °C, dew point 11 °C. Cloud base by the 125 m rule? "
+               "(in m)"),
+             rund(LCL_26_11), t("m", "m"),
+             t("`(26 − 11) × 125 = 1875 m` über Grund. Bei 1 K "
+               "Unsicherheit im Taupunkt ist das 1875 ± 125 m, also "
+               "sinnvoll gerundet 1900 m.",
+               "`(26 − 11) × 125 = 1875 m` above ground. With 1 K of "
+               "uncertainty in the dew point that is 1875 ± 125 m, so "
+               "sensibly rounded 1900 m."),
+             toleranz=0.03),
+        zahl(t("Eine Wolke und ihr Schatten liegen 1,8 km auseinander, "
+               "die Sonne steht 40° hoch. Basishöhe? (in km, zwei "
+               "Nachkommastellen)",
+               "A cloud and its shadow lie 1.8 km apart, the sun "
+               "stands 40° high. Base height? (in km, two decimals)"),
+             rund(SCHATTEN_H40, 2), t("km", "km"),
+             t("`z = s·tan h = 1,8 km × tan 40° = 1,8 × 0,839 = "
+               "1,51 km`. Der Fehler steckt im Abstand, nicht im "
+               "Winkel: 20 % Fehler in s sind 20 % in z.",
+               "`z = s·tan h = 1.8 km × tan 40° = 1.8 × 0.839 = "
+               "1.51 km`. The error is in the distance, not in the "
+               "angle: 20 % error in s is 20 % in z."),
+             toleranz=0.03),
+        mc(t("Warum gibt die 125-m-Regel bei einer Stratusdecke den "
+             "falschen Wert?",
+             "Why does the 125 m rule give the wrong answer for a "
+             "stratus deck?"),
+           [t("Weil Stratus aus Eis besteht.",
+              "Because stratus consists of ice."),
+            t("Weil die Regel nur im Sommer gilt.",
+              "Because the rule holds only in summer."),
+            t("Weil Stratus zu tief liegt für eine Rechnung.",
+              "Because stratus is too low to calculate."),
+            t("Weil ihre Basis nicht das Kondensationsniveau der "
+              "Bodenluft ist: Stratus entsteht durch Hebung oder "
+              "Abkühlung einer ganzen Schicht und hängt an einer "
+              "Inversion, nicht an der Luft unten am Thermometer.",
+              "Because its base is not the condensation level of the "
+              "surface air: stratus forms by lifting or cooling of a "
+              "whole layer and hangs on an inversion, not on the air "
+              "down at the thermometer.")], 3,
+           t("Die Regel setzt voraus, dass das Paket an der "
+             "Wolkenbasis vom Boden gekommen ist und seinen "
+             "Dampfgehalt mitgebracht hat. Das gilt für Cumulus in "
+             "einer durchmischten Schicht, sonst nicht -- deshalb "
+             "rechnen Segelflieger damit und Flugwetterwarten nicht.",
+             "The rule assumes that the parcel at cloud base came from "
+             "the ground and brought its vapour with it. That holds for "
+             "cumulus in a mixed layer and otherwise not -- which is "
+             "why glider pilots use it and aviation forecasters do "
+             "not.")),
+        ]),
+
+    lektion("sb-stock",
+        t("Stock und Stoppuhr: Sonnenhöhe und Gewitterentfernung",
+          "Stick and stopwatch: solar elevation and storm distance"),
+        ["sonnenhoehe", "schallgeschwindigkeit", "donner"],
+        t("**Der Stock.** Ein Stock senkrecht in den Boden, die Länge "
+          "$L$, der Schatten $S$, und $\\tan h = L/S$. Ein Stock von 1,20 m "
+          "mit 1,00 m Schatten gibt $h = 50^\\circ$. Damit drei Dinge: die "
+          "Sonnenhöhe, aus dem kürzesten Schatten des Tages die "
+          "Mittagshöhe und daraus mit der Deklination die eigene Breite "
+          "($\\varphi = 90^\\circ - h_{mittag} + \\delta$), und aus der Höhe die "
+          "Einstrahlung (st-bilanz):\n\n"
+          "$$S = S_0\\,\\sin h\\cdot \\tau$$"
+          "\n\n"
+          "Bei $h = 60^\\circ$ und einer Transmission von 0,75 sind das "
+          "884 W/m². Am 21. Dezember steht die Sonne in Wien nur 18,8° "
+          "hoch, und der längere Weg durch die Atmosphäre drückt die "
+          "Transmission auf 0,6: 263 W/m². **Faktor 3,4** -- und das "
+          "ist der Winter, nicht die Entfernung zur Sonne. Dass das "
+          "Temperaturmaximum nicht zur Mittagsstunde kommt, sondern "
+          "gegen 15 Uhr, steht in st-tagesgang: Es entscheidet die "
+          "Bilanz, nicht die Einstrahlung.\n\n"
+          "**Die Stoppuhr.** Blitz sehen, zählen, Donner hören, durch "
+          "drei teilen -- die Entfernung in Kilometern. Genauer: Die "
+          "Schallgeschwindigkeit in einem Gas ist "
+          "$c = \\sqrt{\\gamma R_L T}$ (adiabatische Kompression, "
+          "$\\gamma = c_p/c_v = 1{,}4$), bei 15 °C also 340 m/s und damit **2,94 "
+          "Sekunden je Kilometer**. Die drei Sekunden sind genau genug, "
+          "und zwei Messungen im Abstand von zehn Minuten geben die "
+          "Verlagerungsgeschwindigkeit der Zelle.\n\n"
+          "**Zwei Beobachtungen, die mehr sagen als die Faustregel.** "
+          "Erstens **rollt** der Donner, weil der Blitzkanal Kilometer "
+          "lang ist: Der Schall vom nächsten Punkt kommt zuerst, der "
+          "vom fernsten Ende Sekunden später, und dazwischen liegt das "
+          "Grollen. Ein kurzer, harter Knall heißt: der Kanal steht "
+          "quer und nah. Zweitens hört man über etwa 25 km hinaus "
+          "**nichts mehr**, und das ist keine Dämpfung, sondern "
+          "Geometrie: Weil $c \\propto \\sqrt{T}$ und die Temperatur nach oben "
+          "abnimmt, ist $dc/dz = (c/2T)\\,dT/dz = -3{,}8\\cdot 10^{-3}$ /s, und ein "
+          "Schallstrahl krümmt sich mit dem Radius $R = c/|dc/dz| = 89$ km "
+          "**nach oben**. Von einer Quelle in der Höhe $H$ erreicht der "
+          "Strahl den Boden nur innerhalb von $\\sqrt{2RH}$: 13 km für den "
+          "untersten Kilometer des Kanals, 30 km für sein oberes Ende "
+          "in 5 km. Dahinter liegt eine **Schattenzone**. Deshalb sieht "
+          "man ferne Gewitter wetterleuchten, ohne etwas zu hören.\n\n"
+          "**Was man daraus schließt.** Stock und Stoppuhr geben zwei "
+          "Zahlen, die in keiner Meldung stehen: wie viel Energie "
+          "gerade auf den Quadratmeter fällt, und wie weit die Zelle "
+          "weg ist, die man am Horizont sieht.",
+          "**The stick.** A stick upright in the ground, its length $L$, "
+          "its shadow $S$, and $\\tan h = L/S$. A stick of 1.20 m with a "
+          "1.00 m shadow gives $h = 50^\\circ$. That yields three things: the "
+          "solar elevation; from the shortest shadow of the day the "
+          "noon elevation and from it, with the declination, one's own "
+          "latitude ($\\varphi = 90^\\circ - h_{noon} + \\delta$); and from the "
+          "elevation the insolation (st-bilanz):\n\n"
+          "$$S = S_0\\,\\sin h\\cdot \\tau$$"
+          "\n\n"
+          "At $h = 60^\\circ$ and a transmission of 0.75 that is 884 W/m². On "
+          "21 December the sun in Vienna stands only 18.8° high, and the "
+          "longer path through the atmosphere pushes the transmission "
+          "down to 0.6: 263 W/m². **A factor of 3.4** -- and that is "
+          "winter, not the distance to the sun. Why the temperature "
+          "maximum comes not at noon but around 15:00 stands in "
+          "st-tagesgang: the budget decides, not the insolation.\n\n"
+          "**The stopwatch.** See the flash, count, hear the thunder, "
+          "divide by three -- the distance in kilometres. More "
+          "precisely: the speed of sound in a gas is "
+          "$c = \\sqrt{\\gamma R_L T}$ (adiabatic compression, "
+          "$\\gamma = c_p/c_v = 1{.}4$), hence 340 m/s at 15 °C and therefore "
+          "**2.94 seconds per kilometre**. Three seconds is accurate "
+          "enough, and two measurements ten minutes apart give the "
+          "speed at which the cell is travelling.\n\n"
+          "**Two observations that say more than the rule of thumb.** "
+          "First, thunder **rolls** because the lightning channel is "
+          "kilometres long: sound from the nearest point arrives first, "
+          "from the far end seconds later, and the rumble lies in "
+          "between. A short hard crack means the channel stands across "
+          "and close. Second, beyond about 25 km **nothing is heard at "
+          "all**, and that is not absorption but geometry: because "
+          "$c \\propto \\sqrt{T}$ and temperature decreases upward, "
+          "$dc/dz = (c/2T)\\,dT/dz = -3{.}8\\cdot 10^{-3}$ /s, and a sound ray curves "
+          "**upward** with radius $R = c/|dc/dz| = 89$ km. From a source at "
+          "height $H$ the ray reaches the ground only within $\\sqrt{2RH}$: "
+          "13 km for the lowest kilometre of the channel, 30 km for its "
+          "upper end at 5 km. Beyond that lies a **shadow zone**. That "
+          "is why distant storms can be seen flashing without a "
+          "sound.\n\n"
+          "**What follows.** Stick and stopwatch give two numbers that "
+          "appear in no forecast: how much energy is falling on the "
+          "square metre right now, and how far away the cell is that "
+          "one can see on the horizon."),
+        "selbstmessen-stock", [
+        zahl(t("Schallgeschwindigkeit bei 15 °C aus c = √(γ·R_L·T), "
+               "γ = 1,4? (in m/s)",
+               "Speed of sound at 15 °C from c = √(γ·R_L·T), γ = 1.4? "
+               "(in m/s)"),
+             rund(C_SCHALL), t("m/s", "m/s"),
+             t("`√(1,4 × 287 × 288) = √115 800 = 340 m/s`, also 2,94 s "
+               "je Kilometer. In kalter Luft (−15 °C) sind es 325 m/s "
+               "-- die Faustregel irrt um 5 %.",
+               "`√(1.4 × 287 × 288) = √115 800 = 340 m/s`, hence 2.94 s "
+               "per kilometre. In cold air (−15 °C) it is 325 m/s -- "
+               "the rule of thumb is 5 % off."),
+             toleranz=0.03),
+        zahl(t("Sonne 60° hoch, Transmission 0,75. Einstrahlung auf "
+               "eine waagrechte Fläche? (in W/m²)",
+               "Sun 60° high, transmission 0.75. Irradiance on a "
+               "horizontal surface? (in W/m²)"),
+             rund(S_H60), t("W/m²", "W/m²"),
+             t("`1361 × sin 60° × 0,75 = 1361 × 0,866 × 0,75 = "
+               "884 W/m²`. Im Dezember in Wien (18,8°, τ = 0,6) sind es "
+               "263 W/m², ein Drittel.",
+               "`1361 × sin 60° × 0.75 = 1361 × 0.866 × 0.75 = "
+               "884 W/m²`. In Vienna in December (18.8°, τ = 0.6) it is "
+               "263 W/m², one third."),
+             toleranz=0.03),
+        mc(t("Man sieht ein Gewitter am Horizont blitzen, hört aber "
+             "nichts. Was ist der Grund?",
+             "A storm can be seen flashing on the horizon but nothing "
+             "is heard. Why?"),
+           [t("Weil die Temperatur nach oben abnimmt, krümmen sich die "
+              "Schallstrahlen nach oben (R ≈ 89 km); über etwa 25 km "
+              "hinaus liegt der Boden in der Schattenzone.",
+              "Because temperature decreases upward the sound rays "
+              "curve upward (R ≈ 89 km); beyond about 25 km the ground "
+              "lies in the shadow zone."),
+            t("Der Schall wird in der Luft vollständig absorbiert.",
+              "The sound is completely absorbed in the air."),
+            t("Ferne Blitze sind zu schwach für Donner.",
+              "Distant flashes are too weak to produce thunder."),
+            t("Der Wind weht aus der falschen Richtung.",
+              "The wind is blowing from the wrong direction.")], 0,
+           t("Dieselbe Strahlenkrümmung wie bei der Luftspiegelung "
+             "(bo-flimmern), nur für Schall und mit umgekehrtem "
+             "Vorzeichen: Nach unten nimmt c zu, also werden die "
+             "Strahlen nach oben weggebogen. Bei einer Bodeninversion "
+             "ist es umgekehrt, und dann hört man den Donner "
+             "ungewöhnlich weit.",
+             "The same ray bending as in a mirage (bo-flimmern), for "
+             "sound and with the opposite sign: c increases downward, "
+             "so the rays are bent away upward. In a surface inversion "
+             "it is the other way round, and then thunder carries "
+             "unusually far.")),
+        ]),
+
+    lektion("sb-druck",
+        t("Das Barometer als Messgerät für die Verlagerung",
+          "The barometer as a gauge of movement"),
+        ["drucktendenz", "vorhersagbarkeit"],
+        t("**Was man messen kann.** Jedes Telefon hat ein Barometer mit "
+          "0,1 hPa Auflösung. Es zeigt nicht das Wetter an, sondern "
+          "**die Änderung**: Fällt der Druck in einer Stunde um mehr "
+          "als 1 hPa, zieht ein Tief oder eine Front heran; steigt er "
+          "nach dem Durchgang ebenso schnell, folgt Kaltluft mit "
+          "Schauern. Eine Bedingung muss man ernst nehmen: Ein Stock"
+          "werk höher sind es 0,35 hPa weniger -- mehr als das Signal. "
+          "Wer die Tendenz messen will, muss das Gerät liegen lassen, "
+          "wo es liegt.\n\n"
+          "**Was dahintersteckt.** Ein Druckfeld, das sich mit der "
+          "Geschwindigkeit $c$ verlagert, ohne sich zu ändern, gibt am "
+          "festen Ort\n\n"
+          "$$\\frac{\\partial p}{\\partial t} = -c\\,\\frac{\\partial p}{\\partial x}$$"
+          "\n\n"
+          "Die Drucktendenz ist also kein eigenes Phänomen, sondern das "
+          "Verlagern eines Musters, und sie misst ein Produkt aus "
+          "Gradient und Zuggeschwindigkeit. Mit einem Wert von der "
+          "Karte: 20 hPa über 500 km, Verlagerung 12 m/s, gibt "
+          "$4\\cdot 10^{-5}\\,\\mathrm{hPa/m} \\cdot 12\\,\\mathrm{m/s} = 1{,}7$ hPa/h. Genau das "
+          "zeigt das Barometer vor einer Kaltfront. Umgekehrt: Wer den "
+          "Gradienten aus der Karte kennt und die Tendenz selbst misst, "
+          "hat die Zuggeschwindigkeit -- und damit die Ankunftszeit.\n\n"
+          "**Die Höhenfalle, gerechnet.** Hydrostatik "
+          "(at-hydrostatik): $dp/dz = -\\rho g$, mit $\\rho = 1{,}2$ kg/m³ sind "
+          "das 11,8 Pa je Meter, also **1 hPa je 8,5 m**. Drei Stufen "
+          "einer Treppe sind eine Zehntel-Hektopascal, die ganze "
+          "Tendenz einer Stunde sind 14 m Höhenunterschied. Deshalb "
+          "melden Stationen ihren Druck immer auf Meereshöhe "
+          "zurückgerechnet, und deshalb ist die Tendenz eines "
+          "wandernden Telefons wertlos.\n\n"
+          "**Und zuletzt: wie weit trägt das eigene Auge?** Ein "
+          "Wettersystem bleibt ungefähr so lange erkennbar, wie es "
+          "braucht, um sich selbst zu durchqueren, $\\tau \\approx L/U$. Eine "
+          "Schauerzelle von 20 km bei 12 m/s: 28 Minuten. Ein Tief von "
+          "2000 km bei 15 m/s: 37 Stunden. Darum gewinnt der Beobachter "
+          "unter einer Stunde -- er kennt den Anfangszustand seines "
+          "20-km-Systems genauer als jedes Modell, das es nicht einmal "
+          "auflöst -- und verliert über sechs Stunden, wo nur noch die "
+          "große Skala zählt, die er nicht sehen kann. Die kleinen "
+          "Skalen verlieren ihre Vorhersagbarkeit zuerst (vo-chaos): "
+          "**Das Auge und das Modell scheitern aus entgegengesetzten "
+          "Gründen**, und deshalb braucht man beide.",
+          "**What one can measure.** Every phone has a barometer with "
+          "0.1 hPa resolution. It does not show the weather but **the "
+          "change**: if the pressure falls by more than 1 hPa in an "
+          "hour, a low or a front is approaching; if it rises just as "
+          "fast after the passage, cold air with showers follows. One "
+          "condition has to be taken seriously: one floor higher up the "
+          "reading is 0.35 hPa lower -- more than the signal. Whoever "
+          "wants to measure the tendency must leave the instrument "
+          "where it lies.\n\n"
+          "**What lies behind it.** A pressure field that travels at "
+          "speed $c$ without changing gives, at a fixed place,\n\n"
+          "$$\\frac{\\partial p}{\\partial t} = -c\\,\\frac{\\partial p}{\\partial x}$$"
+          "\n\n"
+          "The pressure tendency is thus not a phenomenon of its own "
+          "but the translation of a pattern, and it measures a product "
+          "of gradient and travel speed. With a value off the chart: "
+          "20 hPa over 500 km, travelling at 12 m/s, gives "
+          "$4\\cdot 10^{-5}\\,\\mathrm{hPa/m} \\cdot 12\\,\\mathrm{m/s} = 1{.}7$ hPa/h. That is "
+          "exactly what the barometer shows ahead of a cold front. "
+          "Conversely: whoever knows the gradient from the chart and "
+          "measures the tendency himself has the travel speed -- and "
+          "with it the time of arrival.\n\n"
+          "**The height trap, worked out.** Hydrostatics "
+          "(at-hydrostatik): $dp/dz = -\\rho g$, with $\\rho = 1{.}2$ kg/m³ that is "
+          "11.8 Pa per metre, hence **1 hPa per 8.5 m**. Three steps of "
+          "a staircase are a tenth of a hectopascal, a whole hour's "
+          "tendency is 14 m of height. That is why stations always "
+          "report their pressure reduced to sea level, and why the "
+          "tendency measured by a travelling phone is worthless.\n\n"
+          "**And finally: how far does one's own eye carry?** A weather "
+          "system stays recognisable roughly as long as it takes to "
+          "cross itself, $\\tau \\approx L/U$. A shower cell of 20 km at 12 m/s: "
+          "28 minutes. A depression of 2000 km at 15 m/s: 37 hours. "
+          "That is why the observer wins below one hour -- he knows the "
+          "initial state of his 20 km system better than any model that "
+          "does not even resolve it -- and loses beyond six hours, "
+          "where only the large scale counts, which he cannot see. "
+          "Small scales lose their predictability first (vo-chaos): "
+          "**the eye and the model fail for opposite reasons**, and "
+          "that is why one needs both."),
+        "skizze-zyklone", [
+        zahl(t("20 hPa über 500 km, das Muster zieht mit 12 m/s. "
+               "Drucktendenz am festen Ort? (in hPa/h, zwei "
+               "Nachkommastellen)",
+               "20 hPa over 500 km, the pattern travelling at 12 m/s. "
+               "Pressure tendency at a fixed place? (in hPa/h, two "
+               "decimals)"),
+             rund(DRUCKFALL, 2), t("hPa/h", "hPa/h"),
+             t("`∂p/∂t = −c·∂p/∂x = 12 m/s × 20 hPa / 500 000 m = "
+               "4,8·10⁻⁴ hPa/s = 1,73 hPa/h`. Ein typischer Wert vor "
+               "einer Kaltfront; 3 hPa/h heißt Sturm.",
+               "`∂p/∂t = −c·∂p/∂x = 12 m/s × 20 hPa / 500 000 m = "
+               "4.8·10⁻⁴ hPa/s = 1.73 hPa/h`. A typical value ahead of "
+               "a cold front; 3 hPa/h means a gale."),
+             toleranz=0.03),
+        zahl(t("Wie viel Höhenunterschied entspricht 1 hPa in "
+               "Bodennähe (ρ = 1,2 kg/m³)? (in m, eine "
+               "Nachkommastelle)",
+               "How much height difference corresponds to 1 hPa near "
+               "the ground (ρ = 1.2 kg/m³)? (in m, one decimal)"),
+             rund(METER_JE_HPA, 1), t("m", "m"),
+             t("`dz = dp/(ρg) = 100 Pa / (1,2 × 9,81) = 8,5 m`. "
+               "Deshalb ist ein Stockwerk 0,35 hPa und eine Messreihe "
+               "aus der Hand unbrauchbar.",
+               "`dz = dp/(ρg) = 100 Pa / (1.2 × 9.81) = 8.5 m`. That "
+               "is why one storey is 0.35 hPa and a hand-held series of "
+               "readings is useless."),
+             toleranz=0.03),
+        mc(t("Das Barometer zu Hause fällt zwei Stunden lang um "
+             "2 hPa/h. Was ist die beste Deutung?",
+             "The barometer at home falls by 2 hPa/h for two hours. "
+             "What is the best interpretation?"),
+           [t("Es wird wärmer, warme Luft ist leichter.",
+              "It is getting warmer, and warm air is lighter."),
+            t("Ein kräftiger Druckgradient zieht über den Ort: Aus "
+              "∂p/∂t = −c·∂p/∂x folgt bei 4 hPa je 100 km eine "
+              "Verlagerung um 14 m/s -- Front und starker Wind binnen "
+              "Stunden.",
+              "A strong pressure gradient is passing over the place: "
+              "from ∂p/∂t = −c·∂p/∂x, a gradient of 4 hPa per 100 km "
+              "implies a travel speed of 14 m/s -- a front and strong "
+              "wind within hours."),
+            t("Das Gerät ist defekt, 2 hPa/h gibt es nicht.",
+              "The instrument is broken, 2 hPa/h does not occur."),
+            t("Es wird regnen, aber windstill bleiben.",
+              "It will rain but stay calm.")], 1,
+           t("Die Tendenz ist ein Produkt: Gradient mal "
+             "Zuggeschwindigkeit. Beides zusammen heißt Wind, denn der "
+             "Gradient **ist** der Wind (dy-geostrophisch). Deshalb ist "
+             "ein schnell fallendes Barometer eine Windwarnung und "
+             "nicht nur eine Regenwarnung.",
+             "The tendency is a product: gradient times travel speed. "
+             "Both together mean wind, because the gradient **is** the "
+             "wind (dy-geostrophisch). That is why a rapidly falling "
+             "barometer is a wind warning and not merely a rain "
+             "warning.")),
+        ]),
+    ])
+
+
+# ===========================================================================
 # Zusammenstellung
 # ===========================================================================
 
-KAPITEL = [K_ATMOSPHAERE, K_THERMO, K_FEUCHTE, K_STRAHLUNG, K_WOLKEN,
-           K_DYNAMIK, K_ZIRKULATION, K_SYNOPTIK, K_MESOSKALA, K_OPTIK,
-           K_VORHERSAGE]
+# ===========================================================================
+# Wolken lesen (phänomenologisch, hinter der Dynamik)
+# ===========================================================================
+
+# Oberkanten in 1800 m, Basis (LCL) in 1200 m, Boden 26 °C: trocken bis zur
+# Basis, feucht darüber. Die Pakettemperatur an der Oberkante ist die
+# Umgebungstemperatur der Inversionsunterkante.
+WL_T_OBERKANTE = 26.0 - GAMMA_D * 1.2 - 6.0 * 0.6             # °C
+# Auslösetemperatur: Deckel in 1500 m mit 14 °C, trockenadiabatisch herunter.
+WL_T_DECKEL = 14.0
+WL_Z_DECKEL = 1.5                                              # km
+WL_T_TRIGGER = WL_T_DECKEL + GAMMA_D * WL_Z_DECKEL             # °C
+# Zelle 25 km entfernt, Verlagerung mit dem 700-hPa-Wind.
+WL_ZUG = 15.0                                                  # m/s
+WL_ANKUNFT = 25000.0 / WL_ZUG / 60.0                           # min
+# Lebensdauer: Wolkendicke durch Aufwind.
+WL_ZEITSKALA = 3000.0 / 3.0 / 60.0                             # min
+# Kippen eines Turms: tan α = ΔU/w, Versatz der Spitze = ΔU·z/(2w).
+WL_W_TURM = 8.0                                                # m/s
+WL_DU_TURM = 16.0                                              # m/s über 4 km
+WL_KIPPWINKEL = math.degrees(math.atan(WL_DU_TURM / WL_W_TURM))  # Grad
+WL_VERSATZ = WL_DU_TURM * 4000.0 / (2 * WL_W_TURM)             # m
+# Wellenwolken: λ = 2πU/N (th-stabilitaet) zurückgerechnet auf dθ/dz.
+WL_LAMBDA = 8600.0                                             # m
+WL_U_WELLE = 15.0                                              # m/s
+WL_N_WELLE = 2 * math.pi * WL_U_WELLE / WL_LAMBDA              # 1/s
+WL_DTHETA_DZ = WL_N_WELLE ** 2 * 290.0 / G * 1000.0            # K/km
+# Kelvin-Helmholtz: Ri < 1/4 verlangt du/dz > 2N.
+WL_SCHERUNG_MIN = 2 * 0.011 * 1000.0                           # m/s je km
+
+K_WOLKENLESEN = kapitel(
+    "wolkenlesen", t("Wolken lesen: Form, Uhr und Sonde",
+                     "Reading clouds: form, clock and probe"), 6,
+    t("Eine Wolke ist ein Messgerät, das die Atmosphäre selbst aufgestellt "
+      "hat. Ihre Form verrät das Vorzeichen von dθ/dz, ihr Kippen die "
+      "Scherung, der Abstand ihrer Ballen die Brunt-Väisälä-Frequenz, und "
+      "die Uhrzeit, zu der sie entsteht, die Höhe des Deckels. Dieses "
+      "Kapitel liest zurück: vom Hinsehen zu den Gleichungen der Kapitel "
+      "2 bis 6.",
+      "A cloud is an instrument the atmosphere has put up by itself. Its "
+      "shape gives away the sign of dθ/dz, its tilt the shear, the "
+      "spacing of its rolls the Brunt–Väisälä frequency, and the hour at "
+      "which it appears the height of the lid. This chapter reads "
+      "backwards: from looking at the sky to the equations of chapters 2 "
+      "to 6."), [
+
+    lektion("wb-schichtung",
+        t("Wolken als Zeugen der Schichtung",
+          "Clouds as witnesses to the stratification"),
+        ["wolkenform", "schichtung-lesen", "absinkinversion"],
+        t("Ein Blick nach oben ist eine Messung. Nicht von Temperatur oder "
+          "Druck -- die bleiben verborgen --, sondern von genau dem "
+          "Vorzeichen, auf das Kapitel 2 hinauslief: dem von "
+          "$d\\theta/dz$. Die Wolke zeigt es, weil sie aus Luft besteht, die "
+          "gerade gehoben wurde, und weil die Art, wie sie dabei "
+          "stehengeblieben ist, von der Schichtung bestimmt wird. Man "
+          "lernt also keine Namen, sondern ein Vorzeichen abzulesen.\n\n"
+          "**Blumenkohl mit harten Rändern.** Ein Rand ist scharf, wenn er "
+          "aus Tröpfchen besteht, und ein Tröpfchen lebt nur Minuten, "
+          "bevor es verdunstet oder vereist. Ein scharfer, nach außen "
+          "drängender Rand ist deshalb **jung**: Hier steigt es schneller, "
+          "als die Einmischung trockener Umgebungsluft die Wolke abbauen "
+          "kann. Nach th-stabilitaet heißt das $N^2 < 0$ -- aber für das "
+          "*gesättigte* Paket, also bedingte Labilität zwischen $\\Gamma_s$ und "
+          "$\\Gamma_d$ (fe-emagram). Trockenlabil ist die freie Atmosphäre fast "
+          "nie.\n\n"
+          "**Oberkanten in einer Linie.** Das ist der schärfste Messwert "
+          "am ganzen Himmel: Wenn ein Feld von Cumuli oben wie mit dem "
+          "Lineal abgeschnitten ist, liegt dort die Unterkante einer "
+          "**Inversion** -- der Deckel, an dem $d\\theta/dz$ das Vorzeichen "
+          "wechselt. Nicht die Wolke endet, sondern der Auftrieb. In einem "
+          "Hoch ist es die Absinkinversion in 1 bis 2 km, über dem Meer "
+          "die Passatinversion. Die Höhe schätzt man aus dem Verhältnis "
+          "von Wolkendicke zu Wolkenbreite: Ballen, die breiter als hoch "
+          "sind, haben den Deckel schon erreicht.\n\n"
+          "**Glatte, strukturlose Schichten.** Stratus, Altostratus, "
+          "Cirrostratus: gehobene *Schichten*, nicht gehobene *Pakete*. "
+          "$N^2 > 0$, die Hebung kommt nicht von innen, sondern von außen -- "
+          "Aufgleiten an einer Front, großflächiges Steigen, nächtliche "
+          "Abkühlung einer ganzen Lage. Ein stabil geschichteter Himmel "
+          "hat keine Textur, weil keine Zelle den Nachbarn überholen "
+          "kann.\n\n"
+          "**Türmchen im Mittelstockwerk.** Altocumulus *castellanus*: "
+          "kleine Zinnen auf einer mittelhohen Schicht. Dieselbe Aussage "
+          "wie beim Blumenkohl, nur 4 km höher -- und daher wichtiger, "
+          "denn Labilität im Mittelstockwerk am Morgen ist die "
+          "Voraussetzung dafür, dass die Nachmittagskonvektion nicht in "
+          "2 km aufhört.\n\n"
+          "**Zerfaserte Basen, fractus, schiefe Ballen.** Wo die Basis "
+          "ausfranst und einzelne Fetzen darunter treiben, ist die "
+          "Grenzschicht turbulent und geschert (dy-reibung): Der Wind "
+          "nimmt mit der Höhe zu, und die Wolke wird auseinandergezogen, "
+          "bevor sie fertig ist. Dasselbe Bild heißt bei Stratocumulus "
+          "*undulatus* -- Wellen auf einer Sprungschicht.\n\n"
+          "**Die Linse im Lee.** Lenticularis ist die stabilste Form, die "
+          "es gibt: Sie steht still, während die Luft durch sie "
+          "hindurchströmt, und sie wäre ohne $N^2 > 0$ unmöglich. Wer eine "
+          "Linse sieht, weiß, dass es in dieser Höhe keine Konvektion "
+          "geben wird, egal wie warm der Boden wird.\n\n"
+          "**Die Zahl.** Ein Feld Cumulus humilis, Basis in 1200 m, alle "
+          "Oberkanten in 1800 m, Bodentemperatur am Nachmittag 26 °C. Das "
+          "Paket steigt trockenadiabatisch bis zur Basis "
+          "($\\Gamma_d = 9{,}8$ K/km, th-adiabate) und feuchtadiabatisch mit "
+          "6 K/km darüber (fe-hebung):\n\n"
+          r"$$T_{Spitze} = 26 - 9{,}8\cdot 1{,}2 - 6{,}0\cdot 0{,}6 = 10{,}7$$" "\n\n"
+          "-- alles in Grad Celsius; an der Basis in 1200 m sind es "
+          "14,3 °C. Die beiden Zahlen zusammen sind ein halber "
+          "Radiosondenaufstieg. Zwischen 1200 und 1800 m **muss** die "
+          "Umgebung kälter sein als die Feuchtadiabate, sonst wären die "
+          "Türme nie bis 1800 m gekommen -- diese Schicht ist bedingt "
+          "labil. Und in 1800 m **muss** sie wärmer sein als 10,7 °C, "
+          "sonst wären sie weitergewachsen. Genau dort kippt das "
+          "Vorzeichen von $d\\theta/dz$: **die Unterkante der "
+          "Absinkinversion, abgelesen am Lineal der Wolkenoberkanten und "
+          "an einem Thermometer am Boden.** Ein Radiosondenaufstieg würde "
+          "dasselbe liefern und 300 km entfernt starten.",
+          "Looking up is a measurement. Not of temperature or pressure -- "
+          "those stay hidden -- but of exactly the sign chapter 2 was "
+          "driving at: that of $d\\theta/dz$. The cloud shows it because it is "
+          "made of air that has just been lifted, and because the way it "
+          "came to rest is set by the stratification. So what is learnt "
+          "here is not a set of names but how to read off a sign.\n\n"
+          "**Cauliflower with hard edges.** An edge is sharp when it is "
+          "made of droplets, and a droplet lives only minutes before it "
+          "evaporates or freezes. A sharp, outward-bulging edge is "
+          "therefore **young**: here the air is rising faster than the "
+          "entrainment of dry ambient air can eat the cloud away. In the "
+          "language of th-stabilitaet that is $N^2 < 0$ -- but for the "
+          "*saturated* parcel, i.e. conditional instability between $\\Gamma_s$ "
+          "and $\\Gamma_d$ (fe-emagram). The free atmosphere is almost never "
+          "unstable for dry air.\n\n"
+          "**Tops in a straight line.** This is the sharpest reading the "
+          "sky offers: when a field of cumuli is cut off above as if with "
+          "a ruler, that is the base of an **inversion** -- the lid where "
+          "$d\\theta/dz$ changes sign. It is not the cloud that ends but the "
+          "buoyancy. In an anticyclone it is the subsidence inversion at "
+          "1 to 2 km, over the ocean the trade-wind inversion. Its height "
+          "can be judged from the ratio of cloud depth to cloud width: "
+          "rolls that are wider than they are tall have already reached "
+          "the lid.\n\n"
+          "**Smooth, featureless layers.** Stratus, altostratus, "
+          "cirrostratus: lifted *layers*, not lifted *parcels*. $N^2 > 0$, "
+          "and the lifting comes from outside rather than from within -- "
+          "upglide at a front, large-scale ascent, the nocturnal cooling "
+          "of a whole slab. A stably stratified sky has no texture, "
+          "because no cell can overtake its neighbour.\n\n"
+          "**Turrets at mid level.** Altocumulus *castellanus*: little "
+          "battlements on a mid-level sheet. The same statement as the "
+          "cauliflower, only 4 km higher up -- and therefore more "
+          "important, because instability at mid level in the morning is "
+          "what decides whether the afternoon convection stops at 2 km or "
+          "does not.\n\n"
+          "**Frayed bases, fractus, leaning rolls.** Where the base "
+          "unravels and single shreds drift below it, the boundary layer "
+          "is turbulent and sheared (dy-reibung): the wind increases with "
+          "height and the cloud is pulled apart before it is finished. "
+          "The same picture in a stratocumulus sheet is called "
+          "*undulatus* -- waves on a discontinuity.\n\n"
+          "**The lens in the lee.** Lenticularis is the most stable form "
+          "there is: it stands still while the air streams through it, "
+          "and without $N^2 > 0$ it could not exist at all. Anyone who sees "
+          "a lens knows there will be no convection at that height, "
+          "however warm the ground gets.\n\n"
+          "**The number.** A field of cumulus humilis, base at 1200 m, "
+          "every top at 1800 m, surface temperature in the afternoon "
+          "26 °C. The parcel rises dry adiabatically to the base "
+          "($\\Gamma_d = 9.8$ K/km, th-adiabate) and moist adiabatically at "
+          "6 K/km above it (fe-hebung):\n\n"
+          r"$$T_{top} = 26 - 9.8\cdot 1.2 - 6.0\cdot 0.6 = 10.7$$" "\n\n"
+          "-- all of it in degrees Celsius; at the base, 1200 m up, it is "
+          "14.3 °C. The two numbers together are half a radiosonde "
+          "ascent. Between 1200 and 1800 m the environment **must** be "
+          "colder than the moist adiabat, otherwise the towers would "
+          "never have reached 1800 m -- that layer is conditionally "
+          "unstable. And at 1800 m it **must** be warmer than 10.7 °C, "
+          "otherwise they would have kept going. That is where the sign "
+          "of $d\\theta/dz$ flips: **the base of the subsidence "
+          "inversion, read off the ruler of the cloud tops and a "
+          "thermometer at the ground.** A radiosonde would give the same "
+          "answer and be launched 300 km away."),
+        "skizze-stabilitaet", [
+        zahl(t("Cumulus-Basis 1200 m, alle Oberkanten 1800 m, Boden "
+               "26 °C. Trockenadiabatisch bis zur Basis, dann 6 K/km: "
+               "Welche Temperatur hat das Paket an der Oberkante? (in °C, "
+               "eine Nachkommastelle)",
+               "Cumulus base 1200 m, every top at 1800 m, ground 26 °C. "
+               "Dry adiabatic to the base, then 6 K/km: what is the "
+               "parcel temperature at the top? (in °C, one decimal)"),
+             rund(WL_T_OBERKANTE, 1), t("°C", "°C"),
+             t("`26 − 9,8·1,2 − 6,0·0,6 = 26 − 11,7 − 3,6 = 10,7 °C`. Weil "
+               "das Steigen genau dort aufhört, ist das die Temperatur der "
+               "Umgebung in 1800 m -- die Unterkante der Inversion.",
+               "`26 − 9.8·1.2 − 6.0·0.6 = 26 − 11.7 − 3.6 = 10.7 °C`. "
+               "Because the ascent stops exactly there, that is the "
+               "environmental temperature at 1800 m -- the base of the "
+               "inversion."),
+             toleranz=0.04),
+        mc(t("Ein ganzes Feld Cumulus ist oben in derselben Höhe wie mit "
+             "dem Lineal abgeschnitten. Was ist damit gemessen?",
+             "A whole field of cumulus is cut off above at one and the "
+             "same height, as if with a ruler. What has been measured?"),
+           [t("Die Wolken haben dort ihren Dampf aufgebraucht.",
+              "The clouds have used up their vapour at that height."),
+            t("Der Höhenwind schneidet sie ab.",
+              "The upper wind is shearing them off."),
+            t("Die Höhe, in der $d\\theta/dz$ das Vorzeichen wechselt: die "
+              "Unterkante einer Inversion.",
+              "The height at which $d\\theta/dz$ changes sign: the base of "
+              "an inversion."),
+            t("Das Kondensationsniveau.", "The condensation level.")], 2,
+           t("Die Basis ist das LCL, die Oberkante ist der Deckel. Beides "
+             "zusammen gibt die Dicke der Mischungsschicht, und mit der "
+             "Bodentemperatur den ganzen Aufstieg bis dorthin.",
+             "The base is the LCL, the top is the lid. Together they give "
+             "the depth of the mixed layer, and with the surface "
+             "temperature the entire sounding up to it."),
+           bild="cu-humilis"),
+        mc(t("Welche der vier Wolken beweist die **stabilste** Schichtung "
+             "in ihrer Höhe?",
+             "Which of the four clouds proves the **most stable** "
+             "stratification at its own height?"),
+           [t("Cumulus congestus mit harten Rändern.",
+              "Cumulus congestus with hard edges."),
+            t("Altocumulus lenticularis, die stehende Linse.",
+              "Altocumulus lenticularis, the standing lens."),
+            t("Altocumulus castellanus mit Türmchen.",
+              "Altocumulus castellanus with turrets."),
+            t("Cumulus fractus mit zerfaserter Basis.",
+              "Cumulus fractus with a frayed base.")], 1,
+           t("Eine stehende Welle braucht $N^2 > 0$; je stärker die "
+             "Stabilität, desto kürzer und schärfer die Linse. "
+             "Castellanus und congestus beweisen das Gegenteil, fractus "
+             "beweist Turbulenz.",
+             "A standing wave needs $N^2 > 0$; the stronger the stability, "
+             "the shorter and sharper the lens. Castellanus and congestus "
+             "prove the opposite, fractus proves turbulence."),
+           bild="lenticularis"),
+        ]),
+
+    lektion("wb-tageslauf",
+        t("Der Tag einer Konvektionszelle, mit der Uhr",
+          "The day of a convective cell, by the clock"),
+        ["tageslauf-konvektion", "ausloesetemperatur", "gewitteranzeichen"],
+        t("Konvektion hat einen Fahrplan, und er ist nachrechenbar. Was "
+          "folgt, ist ein Beobachtungsprotokoll eines Sommertages im "
+          "Flachland -- mit der Uhrzeit, denn die Uhrzeit ist das "
+          "Messgerät.\n\n"
+          "**8 Uhr.** Kein Wölkchen, aber der Himmel ist nicht blau, "
+          "sondern milchig, und die Dunstschicht hat eine erstaunlich "
+          "scharfe Oberkante. Das ist die nächtliche Bodeninversion "
+          "(st-tagesgang): Unter ihr sammelt sich alles, über ihr ist es "
+          "klar. Steht man auf einem Hügel, sieht man sie von oben.\n\n"
+          "**9 bis 10 Uhr.** Die Sonne heizt den Boden, der Boden heizt "
+          "die unterste Luft, und die Inversion wird **von unten "
+          "weggefressen**: Eine durchmischte Schicht wächst nach oben. Sie "
+          "ist trockenadiabatisch geschichtet, also wird ihre potentielle "
+          "Temperatur einheitlich -- genau die Figur aus th-theta.\n\n"
+          "**Die erste Wolke, und ihre Uhrzeit.** Sie erscheint, sobald "
+          "die Mischungsschicht ihr Kondensationsniveau erreicht. Liegt "
+          "über der Inversion ein Deckel -- eine Schicht mit 14 °C in "
+          "1500 m --, dann muss die Bodentemperatur so weit steigen, dass "
+          "ein trockenadiabatisch aufsteigendes Paket dort noch wärmer "
+          "ist. Die **Auslösetemperatur** ist\n\n"
+          r"$$T_{Trigger} = T_{Deckel} + \Gamma_d\,z_{Deckel} = 14 + 9{,}8\cdot 1{,}5 = 28{,}7$$" "\n\n"
+          "-- in Grad Celsius gerechnet. "
+          "Das ist die nützlichste Zahl des ganzen Kapitels. Erreicht der "
+          "Tag nur 26 °C, bleiben die Haufen flach unter dem Deckel, so "
+          "warm es sich auch anfühlt. "
+          "Erreicht er 30 °C, geht es in dem Moment los, in dem das "
+          "Thermometer durch 28,7 °C läuft -- in der Praxis zwischen 11 "
+          "und 13 Uhr. Dieselbe Zahl erklärt, warum ein Tag im Juni mit "
+          "28 °C nichts bringt und einer im August mit 31 °C ein Gewitter "
+          "pro Tal.\n\n"
+          "**11 bis 12 Uhr.** Erste Fetzen am LCL, Cumulus fractus, dann "
+          "humilis mit flacher Basis. Und etwas Merkwürdiges: Die Basis "
+          "**steigt** im Tagesverlauf, von 900 m am Morgen auf 1600 m am "
+          "Nachmittag. Nach fe-hebung ist $z_{LCL} = 125$ m/K $\\cdot(T - T_d)$, "
+          "und die Spreizung wächst von beiden Seiten -- `T` steigt, weil "
+          "die Sonne heizt, und $T_d$ **sinkt**, weil die wachsende "
+          "Mischungsschicht trockene Luft von oben einmischt. Die Wolke "
+          "fährt mit ihrem eigenen Kondensationsniveau nach oben.\n\n"
+          "**13 bis 15 Uhr.** Mediocris, dann congestus: Türme, die höher "
+          "als breit sind, mit harten Rändern. Dann wird die Spitze "
+          "faserig -- sie ist vereist, Bergeron-Findeisen setzt ein "
+          "(wo-wachstum), und der Schauer beginnt. Die **Zeitskala** einer "
+          "Zelle ist Dicke durch Aufwind: 3 km / 3 m/s = 17 min, bis das "
+          "Wasser oben ist und als Regen zurückkommt. Beobachtet werden 30 "
+          "bis 60 Minuten Lebensdauer (me-gewitter) -- das Doppelte, weil "
+          "die Zelle nachliefert, solange der Aufwind steht.\n\n"
+          "**Die Anzeichenkette, mit Zeiten.** Am Morgen Altocumulus "
+          "castellanus oder floccus und ein Taupunkt über 16 °C: "
+          "Labilität bis ins Mittelstockwerk, Gewitter wahrscheinlich. "
+          "Mittags harte Cu-Ränder und Türme, die über ihre Nachbarn "
+          "hinausschießen. Dann der Amboss, dessen Faserung **gegen den "
+          "Bodenwind** zeigt -- Scherung, also eine Zelle, die sich "
+          "erneuert. Eine dunkle, regenfreie Basis und ein Arcus davor: "
+          "die Böenfront, 10 bis 20 km vor dem Regen (me-gewitter). Wind, "
+          "der plötzlich aus der falschen Richtung einfällt, und 15 "
+          "Minuten später der Temperatursturz. Mammatus auf der Rückseite "
+          "heißt: vorbei.\n\n"
+          "**Die Gegenprobe.** Cumulus humilis, der um 15 Uhr nicht "
+          "größer wird, ist die zuverlässigste Schönwettervorhersage, die "
+          "es ohne Modell gibt: Der Deckel sitzt fest, das Tagesmaximum "
+          "ist durch, es bleibt, wie es ist.\n\n"
+          "**Die Zahl zum Mitnehmen.** Eine Zelle zieht etwa mit dem "
+          "700-hPa-Wind. Bei 15 m/s sind das 54 km/h; eine Zelle, die am "
+          "Horizont in 25 km steht, ist in 28 Minuten da, die Böenfront in "
+          "10 bis 15. So lange hat man, um die Wäsche zu holen.",
+          "Convection runs to a timetable, and the timetable can be "
+          "calculated. What follows is an observing log of a summer day "
+          "in the lowlands -- with the clock times, because the clock is "
+          "the instrument.\n\n"
+          "**08:00.** Not a cloud, but the sky is not blue either: it is "
+          "milky, and the haze layer has a surprisingly sharp top. That "
+          "is the nocturnal surface inversion (st-tagesgang): everything "
+          "collects below it and above it the air is clean. From a hill "
+          "one looks down on it.\n\n"
+          "**09:00 to 10:00.** The sun heats the ground, the ground heats "
+          "the lowest air, and the inversion is **eaten away from "
+          "below**: a mixed layer grows upward. It is stratified dry "
+          "adiabatically, so its potential temperature becomes uniform -- "
+          "exactly the picture from th-theta.\n\n"
+          "**The first cloud, and its hour.** It appears as soon as the "
+          "mixed layer reaches its condensation level. If a lid sits "
+          "above the inversion -- a layer at 14 °C at 1500 m -- then the "
+          "surface temperature has to rise far enough that a parcel "
+          "ascending dry adiabatically is still warmer up there. The "
+          "**trigger temperature** is\n\n"
+          r"$$T_{trigger} = T_{lid} + \Gamma_d\,z_{lid} = 14 + 9.8\cdot 1.5 = 28.7$$" "\n\n"
+          "-- in degrees Celsius. "
+          "That is the most useful number in the whole chapter. If the day "
+          "reaches only 26 °C the heaps stay flat under the lid, however "
+          "warm it feels. If it "
+          "reaches 30 °C, things start the moment the thermometer passes "
+          "28.7 °C -- in practice between 11:00 and 13:00. The same "
+          "number explains why a June day at 28 °C gives nothing and an "
+          "August day at 31 °C gives one thunderstorm per valley.\n\n"
+          "**11:00 to 12:00.** First shreds at the LCL, cumulus fractus, "
+          "then humilis with a flat base. And something odd: the base "
+          "**rises** through the day, from 900 m in the morning to 1600 m "
+          "in the afternoon. By fe-hebung $z_{LCL} = 125$ m/K $\\cdot(T - T_d)$, "
+          "and the spread widens from both ends -- `T` rises because the "
+          "sun heats, and $T_d$ **falls** because the deepening mixed layer "
+          "entrains dry air from above. The cloud rides upward on its own "
+          "condensation level.\n\n"
+          "**13:00 to 15:00.** Mediocris, then congestus: towers taller "
+          "than they are wide, with hard edges. Then the top turns "
+          "fibrous -- it has glaciated, Bergeron–Findeisen sets in "
+          "(wo-wachstum), and the shower starts. The **time scale** of a "
+          "cell is depth over updraught: 3 km / 3 m/s = 17 min for the "
+          "water to get up and come back as rain. The observed lifetime "
+          "is 30 to 60 minutes (me-gewitter) -- twice as long, because the "
+          "cell keeps resupplying as long as the updraught stands.\n\n"
+          "**The chain of signs, with times.** In the morning altocumulus "
+          "castellanus or floccus and a dew point above 16 °C: "
+          "instability up into the middle level, thunderstorms likely. At "
+          "midday hard cumulus edges and towers overshooting their "
+          "neighbours. Then the anvil, whose fibres point **against the "
+          "surface wind** -- shear, hence a cell that renews itself. A "
+          "dark rain-free base with an arcus in front of it: the gust "
+          "front, 10 to 20 km ahead of the rain (me-gewitter). Wind "
+          "suddenly arriving from the wrong direction, and the "
+          "temperature drop 15 minutes later. Mammatus on the back side "
+          "means: over.\n\n"
+          "**The counter-check.** Cumulus humilis that is no bigger at "
+          "15:00 than at 13:00 is the most reliable fair-weather forecast "
+          "available without a model: the lid is holding, the daily "
+          "maximum is past, nothing will change.\n\n"
+          "**The number to take along.** A cell travels roughly with the "
+          "700 hPa wind. At 15 m/s that is 54 km/h; a cell standing 25 km "
+          "off on the horizon arrives in 28 minutes, its gust front in 10 "
+          "to 15. That is how long there is to fetch the washing in."),
+        "cu-zyklus", [
+        zahl(t("Über der Inversion liegt ein Deckel: 14 °C in 1500 m. "
+               "Welche Bodentemperatur löst die Konvektion aus? (in °C, "
+               "eine Nachkommastelle)",
+               "A lid sits above the inversion: 14 °C at 1500 m. What "
+               "surface temperature triggers the convection? (in °C, one "
+               "decimal)"),
+             rund(WL_T_TRIGGER, 1), t("°C", "°C"),
+             t("Trockenadiabatisch herunter: `14 + 9,8 × 1,5 = 28,7 °C`. "
+               "Darunter bleibt das Paket in 1500 m kälter als die "
+               "Umgebung und sinkt zurück -- wolkenlos.",
+               "Dry adiabatically back down: `14 + 9.8 × 1.5 = 28.7 °C`. "
+               "Below that the parcel is colder than its surroundings at "
+               "1500 m and sinks back -- no cloud."),
+             toleranz=0.03),
+        zahl(t("Eine Gewitterzelle steht 25 km entfernt und zieht mit dem "
+               "700-hPa-Wind von 15 m/s heran. In wie vielen Minuten ist "
+               "sie da? (in min)",
+               "A thunderstorm cell stands 25 km away and travels with "
+               "the 700 hPa wind of 15 m/s. In how many minutes does it "
+               "arrive? (in min)"),
+             rund(WL_ANKUNFT), t("min", "min"),
+             t("`25 000 m / 15 m/s = 1667 s = 28 min`. Die Böenfront läuft "
+               "10 bis 20 km voraus, ist also schon in 10 bis 15 Minuten "
+               "da.",
+               "`25 000 m / 15 m/s = 1667 s = 28 min`. The gust front "
+               "runs 10 to 20 km ahead, so it arrives within 10 to 15 "
+               "minutes."),
+             toleranz=0.05),
+        mc(t("Die Wolkenbasis liegt um 10 Uhr bei 900 m und um 15 Uhr bei "
+             "1600 m. Warum steigt sie?",
+             "The cloud base is at 900 m at 10:00 and at 1600 m at 15:00. "
+             "Why does it rise?"),
+           [t("Die Mischungsschicht wird tiefer: `T` steigt und $T_d$ sinkt, "
+              "weil trockene Luft von oben eingemischt wird -- die "
+              "Spreizung wächst von beiden Seiten.",
+              "The mixed layer deepens: `T` rises and $T_d$ falls, because "
+              "dry air is entrained from above -- the spread widens from "
+              "both ends."),
+            t("Der Luftdruck fällt im Tagesverlauf.",
+              "The air pressure falls through the day."),
+            t("Die Wolken werden vom Wind angehoben.",
+              "The clouds are lifted by the wind."),
+            t("Die Sonne steht höher, also ist die Wolke scheinbar "
+              "höher.",
+              "The sun is higher, so the cloud only appears higher.")], 0,
+           t("$z_{LCL} = 125$ m/K $\\cdot(T - T_d)$: 7 K Spreizung geben 900 m, "
+             "13 K geben 1600 m. Das Einmischen von oben ist der Grund, "
+             "warum Thermik am späten Nachmittag höher **und** schwächer "
+             "wird.",
+             "$z_{LCL} = 125$ m/K $\\cdot(T - T_d)$: a spread of 7 K gives 900 m, "
+             "13 K gives 1600 m. Entrainment from above is why thermals "
+             "late in the afternoon get higher **and** weaker."),
+           bild="cu-congestus"),
+        ]),
+
+    lektion("wb-sonde",
+        t("Die Wolke als Messgerät: Kippen, Wellen, Billows",
+          "The cloud as an instrument: tilt, waves, billows"),
+        ["scherung-messen", "leewellen", "kelvin-helmholtz"],
+        t("Über der Grenzschicht gibt es keine Messstation. Was dort "
+          "geschieht, weiß man aus zwei Radiosonden am Tag, aus dem "
+          "Modell -- oder vom Hinsehen, denn die Wolke ist ein Zeiger, "
+          "den die Strömung selbst in die Luft hält. Drei Ablesungen "
+          "lohnen sich, und alle drei ergeben eine Zahl.\n\n"
+          "**Erstens: das Kippen misst die Scherung.** Ein Cumulusturm "
+          "ist kein Körper, sondern ein Strom von Paketen, die an der "
+          "Basis losgelassen werden. Jedes steigt mit `w` und treibt mit "
+          "dem Wind seiner Höhe. Nimmt der Wind über die Turmdicke um "
+          "$\\Delta U$ zu, dann hat die Achse am Oberrand die Neigung\n\n"
+          r"$$\tan\alpha = \frac{\Delta U}{w}$$" "\n\n"
+          "gegen die Senkrechte, und die Spitze steht um "
+          "$\\Delta U\\,z/(2w)$ versetzt -- halb so viel, weil die Scherung "
+          "unten noch nicht gewirkt hat. Ein Turm von 4 km Dicke mit "
+          "8 m/s Aufwind, dessen Achse oben 63° gekippt ist, meldet "
+          "$\\Delta U = 8\\cdot\\tan 63^\\circ = 16$ m/s über 4 km, und seine Spitze "
+          "steht 4 km neben der Basis. Das ist genau die Scherung, die "
+          "nach me-gewitter aus einer Einzelzelle eine langlebige macht: "
+          "Der Regen fällt neben den Aufwind statt hinein. **Ein "
+          "senkrechter Turm regnet sich in 30 Minuten selbst aus; ein "
+          "schiefer hält durch.**\n\n"
+          "**Zweitens: der Wellenabstand misst die Schichtung.** Hinter "
+          "einem Gebirgskamm, oder an jeder Sprungschicht mit "
+          "Höhenwind, stehen Wolken in regelmäßigen Abständen: "
+          "Lenticularis-Bänke im Lee, Altocumulus *undulatus* als "
+          "Wellblech. Die Wellenlänge einer stehenden Schwerewelle steht "
+          "schon in der Herleitung zu th-stabilitaet: "
+          "$\\lambda = 2\\pi U/N$. Das lässt sich umdrehen. Man schätzt $\\lambda$ "
+          "an einer bekannten Strecke am Boden ab und nimmt `U` aus dem "
+          "Höhenwind:\n\n"
+          r"$$N = \frac{2\pi U}{\lambda}, \qquad \frac{d\theta}{dz} = \frac{N^2\,\theta}{g}$$" "\n\n"
+          "Bei $\\lambda = 8{,}6$ km und $U = 15$ m/s ist $N = 0{,}011$ /s, und "
+          "mit θ = 290 K folgt $d\\theta/dz = 3{,}6$ K/km. **Das ist die "
+          "Schichtung in 3 km Höhe, abgelesen aus dem Abstand zweier "
+          "Wolken.** Eine Radiosonde, die zehn Minuten später startet, "
+          "gibt denselben Wert.\n\n"
+          "**Drittens: Billows messen, ob es gleich ruckelt.** Auf der "
+          "Oberseite einer Cirrus-Bank oder einer Stratocumulus-Decke "
+          "steht manchmal eine Reihe brechender Wellen, wie Brandung von "
+          "der Seite gesehen: **Kelvin-Helmholtz-Billows**. Sie entstehen, "
+          "wenn die Scherung an einer dünnen Schicht die Stabilität "
+          "überwindet. Das Maß dafür ist die **Richardson-Zahl**\n\n"
+          r"$$\mathrm{Ri} = \frac{N^2}{(du/dz)^2}$$" "\n\n"
+          "-- das Verhältnis der Arbeit, die ein Wirbel gegen die "
+          "Schichtung leisten muss, zur Energie, die ihm die Scherung "
+          "liefert. Nach Miles und Howard ist eine stabil geschichtete "
+          "Scherströmung sicher stabil, solange $\\mathrm{Ri} > 1/4$ überall "
+          "gilt; Instabilität verlangt also $\\mathrm{Ri} < 1/4$ irgendwo, das "
+          "heißt $du/dz > 2N$. Mit $N = 0{,}011$ /s sind das 22 m/s je "
+          "Kilometer. **Wer Billows sieht, sieht eine Schicht, in der die "
+          "Scherung mindestens 22 m/s je Kilometer beträgt** -- und genau "
+          "dort schüttelt es im Flugzeug, bei blauem Himmel.\n\n"
+          "Drei Ablesungen, drei Zahlen: Scherung aus dem Kippen, "
+          "$d\\theta/dz$ aus dem Wellenabstand, eine untere Grenze für "
+          "$du/dz$ aus den Billows. Keine davon braucht ein Gerät; alle "
+          "drei kommen aus Gleichungen, die in diesem Kurs schon "
+          "hergeleitet sind.",
+          "Above the boundary layer there is no weather station. What "
+          "happens up there is known from two radiosondes a day, from "
+          "the model -- or by looking, because a cloud is a pointer the "
+          "flow itself holds up into the air. Three readings are worth "
+          "taking, and each of them yields a number.\n\n"
+          "**First: the tilt measures the shear.** A cumulus tower is not "
+          "a body but a stream of parcels released at its base. Each "
+          "rises at `w` and drifts with the wind at its own height. If "
+          "the wind increases by $\\Delta U$ over the depth of the tower, "
+          "the axis at the top has the slope\n\n"
+          r"$$\tan\alpha = \frac{\Delta U}{w}$$" "\n\n"
+          "against the vertical, and the top stands offset by "
+          "$\\Delta U\\,z/(2w)$ -- half as much, because the shear had not yet "
+          "acted lower down. A tower 4 km deep with an 8 m/s updraught "
+          "whose axis leans 63° at the top reports "
+          "$\\Delta U = 8\\cdot\\tan 63^\\circ = 16$ m/s over 4 km, and its top "
+          "stands 4 km to the side of its base. That is precisely the "
+          "shear which, by me-gewitter, turns a single cell into a "
+          "long-lived one: the rain falls beside the updraught instead of "
+          "into it. **An upright tower rains itself out in 30 minutes; a "
+          "leaning one lasts.**\n\n"
+          "**Second: the wave spacing measures the stratification.** "
+          "Behind a mountain ridge, or at any discontinuity with wind "
+          "aloft, clouds stand at regular intervals: lenticular banks in "
+          "the lee, altocumulus *undulatus* like corrugated iron. The "
+          "wavelength of a standing gravity wave is already in the "
+          "derivation attached to th-stabilitaet: $\\lambda = 2\\pi U/N$. That "
+          "can be turned around. Estimate $\\lambda$ against a known distance "
+          "on the ground and take `U` from the wind aloft:\n\n"
+          r"$$N = \frac{2\pi U}{\lambda}, \qquad \frac{d\theta}{dz} = \frac{N^2\,\theta}{g}$$" "\n\n"
+          "With $\\lambda = 8.6$ km and $U = 15$ m/s, $N = 0.011$ /s, and with "
+          "θ = 290 K that gives $d\\theta/dz = 3.6$ K/km. **That is the "
+          "stratification at 3 km, read off the spacing of two clouds.** A "
+          "radiosonde launched ten minutes later returns the same "
+          "value.\n\n"
+          "**Third: billows measure whether it is about to get bumpy.** "
+          "On top of a cirrus bank or a stratocumulus sheet there is "
+          "sometimes a row of breaking waves, like surf seen from the "
+          "side: **Kelvin–Helmholtz billows**. They form when the shear "
+          "across a thin layer overcomes the stability. The measure of "
+          "that is the **Richardson number**\n\n"
+          r"$$\mathrm{Ri} = \frac{N^2}{(du/dz)^2}$$" "\n\n"
+          "-- the ratio of the work an eddy has to do against the "
+          "stratification to the energy the shear supplies it. By Miles "
+          "and Howard, a stably stratified shear flow is certainly stable "
+          "as long as $\\mathrm{Ri} > 1/4$ everywhere; instability therefore "
+          "requires $\\mathrm{Ri} < 1/4$ somewhere, that is $du/dz > 2N$. With "
+          "$N = 0.011$ /s that is 22 m/s per kilometre. **Anyone who sees "
+          "billows is seeing a layer in which the shear is at least "
+          "22 m/s per kilometre** -- and that is exactly where an "
+          "aircraft is shaken, under a blue sky.\n\n"
+          "Three readings, three numbers: shear from the tilt, "
+          "$d\\theta/dz$ from the wave spacing, a lower bound on $du/dz$ from "
+          "the billows. None of them needs an instrument; all three come "
+          "out of equations this course has already derived."),
+        "wolkenlesen-sonde", [
+        zahl(t("Ein Turm von 4 km Dicke, Aufwind 8 m/s, Scherung 16 m/s "
+               "über die Turmdicke. Wie stark ist die Achse am Oberrand "
+               "gegen die Senkrechte geneigt? (in Grad, eine "
+               "Nachkommastelle)",
+               "A tower 4 km deep, updraught 8 m/s, shear 16 m/s across "
+               "its depth. How far does the axis lean from the vertical "
+               "at the top? (in degrees, one decimal)"),
+             rund(WL_KIPPWINKEL, 1), t("°", "°"),
+             t("`tan α = ΔU/w = 16/8 = 2`, also `α = 63,4°`. Die Spitze "
+               "steht dabei `ΔU·z/(2w) = 16 × 4000 / 16 = 4000 m` neben "
+               "der Basis -- halb so weit, wie die Achsenneigung oben "
+               "vermuten lässt.",
+               "`tan α = ΔU/w = 16/8 = 2`, hence `α = 63.4°`. The top "
+               "stands `ΔU·z/(2w) = 16 × 4000 / 16 = 4000 m` beside the "
+               "base -- half as far as the slope at the top suggests."),
+             toleranz=0.03),
+        zahl(t("Wellenwolken in 8,6 km Abstand, Grundstrom 15 m/s, "
+               "θ = 290 K. Welches dθ/dz zeigt das an? (in K/km, zwei "
+               "Nachkommastellen)",
+               "Wave clouds spaced 8.6 km apart, mean flow 15 m/s, "
+               "θ = 290 K. What dθ/dz does that indicate? (in K/km, two "
+               "decimals)"),
+             rund(WL_DTHETA_DZ, 2), t("K/km", "K/km"),
+             t("`N = 2π·15/8600 = 0,01096 /s`, `N² = 1,20·10⁻⁴ /s²`, "
+               "`dθ/dz = N²θ/g = 1,20·10⁻⁴ × 290 / 9,81 = 3,55·10⁻³ /m "
+               "= 3,55 K/km`. Normal geschichtete Troposphäre.",
+               "`N = 2π·15/8600 = 0.01096 /s`, `N² = 1.20·10⁻⁴ /s²`, "
+               "`dθ/dz = N²θ/g = 1.20·10⁻⁴ × 290 / 9.81 = 3.55·10⁻³ /m "
+               "= 3.55 K/km`. A normally stratified troposphere."),
+             toleranz=0.04),
+        mc(t("Auf der Oberseite einer Cirrus-Bank steht eine Reihe "
+             "brechender Wellen. Was weiß man damit über diese Schicht?",
+             "A row of breaking waves stands on top of a cirrus bank. "
+             "What does that tell you about the layer?"),
+           [t("Dort ist der Höhenwind schwach.",
+              "The wind aloft is weak there."),
+            t("Die Schicht ist gesättigt und kondensiert gleich ganz "
+              "aus.",
+              "The layer is saturated and about to condense out "
+              "entirely."),
+            t("Es regnet in Kürze.", "Rain is about to start."),
+            t("Dort ist $\\mathrm{Ri}$ unter 1/4 gefallen: die Scherung "
+              "beträgt mindestens $2N$, rund 22 m/s je Kilometer -- "
+              "Turbulenz in klarer Luft.",
+              "$\\mathrm{Ri}$ has fallen below 1/4 there: the shear is at "
+              "least $2N$, about 22 m/s per kilometre -- turbulence in "
+              "clear air.")], 3,
+           t("Billows sind ein Scherungsmesser mit Schwelle. Sie sagen "
+             "nicht, wie groß die Scherung ist, aber dass sie mindestens "
+             "$2N$ beträgt -- und das ist die Zahl, die eine "
+             "Turbulenzmeldung auslöst.",
+             "Billows are a shear meter with a threshold. They do not say "
+             "how large the shear is, only that it is at least $2N$ -- and "
+             "that is the number behind a turbulence report."),
+           bild="cirrus"),
+        ]),
+    ])
+
+
+# ===========================================================================
+# 5b  Das Wolkenbuch
+# ===========================================================================
+
+# Die Zuggeschwindigkeit am Himmel taeuscht: der Wind waechst mit der Hoehe
+# etwa so schnell wie die Hoehe selbst, also kuerzt sich z aus U/z heraus.
+WB_WINKEL_CU = math.degrees(7.0 / 1500.0) * 60.0        # °/min, Cu in 1,5 km
+WB_WINKEL_CI = math.degrees(40.0 / 10000.0) * 60.0      # °/min, Ci in 10 km
+# Wo die Standardatmosphaere −40 °C erreicht: darueber ist jede Wolke Eis.
+WB_EIS_HOEHE = (15.0 - (-40.0)) / 6.5                   # km
+# Basishoehe aus dem Wolkenschatten, z = s·tan h
+WB_SCHATTEN_S = 2500.0                                  # m
+WB_SCHATTEN_H = 40.0                                    # °
+WB_SCHATTEN_Z = WB_SCHATTEN_S * math.tan(math.radians(WB_SCHATTEN_H))
+# Scheinbare Groesse der Ballen: Cirrocumulus unter 1°, Altocumulus 1-5°,
+# Stratocumulus darueber. Ein Ballen von 600 m in 6 km Hoehe:
+WB_BALLEN_WINKEL = math.degrees(600.0 / 6000.0)         # °
+# Wellenlaenge einer undulatus-Reihe: die stehende Welle aus th-stabilitaet
+WB_U_WELLE = 15.0                                       # m/s
+WB_N_WELLE = 0.011                                      # 1/s
+WB_UNDULATUS = 2 * math.pi * WB_U_WELLE / WB_N_WELLE    # m
+# Mammatus: negativer Auftrieb b = g·ΔT/T bei 2 K Unterkuehlung
+WB_MAMMATUS_B = G * 2.0 / 280.0                         # m/s²
+WB_MAMMATUS_V = math.sqrt(2 * WB_MAMMATUS_B * 500.0)    # m/s nach 500 m
+# Virga: Verdunsten ist Diffusionswachstum mit S < 0 (wo-wachstum), also
+# r² = r₀² − 2·ξ·|S|·t. Ein Tropfen von 100 μm in 50 % untersaettigter Luft:
+WB_VIRGA_R = 100.0e-6                                   # m
+WB_VIRGA_T = WB_VIRGA_R ** 2 / (2 * XI_PROZENT * 50.0)  # s
+WB_VIRGA_V = 0.7                                        # m/s, wo-wachstum
+WB_VIRGA_WEG = WB_VIRGA_T * WB_VIRGA_V                  # m
+# Schmidt-Appleman: die Steigung der Mischungsgerade von Abgas und Umgebung
+WB_EI = 1.25        # kg Wasser je kg Kerosin
+WB_Q = 43.0e6       # J/kg Heizwert
+WB_ETA = 0.30       # Vortriebswirkungsgrad
+WB_EPSILON = 0.622  # M_v/M_L
+WB_P_FLUG = 25000.0                                     # Pa, rund 250 hPa
+WB_G_APPLEMAN = WB_EI * C_P * WB_P_FLUG / (WB_EPSILON * WB_Q * (1 - WB_ETA))
+
+
+def e_s_eis(T_celsius):
+    """Magnus über Eis, hPa. Dieselbe Form, steilere Beiwerte, weil
+    L_s = L_v + L_f eingeht."""
+    return 6.112 * math.exp(22.46 * T_celsius / (272.62 + T_celsius))
+
+
+def de_s_dT(T_celsius):
+    """Steigung der Magnus-Kurve über Wasser, Pa/K."""
+    return 100.0 * e_s(T_celsius) * 17.62 * 243.12 / (243.12 + T_celsius) ** 2
+
+
+def wb_schwelle(steigung):
+    """Die Temperatur, in der die Mischungsgerade die Sättigungskurve
+    berührt: dort ist de_s/dT gleich der Steigung der Geraden."""
+    tief, hoch = -70.0, -5.0
+    for _ in range(80):
+        mitte = 0.5 * (tief + hoch)
+        if de_s_dT(mitte) > steigung:
+            hoch = mitte
+        else:
+            tief = mitte
+    return 0.5 * (tief + hoch)
+
+
+WB_T_SCHWELLE = wb_schwelle(WB_G_APPLEMAN)              # °C
+WB_Z_SCHWELLE = (15.0 - WB_T_SCHWELLE) / 6.5            # km, at-standard
+WB_EIS_ANTEIL_15 = e_s_eis(-15.0) / e_s(-15.0) * 100.0  # %
+WB_EIS_ANTEIL_45 = e_s_eis(-45.0) / e_s(-45.0) * 100.0  # %
+
+K_WOLKENBUCH = kapitel(
+    "wolkenbuch", t("Das Wolkenbuch: Arten, Beinamen, Sonderformen",
+                    "The cloud book: species, supplementary features, "
+                    "special forms"), 5,
+    t("wo-gattungen gibt den zehn Wolken ihre Namen. Hier kommt die Ebene "
+      "darunter: Arten, Unterarten, Begleit- und Sonderformen -- und die "
+      "Frage, die einen Physiker daran interessiert: Was sagt diese Form "
+      "über die Luft, in der sie steht? Jede Endung ist eine Aussage über "
+      "einen Prozess, nicht über ein Aussehen.",
+      "wo-gattungen gives the ten clouds their names. This is the level "
+      "below it: species, varieties, accessory clouds and supplementary "
+      "features -- and the question a physicist asks of them: what does "
+      "this shape say about the air it stands in? Every ending is a "
+      "statement about a process, not about an appearance."), [
+
+    lektion("wb-stockwerke",
+        t("Hoch, mittel, tief -- und wie man sich dabei irrt",
+          "High, middle, low -- and how one gets it wrong"),
+        ["stockwerke", "randschaerfe", "halo-oder-korona", "schattenhoehe"],
+        t("Man tritt vor die Tür, sieht eine Wolke und soll sagen, in "
+          "welchem Stockwerk sie hängt. Das beliebteste Kriterium ist "
+          "ausgerechnet das untauglichste: **wie schnell sie zieht**. Ein "
+          "Cumulus in 1,5 km Höhe, getragen von 7 m/s, überstreicht am "
+          "Himmel die Winkelgeschwindigkeit $\\omega = U/z$, also 16°/min. "
+          "Ein Cirrus in 10 km Höhe im 40 m/s starken Höhenwind: 14°/min. "
+          "Praktisch dasselbe -- und das ist kein Zufall. Der thermische "
+          "Wind (dy-thermisch) lässt `U` mit der Höhe wachsen, über der "
+          "mittleren Breite grob so schnell wie `z` selbst, und dann kürzt "
+          "sich die Höhe aus `U/z` heraus. Wer nach der Zuggeschwindigkeit "
+          "geht, rät.\n\n"
+          "**Der Rand.** Ein Wassertröpfchen am Wolkenrand verdunstet in "
+          "Sekunden, sobald es in untersättigte Luft gerät; der Rand bleibt "
+          "dort scharf, wo die Sättigung endet. Eiskristalle wachsen "
+          "stattdessen weiter (Bergeron, wo-wachstum), werden groß, fallen "
+          "und werden vom Höhenwind ausgekämmt: Der Rand franst zu Fasern "
+          "aus. **Scharf heißt Wasser, faserig heißt Eis.** Und Eis heißt "
+          "Höhe -- bei −10 °C gefriert reines Wolkenwasser noch nicht von "
+          "selbst, erst bei −40 °C ist jeder Tropfen zwangsläufig Eis. In "
+          "der Standardatmosphäre (at-standard, $T = 15 - 6{,}5\\,z$ in °C "
+          "und km) liegt diese Linie bei 8,5 km. Darüber gibt es nur "
+          "Eiswolken, darunter beides -- und daraus folgt die Asymmetrie "
+          "des Schlusses: Ein **scharfer** Rand beweist, dass die Wolke "
+          "unter 8,5 km steht; ein faseriger macht die Höhe nur "
+          "wahrscheinlich, denn Eis gibt es auch tiefer.\n\n"
+          "**Halo oder Korona.** Der 22°-Ring um Sonne oder Mond ist "
+          "Brechung im sechseckigen Eisprisma (op-regenbogen) -- also Eis, "
+          "also Cirrostratus. Ein enger bunter Ring von 2 bis 5°, innen "
+          "weiß und außen rot, ist Beugung an Wassertröpfchen -- also "
+          "Wasser, also Altocumulus oder dünner Stratus. Verwechseln kann "
+          "man die beiden nur, wenn man nicht misst: Die Faust am "
+          "ausgestreckten Arm deckt etwa 8°, der Halo liegt deutlich "
+          "außerhalb, die Korona weit innerhalb.\n\n"
+          "**Die Graustufe der Basis.** Grau ist optische Dicke, und "
+          "optische Dicke ist Flüssigwasserweg. Der **Altostratus** lässt "
+          "die Sonnenscheibe als Scheibe durch, aber kein Objekt wirft "
+          "mehr Schatten -- das ist die Ansage: mittelhoch, einige hundert "
+          "Meter dick. Wird die Scheibe unkenntlich und die Basis "
+          "dunkelgrau und regnend, ist es **Nimbostratus**, und der steht "
+          "nicht in einem Stockwerk, sondern durch alle drei. "
+          "**Cirrostratus** dagegen löscht die Scheibe nie und macht die "
+          "Schatten nur weich.\n\n"
+          "**Der Schatten.** Der verlässlichste Griff, weil er rechnet "
+          "statt zu schätzen. Steht die Sonne unter dem Höhenwinkel `h` "
+          "und liegt der Schatten der Wolke um die Strecke `s` neben ihr "
+          "am Boden, dann ist ihre Basis in der Höhe\n\n"
+          r"$$z = s\,\tan h$$" "\n\n"
+          "Bei $s = 2{,}5$ km und $h = 40^\\circ$ sind das 2100 m. Das ist "
+          "die Gegenprobe zur 125-m-Regel aus fe-hebung: Wer am Boden "
+          "24 °C und 12 °C Taupunkt gemessen hat, erwartet seine "
+          "Cumulus-Basis in 1500 m. Kommen aus dem Schatten 2100 m heraus, "
+          "dann stammt diese Wolke **nicht** aus der Bodenschicht -- sie "
+          "ist über einer Inversion entstanden, aus feuchterer Luft weiter "
+          "oben, und die 125-m-Regel gilt für sie nicht.\n\n"
+          "Zuletzt das Stockwerk selbst, und dass es keine festen Zahlen "
+          "hat. Die WMO staffelt nach Breite, weil die Tropopause nach "
+          "Breite staffelt: tief überall 0 bis 2 km; mittel polar 2 bis 4, "
+          "gemäßigt 2 bis 7, tropisch 2 bis 8 km; hoch polar 3 bis 8, "
+          "gemäßigt 5 bis 13, tropisch 6 bis 18 km. Dieselbe Wolke in "
+          "derselben Höhe heißt auf Spitzbergen Cirrus und in Jakarta "
+          "Altocumulus. Der Grund steht in fe-hebung: Die feuchte "
+          "Konvektion stellt die Troposphäre so hoch, wie sie Wärme "
+          "hinaufträgt, und in den Tropen trägt sie 18 km hoch.",
+          "You step outside, see a cloud and are supposed to say which "
+          "level it hangs in. The most popular criterion is precisely the "
+          "most useless one: **how fast it moves**. A cumulus at 1.5 km, "
+          "carried along at 7 m/s, sweeps the sky at the angular rate "
+          "$\\omega = U/z$, which is 16°/min. A cirrus at 10 km in a "
+          "40 m/s upper wind: 14°/min. Practically the same -- and that is "
+          "no accident. The thermal wind (dy-thermisch) makes `U` grow "
+          "with height, in midlatitudes roughly as fast as `z` itself, and "
+          "then the height cancels out of `U/z`. Judging by apparent speed "
+          "is guessing.\n\n"
+          "**The edge.** A water droplet at the cloud edge evaporates "
+          "within seconds once it reaches subsaturated air; the edge stays "
+          "sharp exactly where saturation ends. Ice crystals instead keep "
+          "growing (Bergeron, wo-wachstum), get large, fall, and are "
+          "combed out by the upper wind: the edge frays into fibres. "
+          "**Sharp means water, fibrous means ice.** And ice means height "
+          "-- at −10 °C pure cloud water still does not freeze by itself, "
+          "and only at −40 °C is every droplet inevitably ice. In the "
+          "standard atmosphere (at-standard, $T = 15 - 6.5\\,z$ in °C and "
+          "km) that line sits at 8.5 km. Above it there are only ice "
+          "clouds, below it both -- and hence the asymmetry of the "
+          "inference: a **sharp** edge proves the cloud stands below "
+          "8.5 km; a fibrous one only makes height likely, because there "
+          "is ice lower down as well.\n\n"
+          "**Halo or corona.** The 22° ring around sun or moon is "
+          "refraction in the hexagonal ice prism (op-regenbogen) -- so "
+          "ice, so cirrostratus. A tight coloured ring of 2 to 5°, white "
+          "inside and red outside, is diffraction by water droplets -- so "
+          "water, so altocumulus or thin stratus. The two can only be "
+          "confused by someone who does not measure: a fist at arm's "
+          "length covers about 8°, the halo lies well outside it, the "
+          "corona far inside.\n\n"
+          "**The grey of the base.** Grey is optical depth, and optical "
+          "depth is liquid water path. **Altostratus** lets the sun "
+          "through as a disc, but nothing casts a shadow any more -- that "
+          "is the statement: middle level, a few hundred metres thick. "
+          "Once the disc becomes unrecognisable and the base goes dark "
+          "grey and rains, it is **nimbostratus**, and that one does not "
+          "sit in a level at all but spans all three. **Cirrostratus**, by "
+          "contrast, never extinguishes the disc and only softens "
+          "the shadows.\n\n"
+          "**The shadow.** The most reliable handle, because it computes "
+          "instead of estimating. If the sun stands at elevation `h` and "
+          "the cloud's shadow lies a distance `s` to the side of it on the "
+          "ground, its base is at the height\n\n"
+          r"$$z = s\,\tan h$$" "\n\n"
+          "With $s = 2.5$ km and $h = 40^\\circ$ that is 2100 m. And that "
+          "is the cross-check on the 125 m rule from fe-hebung: someone "
+          "who measured 24 °C and a dew point of 12 °C at the ground "
+          "expects his cumulus base at 1500 m. If the shadow gives 2100 m, "
+          "then this cloud does **not** come from the surface layer -- it "
+          "formed above an inversion, out of moister air higher up, and "
+          "the 125 m rule does not apply to it.\n\n"
+          "Finally the levels themselves, and the fact that they have no "
+          "fixed numbers. The WMO grades them by latitude because the "
+          "tropopause is graded by latitude: low everywhere 0 to 2 km; "
+          "middle polar 2 to 4, temperate 2 to 7, tropical 2 to 8 km; high "
+          "polar 3 to 8, temperate 5 to 13, tropical 6 to 18 km. The same "
+          "cloud at the same height is called cirrus in Svalbard and "
+          "altocumulus in Jakarta. The reason is in fe-hebung: moist "
+          "convection sets the troposphere as high as it carries heat, and "
+          "in the tropics it carries it 18 km up."),
+        "wolkenbuch-stockwerke", [
+        zahl(t("Der Schatten einer Wolke liegt 2500 m neben ihr, die Sonne "
+               "steht 40° hoch. Wie hoch ist ihre Basis? (in m)",
+               "A cloud's shadow lies 2500 m to the side of it, the sun "
+               "stands 40° high. How high is its base? (in m)"),
+             rund(WB_SCHATTEN_Z), t("m", "m"),
+             t("`z = s·tan h = 2500 × tan 40° = 2500 × 0,839 = 2100 m`. "
+               "Steht die Sonne tiefer, wird der Schatten länger und der "
+               "Tangens kleiner -- das Produkt bleibt die Höhe.",
+               "`z = s·tan h = 2500 × tan 40° = 2500 × 0.839 = 2100 m`. "
+               "With a lower sun the shadow is longer and the tangent "
+               "smaller -- the product stays the height."),
+             toleranz=0.03),
+        mc(t("Ein Cumulus in 1,5 km und ein Cirrus in 10 km Höhe ziehen "
+             "mit fast derselben Winkelgeschwindigkeit über den Himmel. "
+             "Warum?",
+             "A cumulus at 1.5 km and a cirrus at 10 km sweep the sky at "
+             "almost the same angular rate. Why?"),
+           [t("Zufall -- Höhenwinde sind einfach sehr verschieden.",
+              "Coincidence -- upper winds are simply very variable."),
+            t("Weil der Wind wegen des thermischen Windes mit der Höhe "
+              "ähnlich schnell wächst wie die Höhe selbst, und `U/z` "
+              "deshalb stehen bleibt.",
+              "Because the thermal wind makes the wind grow with height "
+              "at about the same rate as the height itself, so `U/z` "
+              "stays put."),
+            t("Weil die Winkelgeschwindigkeit nicht von der Höhe abhängt.",
+              "Because angular rate does not depend on height at all."),
+            t("Weil Cirrus in Wirklichkeit viel tiefer hängt.",
+              "Because cirrus actually hangs much lower.")], 1,
+           t("16°/min gegen 14°/min: `7/1500` gegen `40/10000`. Das "
+             "Verhältnis von Wind zu Höhe ist in der Troposphäre "
+             "erstaunlich konstant, weil beide am Temperaturgefälle "
+             "zwischen Pol und Äquator hängen (dy-thermisch). Deshalb "
+             "taugt die Zuggeschwindigkeit nicht zum Schätzen des "
+             "Stockwerks.",
+             "16°/min against 14°/min: `7/1500` against `40/10000`. The "
+             "ratio of wind to height is remarkably constant through the "
+             "troposphere, because both hang on the pole-to-equator "
+             "temperature gradient (dy-thermisch). That is why apparent "
+             "speed is useless for guessing the level."),
+           bild="cirrus"),
+        mc(t("Um die Sonne steht ein enger bunter Ring von etwa 3°, innen "
+             "weiß. In welcher Wolke stehen Sie?",
+             "A tight coloured ring of about 3° surrounds the sun, white "
+             "on the inside. What cloud are you looking through?"),
+           [t("Cirrostratus -- das ist der 22°-Halo.",
+              "Cirrostratus -- that is the 22° halo."),
+            t("Cumulonimbus -- der Amboss streut.",
+              "Cumulonimbus -- the anvil scatters."),
+            t("Eine Wassertröpfchenwolke, Altocumulus oder dünner "
+              "Stratus: 3° ist eine Korona, also Beugung, also "
+              "Tropfen.",
+              "A water droplet cloud, altocumulus or thin stratus: 3° is "
+              "a corona, so diffraction, so droplets."),
+            t("Nimbostratus -- Regen bricht das Licht.",
+              "Nimbostratus -- rain refracts the light.")], 2,
+           t("Beugung macht enge Ringe (Faust am ausgestreckten Arm = 8°, "
+             "die Korona liegt weit innerhalb), Brechung im Eisprisma "
+             "macht den weiten 22°-Ring. Die Korona ist also der "
+             "Phasentest: Tröpfchen, kein Eis.",
+             "Diffraction makes tight rings (a fist at arm's length = 8°, "
+             "the corona lies far inside it), refraction in the ice prism "
+             "makes the wide 22° ring. The corona is therefore the phase "
+             "test: droplets, not ice.")),
+        ]),
+
+    lektion("wb-arten",
+        t("Arten und Beinamen: das Bestimmungsschema",
+          "Species and varieties: the key"),
+        ["wolkenarten", "unterarten", "undulatus", "ballenwinkel"],
+        t("Die Gattung ist der Nachname, die **Art** der Vorname -- und "
+          "erst der Vorname sagt, was gerade passiert. Die WMO kennt "
+          "vierzehn Arten, und jede ist die Aussage über einen Prozess. "
+          "Wer sie liest, braucht keinen Wetterbericht für die nächste "
+          "Stunde.\n\n"
+          "**Beim Cumulus** steht die Art für das Verhältnis von Höhe zu "
+          "Breite, also für die Stärke des Auftriebs: *humilis* breiter "
+          "als hoch (Deckel kurz über der Basis), *mediocris* etwa so hoch "
+          "wie breit, *congestus* höher als breit mit Blumenkohlrändern "
+          "(kein Deckel mehr, der Turm nimmt sich, was die CAPE aus "
+          "fe-emagram hergibt), *fractus* zerrissen ohne flache Basis "
+          "(kein Kondensationsniveau mehr -- die Luft ist nicht mehr "
+          "durchmischt, sondern turbulent).\n\n"
+          "**Beim Cirrus** steht die Art für die Scherung. *fibratus* sind "
+          "gerade Fasern ohne Haken: Die Kristalle fallen, aber der Wind "
+          "ändert sich mit der Höhe nicht. *uncinus*, der Haken, ist "
+          "genau diese Änderung: Der Kristall fällt aus seinem "
+          "Entstehungsniveau in langsamere Luft darunter und bleibt "
+          "zurück, der Fallstreifen krümmt sich -- ein Scherungsmesser aus "
+          "Eis. *spissatus* ist dick und grau, meist der übrig gebliebene "
+          "Amboss eines Gewitters von gestern.\n\n"
+          "**Im Mittelstockwerk** trägt die Art die ganze Information: "
+          "*stratiformis* heißt Hebung einer ganzen Schicht, *lenticularis* "
+          "die stehende glatte Linse (laminare Welle, also sehr stabile "
+          "Schichtung -- durchgerechnet in me-foehn), *castellanus* "
+          "Türmchen auf gemeinsamer Basis (Labilität **in** dieser Höhe, "
+          "das klassische Gewitterzeichen am Morgen), *floccus* "
+          "flockenartig mit zerfaserter Unterseite (dieselbe Labilität, "
+          "schon weiter: die Flocken regnen in sich hinein).\n\n"
+          "Darunter die **Unterarten**, die nicht die Wolke, sondern das "
+          "Feld beschreiben: *undulatus* in Wellen, *radiatus* in "
+          "parallelen Bändern längs des Windes, *duplicatus* in zwei "
+          "übereinanderliegenden Lagen, *perlucidus* mit Lücken, durch die "
+          "man den Himmel sieht, *translucidus* so dünn, dass die Sonne "
+          "durchkommt, *opacus* nicht mehr. Die Regel dahinter ist knapp: "
+          "**-cumuliformis heißt Auftrieb von unten, -stratiformis heißt "
+          "Hebung einer Schicht, undulatus heißt Welle an einer "
+          "Sprungschicht.**\n\n"
+          "Zwei Zahlen, mit denen man bestimmt, statt zu raten. Die erste "
+          "ist der **Ballenwinkel**, und sie ist die amtliche "
+          "Unterscheidung zwischen drei Gattungen, die gleich aussehen: "
+          "Cirrocumulus hat Ballen unter 1°, Altocumulus 1 bis 5°, "
+          "Stratocumulus über 5°. Man hält den kleinen Finger an "
+          "ausgestrecktem Arm hoch -- er deckt etwa 1°. Ein Ballen von "
+          "600 m Durchmesser in 6 km Höhe erscheint unter "
+          "`arctan(600/6000) = 5,7°`: Bei dieser Größe ist die "
+          "Wolke also tief, nicht mittelhoch, und man hat eben die "
+          "Entfernung gemessen, ohne sie zu kennen.\n\n"
+          "Die zweite ist die **Wellenlänge einer undulatus-Reihe**. Eine "
+          "Welle an einer stabilen Sprungschicht steht still, wenn ihre "
+          "Phasengeschwindigkeit den Wind aufhebt; das Paket schwingt mit "
+          "der Brunt-Väisälä-Frequenz `N` und wird dabei mit `U` "
+          "weitergetragen, also $\\lambda = 2\\pi U/N$ -- dieselbe "
+          "Gleichung, die in th-stabilitaet den Abstand der "
+          "Lenticularis-Wolken hinter einem Gebirgskamm liefert. Mit "
+          "$U = 15$ m/s und $N = 0{,}011$ /s kommen 8,6 km heraus. Und das "
+          "ist überprüfbar: Zählt man die Wellenberge einer "
+          "Altocumulus-undulatus-Reihe über eine bekannte Strecke -- zwei "
+          "Ortschaften, deren Abstand man weiß --, kommt man auf einige "
+          "Kilometer je Welle und hat damit die Schichtungsstabilität "
+          "mehrere Kilometer über sich gemessen, vom Boden aus, mit den "
+          "Augen.",
+          "The genus is the surname, the **species** the given name -- and "
+          "only the given name says what is happening right now. The WMO "
+          "lists fourteen species, and each one is a statement about a "
+          "process. Whoever reads them needs no forecast for the next "
+          "hour.\n\n"
+          "**For cumulus** the species gives the ratio of height to "
+          "width, hence the strength of the updraught: *humilis* wider "
+          "than tall (a lid just above the base), *mediocris* about as "
+          "tall as wide, *congestus* taller than wide with cauliflower "
+          "edges (no lid left, the tower takes whatever CAPE from "
+          "fe-emagram allows), *fractus* ragged with no flat base at all "
+          "(no condensation level any more -- the air is no longer mixed "
+          "but turbulent).\n\n"
+          "**For cirrus** the species gives the shear. *fibratus* are "
+          "straight fibres without hooks: the crystals fall, but the wind "
+          "does not change with height. *uncinus*, the hook, is precisely "
+          "that change: the crystal drops out of the level where it formed "
+          "into slower air below and lags behind, so the fallstreak bends "
+          "-- a shear meter made of ice. *spissatus* is thick and grey, "
+          "usually the leftover anvil of yesterday's thunderstorm.\n\n"
+          "**At middle level** the species carries all of the information: "
+          "*stratiformis* means the lifting of a whole layer, "
+          "*lenticularis* the smooth standing lens (a laminar wave, hence "
+          "very stable stratification -- worked through in me-foehn), "
+          "*castellanus* turrets on a common base (instability **at** that "
+          "height, the classic morning sign of thunderstorms), *floccus* "
+          "tufts with a frayed underside (the same instability, one step "
+          "on: the tufts are raining into themselves).\n\n"
+          "Below that the **varieties**, which describe not the cloud but "
+          "the field: *undulatus* in waves, *radiatus* in parallel bands "
+          "along the wind, *duplicatus* in two layers one above the other, "
+          "*perlucidus* with gaps that show the sky, *translucidus* thin "
+          "enough for the sun to come through, *opacus* no longer. The "
+          "rule behind it is short: **-cumuliformis means buoyancy from "
+          "below, -stratiformis means the lifting of a layer, undulatus "
+          "means a wave on a stable interface.**\n\n"
+          "Two numbers with which one identifies rather than guesses. The "
+          "first is the **element angle**, and it is the official "
+          "distinction between three genera that look alike: cirrocumulus "
+          "has elements below 1°, altocumulus 1 to 5°, stratocumulus above "
+          "5°. Hold up your little finger at arm's length -- it covers "
+          "about 1°. An element 600 m across at 6 km appears at "
+          "`arctan(600/6000) = 5.7°`: at that apparent size the "
+          "cloud is low, not mid-level, and you have just measured a "
+          "distance without knowing it.\n\n"
+          "The second is the **wavelength of an undulatus train**. A wave "
+          "on a stable interface stands still when its phase speed "
+          "cancels the wind; the parcel oscillates at the Brunt-Väisälä "
+          "frequency `N` while being carried along at `U`, hence "
+          "$\\lambda = 2\\pi U/N$ -- the same equation that in "
+          "th-stabilitaet gives the spacing of lenticular clouds behind a "
+          "ridge. With $U = 15$ m/s and $N = 0.011$ /s that comes to "
+          "8.6 km. And it is checkable: count the wave crests of an "
+          "altocumulus undulatus train across a known distance -- two "
+          "villages whose separation you know -- and you arrive at a few "
+          "kilometres per wave, having thereby measured the stability of "
+          "the stratification several kilometres above you, from the "
+          "ground, with your eyes."),
+        "lenticularis", [
+        zahl(t("Eine Altocumulus-undulatus-Reihe steht in einer Schicht "
+               "mit N = 0,011 /s, der Wind dort weht mit 15 m/s. "
+               "Wellenlänge nach λ = 2πU/N? (in km, eine "
+               "Nachkommastelle)",
+               "An altocumulus undulatus train sits in a layer with "
+               "N = 0.011 /s, where the wind blows at 15 m/s. Wavelength "
+               "from λ = 2πU/N? (in km, one decimal)"),
+             rund(WB_UNDULATUS / 1000.0, 1), t("km", "km"),
+             t("`λ = 2π × 15 / 0,011 = 8570 m`. Dieselbe Rechnung wie für "
+               "Lee-Wellen in th-stabilitaet; nur steht die Sprungschicht "
+               "hier nicht hinter einem Berg, sondern im freien "
+               "Luftraum.",
+               "`λ = 2π × 15 / 0.011 = 8570 m`. The same calculation as "
+               "for lee waves in th-stabilitaet; only here the interface "
+               "is not behind a mountain but free in the air."),
+             toleranz=0.04),
+        mc(t("Morgens um 8 Uhr stehen im Mittelstockwerk Türmchen auf "
+             "gemeinsamer Basis -- Altocumulus castellanus. Was folgt "
+             "daraus für den Nachmittag?",
+             "At 8 in the morning there are turrets on a common base at "
+             "middle level -- altocumulus castellanus. What follows for "
+             "the afternoon?"),
+           [t("Die Luft in 3 bis 5 km ist labil geschichtet; erreicht die "
+              "Bodenkonvektion diese Höhe, wächst sie durch -- Gewitter "
+              "am Nachmittag.",
+              "The air at 3 to 5 km is unstably stratified; once surface "
+              "convection reaches that height it keeps going -- "
+              "thunderstorms in the afternoon."),
+            t("Beständiges Hochdruckwetter, die Türmchen sind "
+              "Absinken.",
+              "Settled high pressure; the turrets are subsidence."),
+            t("Eine Warmfront in sechs Stunden.",
+              "A warm front in six hours."),
+            t("Nichts -- die Art sagt nur etwas über das Aussehen.",
+              "Nothing -- the species only describes appearance.")], 0,
+           t("Die Türmchen sind Auftrieb, und Auftrieb in 4 km heißt "
+             "$d\\theta/dz < 0$ in 4 km. Der Deckel liegt dann nicht über, "
+             "sondern unter der labilen Schicht: Was dort hineinstößt, "
+             "steigt weiter. Im Emagramm (fe-emagram) sieht man dieselbe "
+             "Aussage als Umgebungskurve, die steiler als die "
+             "Feuchtadiabate verläuft.",
+             "The turrets are buoyancy, and buoyancy at 4 km means "
+             "$d\\theta/dz < 0$ at 4 km. The lid then lies below, not "
+             "above, the unstable layer: whatever pushes into it keeps "
+             "rising. On the emagram (fe-emagram) the same statement "
+             "appears as an environmental curve steeper than the moist "
+             "adiabat."),
+           bild="ac-castellanus"),
+        mc(t("Cirrus uncinus: Woher kommt der Haken am Ende der Faser?",
+             "Cirrus uncinus: where does the hook at the end of the fibre "
+             "come from?"),
+           [t("Aus dem Gefrieren der Tropfen.",
+              "From the freezing of droplets."),
+            t("Aus der Scherung: Der fallende Kristall gerät in langsamere "
+              "Luft unter seinem Entstehungsniveau und bleibt zurück.",
+              "From shear: the falling crystal enters slower air below the "
+              "level where it formed and lags behind."),
+            t("Aus der Coriolis-Kraft am einzelnen Kristall.",
+              "From the Coriolis force on the individual crystal."),
+            t("Aus einer Welle im Höhenwind.",
+              "From a wave in the upper wind.")], 1,
+           t("Der Kopf der Faser ist das Entstehungsniveau, der Schweif "
+             "der Fallstreifen. Seine Krümmung ist $du/dz$, mit dem Auge "
+             "gelesen: ein starker Haken heißt starke Scherung, und "
+             "starke Scherung in der Höhe heißt Jetstream in der Nähe. "
+             "Cirrus fibratus ohne Haken heißt umgekehrt, dass sich der "
+             "Wind über diese Schicht kaum ändert.",
+             "The head of the fibre is the level where it formed, the "
+             "tail is the fallstreak. Its curvature is $du/dz$, read by "
+             "eye: a strong hook means strong shear, and strong shear "
+             "aloft means a jet stream nearby. Cirrus fibratus without "
+             "hooks conversely means the wind hardly changes across that "
+             "layer.")),
+        ]),
+
+    lektion("wb-sonderformen",
+        t("Sonderformen: mammatus, pileus, incus, virga",
+          "Supplementary features: mammatus, pileus, incus, virga"),
+        ["sonderformen", "mammatus", "pileus", "virga"],
+        t("Die dritte Ebene unter Gattung und Art sind die "
+          "**Sonderformen** und die **Begleitwolken** -- und sie sind die "
+          "interessanteste, weil jede einzelne der sichtbare Abdruck eines "
+          "Mechanismus ist, den der Kurs schon hergeleitet hat.\n\n"
+          "**incus**, der Amboss. Der Turm steigt, bis er in eine Schicht "
+          "kommt, in der die Temperatur mit der Höhe nicht mehr fällt: die "
+          "Tropopause. Dort ist $N^2$ groß (th-stabilitaet), der Auftrieb "
+          "kehrt sich um, und die Luft kann nur noch seitlich weg. Die "
+          "flache Oberkante ist also ein direkt sichtbarer Höhenmesser -- "
+          "sie liegt in gemäßigten Breiten bei 11 km, in den Tropen bei "
+          "16. Schießt in der Mitte noch eine Kuppel darüber hinaus "
+          "(eine überschießende Kuppel, *overshooting top*), dann hat "
+          "der Aufwind mehr Schwung als der Deckel Widerstand -- das ist "
+          "das Zeichen für eine schwere Zelle.\n\n"
+          "**pileus**, die Mütze. Über der Spitze eines schnell steigenden "
+          "Turms liegt eine glatte, dünne, linsenförmige Kappe, die der "
+          "Turm Minuten später durchstößt und auffrisst. Sie entsteht, "
+          "weil der Turm die **feuchte Schicht über sich** anhebt wie ein "
+          "Kolben, und diese Schicht erreicht ihr Kondensationsniveau, "
+          "bevor der Turm sie erreicht. Der pileus steht also genau am "
+          "LCL der gehobenen Schicht (fe-hebung) und ist Hebung, bevor "
+          "etwas da ist, das hebt. Ein pileus heißt: Dieser Turm ist "
+          "schnell, und über ihm ist es feucht -- er wird weiterwachsen. "
+          "Liegt die Kappe als dünner Schleier an der Seite statt oben, "
+          "heißt sie *velum*.\n\n"
+          "**mammatus**, die Beutel. An der Unterseite des Amboss hängen "
+          "glatte, runde Säcke. Sie sind kein Aufwind, sondern das "
+          "Gegenteil: In der trockenen Luft unter dem Amboss sublimieren "
+          "die herausfallenden Eiskristalle, der Entzug der "
+          "Sublimationswärme kühlt diese Luft, sie wird schwerer als ihre "
+          "Umgebung und sinkt in Blasen. Der Auftrieb ist $b = g\\,\\Delta "
+          "T/T$; bei 2 K Unterkühlung und 280 K sind das 0,070 m/s², "
+          "0,7 % von `g`. Über 500 m Fallhöhe gäbe das $v = \\sqrt{2bh} = "
+          "8{,}4$ m/s -- in Wirklichkeit weniger, weil die Blase mischt. "
+          "Die Zahl erklärt aber das Aussehen: So sanft, dass die Beutel "
+          "rund und glatt bleiben, statt zu zerreißen.\n\n"
+          "**virga**, die Fallstreifen, die den Boden nicht erreichen. "
+          "Unter der Basis hängen schräge Schleier, die in der Luft "
+          "aufhören. Wie weit kommt ein Tropfen? Verdunsten ist "
+          "Diffusionswachstum mit negativer Übersättigung, also dieselbe "
+          "Gleichung wie in wo-wachstum, nur rückwärts: $r^2 = r_0^2 - "
+          "2\\xi|S|t$. Ein Tropfen von 100 μm in Luft mit 50 % "
+          "Untersättigung ist nach $t = r_0^2/(2\\xi|S|) = 167$ s "
+          "verschwunden. Seine Fallgeschwindigkeit ist in diesem Bereich "
+          "0,7 m/s (Stokes gilt da schon nicht mehr -- $Re \\approx 10$, "
+          "und wo-wachstum rechnet den Wert vor), also kommt er rund "
+          "120 m. Genau das ist die beobachtete Länge eines "
+          "Fallstreifens, und genau deshalb erreicht Nieseln nur aus "
+          "tiefen Wolken den Boden.\n\n"
+          "Der Rest des Katalogs in je einem Satz. **praecipitatio**: der "
+          "Niederschlag kommt an, der Streifen schließt bis zum Boden. "
+          "**arcus**, die Böenwalze: Die ausfließende Kaltluft hebt an ihrer Vorderkante "
+          "die warme Luft, und die kondensiert über der Front -- die Walze "
+          "markiert die Kaltluftgrenze, nicht die Wolke. **murus** und "
+          "**tuba**: die rotierende Wandwolke und der Schlauch darunter, "
+          "sichtbar gemachte Drehung. **asperitas**: eine chaotisch "
+          "gewellte Unterseite, meist unter einer zerfallenden "
+          "Stratocumulus-Decke mit Scherung darin. **cavum**: das runde "
+          "Loch in einer unterkühlten Altocumulus-Schicht, in dem ein "
+          "Flugzeug oder ein Kristallschauer das Wasser auf einmal in Eis "
+          "umgewandelt hat -- Bergeron-Findeisen in einem Zug, mit einem "
+          "Fallstreifen in der Mitte.",
+          "The third level below genus and species are the "
+          "**supplementary features** and **accessory clouds** -- and they "
+          "are the most interesting one, because each single one is the "
+          "visible imprint of a mechanism the course has already "
+          "derived.\n\n"
+          "**incus**, the anvil. The tower rises until it reaches a layer "
+          "in which temperature no longer falls with height: the "
+          "tropopause. There $N^2$ is large (th-stabilitaet), the buoyancy "
+          "reverses, and the air can only go sideways. The flat top is "
+          "therefore a directly visible altimeter -- it sits at 11 km in "
+          "midlatitudes and at 16 km in the tropics. If a dome still "
+          "pushes through it in the middle (an overshooting top), the "
+          "updraught has more momentum than the lid has resistance -- the "
+          "sign of a severe cell.\n\n"
+          "**pileus**, the cap. Above the top of a fast-rising tower lies "
+          "a smooth, thin, lens-shaped cap which the tower punches through "
+          "and eats minutes later. It forms because the tower lifts the "
+          "**moist layer above itself** like a piston, and that layer "
+          "reaches its condensation level before the tower reaches the "
+          "layer. So the pileus stands exactly at the LCL of the lifted "
+          "layer (fe-hebung) and is lifting made visible before there is "
+          "anything there doing the lifting. A pileus says: this tower is "
+          "fast, and it is moist above it -- it will keep growing. If the "
+          "cap lies as a thin veil to the side instead of on top, it is "
+          "called *velum*.\n\n"
+          "**mammatus**, the pouches. Smooth round sacks hang from the "
+          "underside of the anvil. They are not updraught but the "
+          "opposite: in the dry air below the anvil the ice crystals "
+          "falling out of it sublime, the withdrawal of the heat of "
+          "sublimation cools that air, it becomes heavier than its "
+          "surroundings and sinks in bubbles. The buoyancy is "
+          "$b = g\\,\\Delta T/T$; at 2 K of cooling and 280 K that is "
+          "0.070 m/s², 0.7 % of `g`. Over 500 m of descent that would give "
+          "$v = \\sqrt{2bh} = 8.4$ m/s -- less in reality, because the "
+          "bubble mixes. But the number explains the look: gentle enough "
+          "that the pouches stay round and smooth instead of tearing "
+          "apart.\n\n"
+          "**virga**, the fallstreaks that never reach the ground. "
+          "Slanting veils hang below the base and stop in mid-air. How far "
+          "does a drop get? Evaporation is diffusional growth with "
+          "negative supersaturation, so the same equation as in "
+          "wo-wachstum, only backwards: $r^2 = r_0^2 - 2\\xi|S|t$. A drop "
+          "of 100 μm in air 50 % subsaturated is gone after "
+          "$t = r_0^2/(2\\xi|S|) = 167$ s. Its fall speed in that size "
+          "range is 0.7 m/s (Stokes has already broken down there -- "
+          "$Re \\approx 10$, and wo-wachstum works the value out), so it "
+          "gets about 120 m. That is exactly the observed length of a "
+          "fallstreak, and exactly why drizzle only reaches the ground "
+          "from low clouds.\n\n"
+          "The rest of the catalogue in one sentence each. "
+          "**praecipitatio**: the precipitation arrives, the streak closes "
+          "down to the ground. **arcus**, the shelf: the outflowing cold "
+          "air lifts the warm air at its leading edge, and that condenses "
+          "above the front -- the roll marks the edge of the cold air, not "
+          "the cloud. **murus** and **tuba**: the rotating wall cloud and "
+          "the funnel below it, rotation made visible. **asperitas**: a "
+          "chaotically wavy underside, usually below a decaying "
+          "stratocumulus deck with shear in it. **cavum**: the round hole "
+          "in a supercooled altocumulus layer, where an aircraft or a "
+          "shower of crystals turned the water into ice all at once -- "
+          "Bergeron-Findeisen in one go, with a fallstreak in the "
+          "middle."),
+        "wolkenbuch-sonderformen", [
+        zahl(t("Mammatus: Die absinkende Luft unter dem Amboss ist 2 K "
+               "kälter als ihre Umgebung bei 280 K. Negativer Auftrieb "
+               "b = g·ΔT/T? (in m/s², drei Nachkommastellen)",
+               "Mammatus: the sinking air below the anvil is 2 K colder "
+               "than its surroundings at 280 K. Negative buoyancy "
+               "b = g·ΔT/T? (in m/s², three decimals)"),
+             rund(WB_MAMMATUS_B, 3), t("m/s²", "m/s²"),
+             t("`9,81 × 2 / 280 = 0,070 m/s²`, also 0,7 % von `g`. "
+               "Dieselbe Formel, mit der th-stabilitaet den Auftrieb "
+               "eines gehobenen Pakets ansetzt -- nur mit umgekehrtem "
+               "Vorzeichen, weil hier gekühlt und nicht erwärmt wird.",
+               "`9.81 × 2 / 280 = 0.070 m/s²`, i.e. 0.7 % of `g`. The "
+               "same expression th-stabilitaet uses for the buoyancy of a "
+               "lifted parcel -- only with the opposite sign, because "
+               "here the air is cooled, not warmed."),
+             toleranz=0.05),
+        zahl(t("Ein Tropfen von 100 μm Radius fällt mit 0,7 m/s in Luft "
+               "mit 50 % Untersättigung (ξ = 6·10⁻¹³ m²/s je Prozent). "
+               "Wie lang wird sein Fallstreifen? (in m)",
+               "A drop of 100 μm radius falls at 0.7 m/s through air 50 % "
+               "subsaturated (ξ = 6·10⁻¹³ m²/s per per cent). How long "
+               "does its fallstreak become? (in m)"),
+             rund(WB_VIRGA_WEG), t("m", "m"),
+             t("`t = r₀²/(2ξ|S|) = 10⁻⁸/(2 × 6·10⁻¹³ × 50) = 167 s`, "
+               "mal 0,7 m/s sind 117 m. Die Gleichung ist das "
+               "Diffusionswachstum aus wo-wachstum mit negativem `S`; "
+               "beachtlich ist, wie gut die 100 bis 300 m herauskommen, "
+               "die man unter einer Wolke sieht.",
+               "`t = r₀²/(2ξ|S|) = 10⁻⁸/(2 × 6·10⁻¹³ × 50) = 167 s`, "
+               "times 0.7 m/s is 117 m. The equation is the diffusional "
+               "growth of wo-wachstum with negative `S`; what is "
+               "remarkable is how well it reproduces the 100 to 300 m one "
+               "sees below a cloud."),
+             toleranz=0.05),
+        mc(t("Über der Spitze eines schnell wachsenden Cumulus congestus "
+             "liegt eine glatte Kappe, die er zwei Minuten später "
+             "durchstößt. Was ist das?",
+             "A smooth cap lies above the top of a fast-growing cumulus "
+             "congestus, which punches through it two minutes later. What "
+             "is it?"),
+           [t("Eine Inversion, die den Turm deckelt.",
+              "An inversion capping the tower."),
+            t("Der vereiste Teil des Turms.",
+              "The glaciated part of the tower."),
+            t("Hochnebel, der zufällig darüber liegt.",
+              "High fog that happens to lie above it."),
+            t("Ein pileus: Der Turm hebt die feuchte Schicht über sich "
+              "wie ein Kolben, und die erreicht ihr LCL, bevor der Turm "
+              "sie erreicht.",
+              "A pileus: the tower lifts the moist layer above itself "
+              "like a piston, and that layer reaches its LCL before the "
+              "tower reaches it.")], 3,
+           t("Deshalb ist der pileus ein Vorzeichen, kein Hindernis: Er "
+             "beweist, dass der Aufwind schnell ist (sonst würde die "
+             "Schicht seitlich ausweichen statt zu kondensieren) und dass "
+             "es darüber feucht ist. Beides heißt: Der Turm wächst "
+             "weiter.",
+             "That is why the pileus is an omen, not an obstacle: it "
+             "proves that the updraught is fast (otherwise the layer "
+             "would slip sideways instead of condensing) and that it is "
+             "moist above. Both mean the tower will keep growing."),
+           bild="cu-congestus"),
+        ]),
+
+    lektion("wb-kondensstreifen",
+        t("Kondensstreifen: was ein Flugzeug über 10 km verrät",
+          "Contrails: what an aircraft gives away about 10 km up"),
+        ["kondensstreifen", "mischungsgerade", "schmidt-appleman",
+         "eisuebersaettigung"],
+        t("Zwei Flugzeuge in derselben Höhe, und hinter dem einen reißt "
+          "der Streifen nach drei Flugzeuglängen ab, während der andere "
+          "einen weißen Strich über den halben Himmel zieht, der in einer "
+          "halben Stunde zu einem breiten Band auseinanderfließt. Beide "
+          "haben dieselben Triebwerke. Der Unterschied steht nicht im "
+          "Flugzeug, sondern in der Luft, und man kann ihn vom Boden aus "
+          "ablesen.\n\n"
+          "Zuerst, warum überhaupt etwas entsteht. Das Abgas ist heiß "
+          "(600 K) und sehr feucht (Kerosin verbrennt zu Wasser: 1,25 kg "
+          "Wasser je kg Treibstoff), die Umgebung ist kalt (−50 °C) und "
+          "trocken. Beim Mischen gehen Temperatur **und** Dampfdruck "
+          "linear mit dem Mischungsanteil -- beides sind Erhaltungsgrößen "
+          "je Masse. Der Zustand der Mischung läuft deshalb im "
+          "$(T, e)$-Diagramm auf einer **Geraden** zwischen den beiden "
+          "Endpunkten. Die Sättigungskurve $e_s(T)$ aus fe-dampf ist "
+          "dagegen **konvex** -- sie ist exponentiell. Und eine Sehne "
+          "zwischen zwei Punkten unter einer konvexen Kurve kann über "
+          "ihnen liegen: Die Mischung ist übersättigt, obwohl keiner der "
+          "beiden Ausgangszustände es war. Nebel aus dem Auspuff, aus dem "
+          "Atem an kalter Luft, über dem offenen Wasser im Winter -- "
+          "immer dieselbe Figur.\n\n"
+          "Die Steigung der Geraden hängt nur am Treibstoff und am Druck:\n\n"
+          r"$$G = \frac{EI\,c_p\,p}{\varepsilon\,Q\,(1-\eta)}$$" "\n\n"
+          "mit dem Emissionsindex $EI = 1{,}25$, dem Heizwert "
+          "$Q = 43$ MJ/kg, $\\varepsilon = 0{,}622$ und dem "
+          "Vortriebswirkungsgrad $\\eta \\approx 0{,}3$ (der Anteil der "
+          "Energie, der als Schub weggeht statt die Luft zu heizen -- "
+          "daher $1 - \\eta$). Bei 250 hPa sind das 1,68 Pa/K. Die "
+          "**Schmidt-Appleman-Bedingung** ist nun, dass diese Gerade die "
+          "Sättigungskurve überhaupt erreicht, und der Grenzfall ist die "
+          "Berührung: $de_s/dT = G$. Mit der Magnus-Formel liegt dieser "
+          "Punkt bei **−41,7 °C**, in der Standardatmosphäre (at-standard) "
+          "also bei 8,7 km. Darunter ist es zu warm: Kein Triebwerk macht "
+          "dort einen Streifen, wie feucht die Luft auch sei. Darüber "
+          "macht jedes einen -- wenigstens kurz.\n\n"
+          "Jetzt der Teil, der fürs Hinsehen zählt. Ob der Streifen "
+          "**bleibt**, entscheidet nicht die Schmidt-Appleman-Bedingung, "
+          "sondern die Umgebungsfeuchte. Die Eiskristalle verdunsten, "
+          "sobald die Luft gegenüber **Eis** untersättigt ist; bei "
+          "−45 °C liegt $e_s$ über Eis bei nur 65 % des Werts über Wasser "
+          "(derselbe Bergeron-Unterschied wie in wo-wachstum, nur "
+          "größer, weil es kälter ist). Eine Umgebung mit 70 % relativer "
+          "Feuchte über Wasser ist dort also längst übersättigt gegenüber "
+          "Eis -- es genügen 65 %. Und eine solche Luftmasse ist dabei, von selbst Cirrus zu "
+          "bilden.\n\n"
+          "Damit ist der Kondensstreifen ein Feuchtigkeitsmessgerät in "
+          "10 km Höhe, das man geschenkt bekommt. **Kurzer Stummel**, der "
+          "nach Sekunden abreißt: Die Höhenluft ist trocken, kein Cirrus "
+          "zu erwarten, und wenn ein Hoch darüber liegt, hält das Wetter. "
+          "**Langer, beständiger Streifen**, der sich verbreitert und nach "
+          "einer Stunde noch da ist: eisübersättigt -- die Vorlaufzone "
+          "einer Warmfront, nach wo-gattungen 12 bis 24 Stunden voraus, "
+          "noch bevor der erste natürliche Cirrus steht. **Viele Streifen, "
+          "die zu einem Schleier verschmelzen**: Cirrostratus auf Vorrat, "
+          "der Halo kommt heute noch. **Streifen, die sich quer "
+          "verbreitern und dabei kippen**: Das ist die Scherung $du/dz$, "
+          "wie beim uncinus-Haken -- nur gerade und mit bekannter "
+          "Entstehungszeit, also messbar.\n\n"
+          "Ein ehrlicher Nachsatz: Aus derselben Rechnung folgt, dass "
+          "Kondensstreifen-Cirrus den Strahlungshaushalt verschiebt -- er "
+          "lässt die Sonne durch und hält die Infrarotstrahlung zurück "
+          "(st-bilanz, st-treibhaus), also wärmt er netto, und zwar "
+          "nachts am stärksten, weil dann der kurzwellige Anteil fehlt.",
+          "Two aircraft at the same altitude, and behind one the trail "
+          "breaks off after three fuselage lengths while the other draws a "
+          "white line across half the sky that spreads into a broad band "
+          "within half an hour. Both have the same engines. The difference "
+          "is not in the aircraft but in the air, and it can be read off "
+          "from the ground.\n\n"
+          "First, why anything forms at all. The exhaust is hot (600 K) "
+          "and very moist (kerosene burns to water: 1.25 kg of water per "
+          "kg of fuel), the surroundings are cold (−50 °C) and dry. On "
+          "mixing, temperature **and** vapour pressure both go linearly "
+          "with the mixing fraction -- both are conserved quantities per "
+          "unit mass. The state of the mixture therefore runs along a "
+          "**straight line** in the $(T, e)$ plane between the two end "
+          "points. The saturation curve $e_s(T)$ from fe-dampf, by "
+          "contrast, is **convex** -- it is exponential. And a chord "
+          "between two points below a convex curve can lie above it: the "
+          "mixture is supersaturated although neither of the two original "
+          "states was. Fog from an exhaust pipe, from your breath in cold "
+          "air, over open water in winter -- always the same figure.\n\n"
+          "The slope of the line depends only on the fuel and the "
+          "pressure:\n\n"
+          r"$$G = \frac{EI\,c_p\,p}{\varepsilon\,Q\,(1-\eta)}$$" "\n\n"
+          "with the emission index $EI = 1.25$, the heating value "
+          "$Q = 43$ MJ/kg, $\\varepsilon = 0.622$ and the propulsion "
+          "efficiency $\\eta \\approx 0.3$ (the fraction of the energy "
+          "that leaves as thrust instead of heating the air -- hence "
+          "$1 - \\eta$). At 250 hPa that comes to 1.68 Pa/K. The "
+          "**Schmidt-Appleman condition** is now that this line reaches "
+          "the saturation curve at all, and the limiting case is tangency: "
+          "$de_s/dT = G$. With the Magnus formula that point lies at "
+          "**−41.7 °C**, hence in the standard atmosphere (at-standard) at "
+          "8.7 km. Below that it is too warm: no engine makes a trail "
+          "there, however moist the air. Above it every engine makes one "
+          "-- at least briefly.\n\n"
+          "Now the part that matters for looking. Whether the trail "
+          "**stays** is decided not by the Schmidt-Appleman condition but "
+          "by the ambient humidity. The ice crystals evaporate as soon as "
+          "the air is subsaturated with respect to **ice**; at −45 °C "
+          "$e_s$ over ice is only 65 % of the value over water (the same "
+          "Bergeron difference as in wo-wachstum, only larger because it "
+          "is colder). So a surrounding air mass at 70 % relative humidity "
+          "over water is well past saturation with respect to ice -- 65 % "
+          "is enough. And "
+          "such an air mass is on its way to making cirrus by itself.\n\n"
+          "That makes a contrail a free humidity instrument at 10 km. "
+          "**A short stub** that breaks off after seconds: the upper air "
+          "is dry, no cirrus to expect, and if a high sits above, the "
+          "weather holds. **A long persistent trail** that spreads and is "
+          "still there an hour later: ice-supersaturated -- the leading "
+          "zone of a warm front, by wo-gattungen 12 to 24 hours ahead, "
+          "before the first natural cirrus even stands there. **Many "
+          "trails merging into a veil**: cirrostratus in advance, the halo "
+          "will arrive today. **Trails that widen sideways and tilt at the "
+          "same time**: that is the shear $du/dz$, as with the uncinus "
+          "hook -- only straight and with a known starting time, hence "
+          "measurable.\n\n"
+          "An honest postscript: the same calculation implies that "
+          "contrail cirrus shifts the radiation budget -- it lets the sun "
+          "through and holds the infrared back (st-bilanz, st-treibhaus), "
+          "so it warms on balance, and most strongly at night, when the "
+          "short-wave part is missing."),
+        "wolkenbuch-kondensstreifen", [
+        zahl(t("Steigung der Mischungsgerade in 250 hPa: EI = 1,25, "
+               "c_p = 1004 J/(kg K), ε = 0,622, Q = 43 MJ/kg, η = 0,30. "
+               "G = EI·c_p·p/(ε·Q·(1−η))? (in Pa/K, zwei "
+               "Nachkommastellen)",
+               "Slope of the mixing line at 250 hPa: EI = 1.25, "
+               "c_p = 1004 J/(kg K), ε = 0.622, Q = 43 MJ/kg, η = 0.30. "
+               "G = EI·c_p·p/(ε·Q·(1−η))? (in Pa/K, two decimals)"),
+             rund(WB_G_APPLEMAN, 2), t("Pa/K", "Pa/K"),
+             t("`1,25 × 1004 × 25000 / (0,622 × 43·10⁶ × 0,70) = "
+               "3,14·10⁷ / 1,87·10⁷ = 1,68 Pa/K`. In 200 hPa ist G "
+               "kleiner, die Gerade flacher -- deshalb genügt dort eine "
+               "noch wärmere Umgebung nicht, und die Schwelle wandert "
+               "mit der Flughöhe.",
+               "`1.25 × 1004 × 25000 / (0.622 × 43·10⁶ × 0.70) = "
+               "3.14·10⁷ / 1.87·10⁷ = 1.68 Pa/K`. At 200 hPa G is "
+               "smaller and the line flatter -- so an even warmer "
+               "environment will not do there, and the threshold moves "
+               "with flight level."),
+             toleranz=0.04),
+        mc(t("Weder das Abgas noch die Umgebungsluft ist gesättigt -- "
+             "warum entsteht beim Mischen trotzdem eine Wolke?",
+             "Neither the exhaust nor the ambient air is saturated -- why "
+             "does mixing nevertheless make a cloud?"),
+           [t("Weil der Druck im Nachstrom des Triebwerks fällt.",
+              "Because the pressure falls in the engine's wake."),
+            t("Weil beim Mischen T und e linear laufen, die Kurve "
+              "$e_s(T)$ aber konvex ist: Die Sehne kann über der Kurve "
+              "liegen.",
+              "Because T and e both run linearly on mixing while the "
+              "curve $e_s(T)$ is convex: the chord can lie above the "
+              "curve."),
+            t("Weil die Abgaspartikel die Oberflächenspannung "
+              "aufheben.",
+              "Because the exhaust particles cancel the surface "
+              "tension."),
+            t("Weil der Wasserdampf des Abgases schwerer ist als "
+              "Luft.",
+              "Because the water vapour in the exhaust is heavier than "
+              "air.")], 1,
+           t("Das ist derselbe Satz, der den Mischungsnebel über offenem "
+             "Wasser erklärt: Zwei Zustände unter einer konvexen Kurve, "
+             "gemischt, liegen darüber. Die Kerne aus dem Russ "
+             "(wo-tropfen) senken dann noch die Kelvin-Schwelle, aber "
+             "nötig ist sie nicht -- nötig ist die Konvexität von "
+             "$e_s(T)$, also Clausius-Clapeyron.",
+             "This is the same statement that explains mixing fog over "
+             "open water: two states below a convex curve, mixed, lie "
+             "above it. The soot nuclei (wo-tropfen) then lower the "
+             "Kelvin threshold as well, but they are not necessary -- "
+             "what is necessary is the convexity of $e_s(T)$, hence "
+             "Clausius-Clapeyron.")),
+        mc(t("Ein Kondensstreifen steht nach einer Stunde noch da und ist "
+             "zu einem breiten Band geworden. Was schließen Sie für "
+             "morgen?",
+             "A contrail is still there after an hour and has become a "
+             "broad band. What do you conclude for tomorrow?"),
+           [t("Nichts -- die Beständigkeit hängt nur am Triebwerkstyp.",
+              "Nothing -- persistence depends only on the engine type."),
+            t("Es wird kälter, weil der Streifen die Sonne "
+              "abschirmt.",
+              "It will get colder, because the trail shades the sun."),
+            t("Hochdruckwetter: Nur bei Absinken bleiben Streifen "
+              "stehen.",
+              "High pressure: trails only persist in subsiding air."),
+            t("Die Höhenluft ist eisübersättigt -- sie bildet von selbst "
+              "Cirrus. Das ist die Vorlaufzone einer Warmfront, 12 bis "
+              "24 Stunden voraus.",
+              "The upper air is ice-supersaturated -- it makes cirrus by "
+              "itself. That is the leading zone of a warm front, 12 to "
+              "24 hours ahead.")], 3,
+           t("Der Streifen bleibt nur, wenn die Umgebung gegenüber Eis "
+             "übersättigt ist, und das ist sie schon bei rund 65 % "
+             "relativer Feuchte über Wasser (bei −45 °C liegt e_s über "
+             "Eis bei 65 % des Werts über Wasser). Dieselbe Luftmasse "
+             "macht nach wo-gattungen den Cirrus, der der Warmfront "
+             "vorausgeht -- man sieht sie nur eher, weil das Flugzeug die "
+             "Kerne mitbringt.",
+             "The trail only stays if the surroundings are supersaturated "
+             "with respect to ice, and they already are at about 65 % "
+             "relative humidity over water (at −45 °C e_s over ice is "
+             "65 % of the value over water). The same air mass makes the "
+             "cirrus that precedes a warm front, by wo-gattungen -- one "
+             "simply sees it sooner, because the aircraft brings the "
+             "nuclei along."),
+           bild="cirrus"),
+        ]),
+    ])
+
+
+KAPITEL = [K_ATMOSPHAERE, K_THERMO, K_FEUCHTE, K_STRAHLUNG, K_BODEN, K_WOLKEN, K_WOLKENBUCH,
+           K_DYNAMIK, K_WOLKENLESEN, K_ZIRKULATION, K_SYNOPTIK, K_MESOSKALA, K_OPTIK,
+           K_HIMMEL, K_VORHERSAGE, K_SELBSTMESSEN]
 
 # Alles Geplante ist geschrieben.
 PLAN = []
@@ -4103,4 +7334,84 @@ EINSTUFUNG = [
             "ist der Anteil der Mitglieder.",
             "The ensemble delivers a distribution; the probability is the "
             "fraction of members.")),
+
+    # -- Beobachtungsfragen zu den neuen Kapiteln --------------------------
+    frage("e-himmelsblick", 4, "strahlung",
+          t("Nach einer klaren Nacht ist der Rasen nass, unter dem "
+            "Apfelbaum aber trocken. Warum?",
+            "After a clear night the lawn is wet, but dry under the "
+            "apple tree. Why?"),
+          [t("Der Baum nimmt dem Boden den Wasserdampf weg.",
+             "The tree takes the vapour away from the ground."),
+           t("Unter der Krone ist es wärmer, weil Blätter Wärme "
+             "abgeben.",
+             "It is warmer under the canopy because leaves give off "
+             "heat."),
+           t("Der Boden strahlt nur gegen den Teil des Himmels aus, "
+             "den er sieht: Unter der Krone ist der Verlust auf etwa "
+             "ein Drittel reduziert, die Oberfläche kommt nicht unter "
+             "den Taupunkt.",
+             "The ground radiates only against the part of the sky it "
+             "sees: under the canopy the loss is cut to about a third, "
+             "and the surface never reaches the dew point."),
+           t("Das Laub hält den Tau ab, der Boden darunter ist "
+             "trotzdem kalt.",
+             "The foliage keeps the dew off; the ground underneath is "
+             "cold all the same.")], 2,
+          t("Derselbe Faktor macht den Unterschied zwischen freiem Feld "
+            "und Straßenschlucht, und er heißt Himmelsblickfaktor: "
+            "`L_netto = ψ·(σT⁴ − L↓)`, im Freien 70 W/m², unter der "
+            "Krone 21 W/m².",
+            "The same factor makes the difference between open field "
+            "and street canyon, and it is called the sky view factor: "
+            "`L_net = ψ·(σT⁴ − L↓)`, 70 W/m² in the open, 21 W/m² under "
+            "the canopy.")),
+    frage("e-landmarke", 9, "optik",
+          t("Der entfernteste noch erkennbare Berggipfel steht 40 km "
+            "weit. Was folgt daraus?",
+            "The most distant still recognisable summit stands 40 km "
+            "away. What follows?"),
+          [t("Der Extinktionskoeffizient ist etwa 10⁻⁴ /m, aus "
+             "V = 3,9/β -- leichter Dunst, zehnmal mehr als reine "
+             "Luft.",
+             "The extinction coefficient is about 10⁻⁴ /m, from "
+             "V = 3.9/β -- light haze, ten times more than clean "
+             "air."),
+           t("Die Luft ist praktisch rein, β ≈ 10⁻⁵ /m.",
+             "The air is practically clean, β ≈ 10⁻⁵ /m."),
+           t("Nichts -- die Sichtweite hängt nur von der Größe des "
+             "Bergs ab.",
+             "Nothing -- visibility depends only on the size of the "
+             "mountain."),
+           t("Die Erdkrümmung begrenzt die Sicht auf 40 km.",
+             "The curvature of the Earth limits the view to 40 km.")], 0,
+          t("Koschmieder, umgekehrt gelesen: `β = 3,9/V = 3,9/40 000 m "
+            "= 9,75·10⁻⁵ /m`. Eine benannte Landmarke in bekannter "
+            "Entfernung ist ein Transmissometer.",
+            "Koschmieder read backwards: `β = 3.9/V = 3.9/40 000 m = "
+            "9.75·10⁻⁵ /m`. A named landmark at a known distance is a "
+            "transmissometer.")),
+    frage("e-drucktendenz", 10, "vorhersage",
+          t("Das Barometer fällt gleichmäßig um 2 hPa je Stunde. Was "
+            "misst man damit eigentlich?",
+            "The barometer falls steadily by 2 hPa per hour. What is "
+            "actually being measured?"),
+          [t("Die Temperatur der Luftsäule.",
+             "The temperature of the air column."),
+           t("Das Produkt aus Druckgradient und Zuggeschwindigkeit des "
+             "Musters: ∂p/∂t = −c·∂p/∂x.",
+             "The product of pressure gradient and the travel speed of "
+             "the pattern: ∂p/∂t = −c·∂p/∂x."),
+           t("Die kommende Regenmenge.",
+             "The amount of rain to come."),
+           t("Die Höhe über dem Meer.",
+             "The height above sea level.")], 1,
+          t("Ein Druckfeld, das sich unverändert verlagert, gibt am "
+            "festen Ort genau diese Tendenz. Wer den Gradienten aus der "
+            "Karte kennt, bekommt die Zuggeschwindigkeit -- und damit "
+            "die Ankunftszeit der Front.",
+            "A pressure field travelling unchanged produces exactly "
+            "this tendency at a fixed place. Whoever knows the gradient "
+            "from the chart gets the travel speed -- and with it the "
+            "arrival time of the front.")),
 ]

@@ -847,4 +847,208 @@ KURSFORMELN = {
           "`δ` distance between two model states. `δ₀` initial error. "
           "`λ` Lyapunov exponent, 1/s. `t₂` doubling time.")),
 ],
+# --- Wolken lesen ------------------------------------------------------------
+
+"wb-sonde": [
+    formel("tan α = ΔU/w,  Δx = ΔU·z/(2w)",
+        r"$\tan\alpha = \frac{\Delta U}{w}, \qquad \Delta x = \frac{\Delta U\,z}{2w}$",
+        t("Das Kippen eines Turms als Scherungsmesser",
+          "The tilt of a tower as a shear meter"),
+        t("Der Turm ist kein Körper, sondern ein Strom von Paketen: Die "
+          "Achse ist die Bahn eines Pakets, das mit `w` steigt und mit "
+          "`u(z)` treibt. Die Neigung am Oberrand gibt die Scherung über "
+          "die Turmdicke, der Versatz der Spitze nur die Hälfte davon -- "
+          "die Achse ist eine Parabel. Gilt, solange `w` nicht stark von "
+          "der Höhe abhängt.",
+          "The tower is not a body but a stream of parcels: its axis is "
+          "the trajectory of a parcel rising at `w` and drifting with "
+          "`u(z)`. The slope at the top gives the shear across the depth "
+          "of the tower, the offset of the top only half of it -- the "
+          "axis is a parabola. Holds as long as `w` does not depend "
+          "strongly on height."),
+        t("`α` Neigung der Achse gegen die Senkrechte. `ΔU` Zunahme des "
+          "Horizontalwinds über die Turmdicke, m/s. `w` Aufwind, m/s. "
+          "`Δx` Versatz der Spitze gegen die Basis, m. `z` Turmdicke, m.",
+          "`α` tilt of the axis from the vertical. `ΔU` increase of the "
+          "horizontal wind across the depth of the tower, m/s. `w` "
+          "updraught, m/s. `Δx` offset of the top from the base, m. `z` "
+          "depth of the tower, m.")),
+    formel("Ri = N²/(du/dz)² < 1/4",
+        r"$\mathrm{Ri} = \frac{N^2}{(du/dz)^2} < \frac{1}{4}$",
+        t("Die Richardson-Zahl und die Kelvin-Helmholtz-Schwelle",
+          "The Richardson number and the Kelvin–Helmholtz threshold"),
+        t("Das Verhältnis der Arbeit, die ein Wirbel gegen die Schichtung "
+          "leisten muss, zur Energie, die ihm die Scherung liefert. Nach "
+          "Miles und Howard ist eine stabil geschichtete Scherströmung "
+          "sicher stabil, solange `Ri > 1/4` überall gilt; brechende "
+          "Wellen (Billows) verlangen also `du/dz > 2N`. Ein Messgerät "
+          "mit Schwelle: Es sagt nicht, wie groß die Scherung ist, "
+          "sondern dass sie mindestens `2N` beträgt.",
+          "The ratio of the work an eddy must do against the "
+          "stratification to the energy the shear supplies it. By Miles "
+          "and Howard a stably stratified shear flow is certainly stable "
+          "as long as `Ri > 1/4` holds everywhere; breaking waves "
+          "(billows) therefore require `du/dz > 2N`. An instrument with "
+          "a threshold: it does not say how large the shear is, only "
+          "that it is at least `2N`."),
+        t("`Ri` Richardson-Zahl, dimensionslos. `N` "
+          "Brunt-Väisälä-Frequenz, 1/s. `du/dz` vertikale Scherung des "
+          "Horizontalwinds, 1/s.",
+          "`Ri` Richardson number, dimensionless. `N` Brunt–Väisälä "
+          "frequency, 1/s. `du/dz` vertical shear of the horizontal "
+          "wind, 1/s.")),
+],
+
+# --- 12 Den Himmel lesen -----------------------------------------------------
+
+"hi-windzeichen": [
+    formel("u(z) = (u*/κ) · ln(z/z₀)",
+        r"$u(z) = \frac{u_*}{\kappa}\,\ln\frac{z}{z_0}, \qquad \frac{u(10)}{u(2)} = \frac{\ln(10/z_0)}{\ln(2/z_0)}$",
+        t("Das logarithmische Windprofil",
+          "The logarithmic wind profile"),
+        t("In der bodennahen Schicht konstanten Impulsflusses wächst der "
+          "Wind mit dem Logarithmus der Höhe. Das Verhältnis zweier "
+          "Höhen hängt nur noch von der Rauhigkeit ab: über Gras ist "
+          "der 10-m-Wind 1,38-mal der 2-m-Wind, über Vorstadt 2,16-mal. "
+          "Gilt bei neutraler Schichtung und bis etwa 50 m.",
+          "In the near-surface layer of constant momentum flux the wind "
+          "grows with the logarithm of height. The ratio of two heights "
+          "depends only on the roughness: over grass the 10 m wind is "
+          "1.38 times the 2 m wind, over a suburb 2.16 times. Valid in "
+          "neutral stratification and up to about 50 m."),
+        t("`u(z)` Wind in der Höhe z, m/s. `u*` Schubspannungs"
+          "geschwindigkeit, m/s. `κ` von-Kármán-Konstante, 0,4. `z₀` "
+          "Rauhigkeitslänge, m (0,03 Wiese, 0,5 Vorstadt).",
+          "`u(z)` wind at height z, m/s. `u*` friction velocity, m/s. "
+          "`κ` von Kármán constant, 0.4. `z₀` roughness length, m "
+          "(0.03 meadow, 0.5 suburb).")),
+    formel("v = 0,836 · B^1,5,   q = ρv²/2",
+        r"$v = 0{,}836\,\frac{\mathrm{m}}{\mathrm{s}}\,B^{3/2}, \qquad q = \tfrac{1}{2}\rho v^2 \propto B^3$",
+        t("Die Beaufort-Leiter", "The Beaufort ladder"),
+        t("Beaufort ist eine Skala von Beobachtungen, nicht von "
+          "Geschwindigkeiten; die Umrechnung ist eine Anpassung. Der "
+          "Exponent dagegen ist Physik: Gesehen wird die Kraft, und die "
+          "geht mit `v²`, also mit `B³`. B 6 sind 12,3 m/s und 92 Pa, "
+          "B 12 sind 34,8 m/s und 740 Pa -- achtmal.",
+          "Beaufort is a scale of observations, not of speeds; the "
+          "conversion is a fit. The exponent, though, is physics: what "
+          "is seen is the force, and that goes as `v²`, hence as `B³`. "
+          "B 6 is 12.3 m/s and 92 Pa, B 12 is 34.8 m/s and 740 Pa -- "
+          "eight times."),
+        t("`B` Beaufort-Stufe, 0 bis 12. `v` Wind in 10 m Höhe, m/s. "
+          "`q` Staudruck, Pa. `ρ` Luftdichte, 1,225 kg/m³. Die Kraft "
+          "auf eine Fläche A ist `F = ½ c_w ρ A v²`.",
+          "`B` Beaufort force, 0 to 12. `v` wind at 10 m, m/s. `q` "
+          "dynamic pressure, Pa. `ρ` air density, 1.225 kg/m³. The "
+          "force on an area A is `F = ½ c_w ρ A v²`.")),
+],
+
+
+# --- 13 Spuren am Boden ------------------------------------------------------
+
+"bo-nebel": [
+    formel("e_m = ½(e₁+e₂) > e_s(½(T₁+T₂))",
+        r"$e_m = \tfrac{1}{2}(e_1+e_2) \;>\; e_s\!\left(\tfrac{1}{2}(T_1+T_2)\right), \qquad \frac{d^2 e_s}{dT^2} > 0$",
+        t("Die Mischungsgerade", "The mixing line"),
+        t("Beim Mischen zweier Pakete mischen sich T und e linear, die "
+          "Mischung liegt also auf der Sehne. Weil e_s(T) konvex ist, "
+          "liegt die Sehne über der Kurve: Zwei gesättigte Luftmassen "
+          "ergeben gemischt eine übersättigte. 0 °C und 20 °C halb und "
+          "halb geben 120 % Feuchte. Gilt für gleichen Druck und ohne "
+          "Wärmeaustausch nach außen.",
+          "On mixing two parcels, T and e mix linearly, so the mixture "
+          "lies on the chord. Because e_s(T) is convex the chord lies "
+          "above the curve: two saturated air masses mixed give a "
+          "supersaturated one. 0 °C and 20 °C half and half give 120 % "
+          "humidity. Valid at equal pressure and without heat exchange "
+          "with the outside."),
+        t("`e₁, e₂` Dampfdruck der beiden Pakete, hPa. `T₁, T₂` ihre "
+          "Temperaturen. `e_m` Dampfdruck der Mischung (gleiche "
+          "Massen). `e_s` Sättigungsdampfdruck, hPa.",
+          "`e₁, e₂` vapour pressure of the two parcels, hPa. `T₁, T₂` "
+          "their temperatures. `e_m` vapour pressure of the mixture "
+          "(equal masses). `e_s` saturation vapour pressure, hPa.")),
+    formel("Δr = 0,622 · Δe/p",
+        r"$\Delta r = 0{,}622\,\frac{\Delta e}{p}, \qquad \Delta e = e_m - e_s(T_m)$",
+        t("Das kondensierte Wasser", "The condensed water"),
+        t("Die Übersättigung kondensiert, bis die Sättigung erreicht "
+          "ist. Aus 2,46 hPa Überschuss bei 1000 hPa werden 1,5 g "
+          "Flüssigwasser je Kilogramm Luft -- mehr als in einer "
+          "gewöhnlichen Wolke, deshalb ist Mischungsnebel dicht. Die "
+          "Kondensationswärme ist vernachlässigt; sie hebt T_m um "
+          "wenige Zehntel Kelvin und verkleinert Δr.",
+          "The supersaturation condenses until saturation is reached. "
+          "An excess of 2.46 hPa at 1000 hPa becomes 1.5 g of liquid "
+          "water per kilogram of air -- more than an ordinary cloud "
+          "holds, which is why mixing fog is dense. The latent heat is "
+          "neglected; it raises T_m by a few tenths of a kelvin and "
+          "reduces Δr."),
+        t("`Δr` kondensiertes Wasser, kg/kg. `Δe` Überschuss über die "
+          "Sättigung, hPa. `p` Luftdruck, hPa. 0,622 ist das "
+          "Verhältnis der Molmassen von Wasser und Luft.",
+          "`Δr` condensed water, kg/kg. `Δe` excess over saturation, "
+          "hPa. `p` air pressure, hPa. 0.622 is the ratio of the molar "
+          "masses of water and air.")),
+],
+
+"wb-kondensstreifen": [
+    formel("e(T) = e_U + G·(T − T_U)",
+        r"$e(T) = e_U + G\,(T - T_U), \qquad e_s\ \mathrm{konvex} \Rightarrow e > e_s$",
+        t("Die Mischungsgerade", "The mixing line"),
+        t("Mischt man zwei Luftmassen, gehen Temperatur und Dampfdruck "
+          "beide linear mit dem Mischungsanteil: Der Zustand läuft auf "
+          "einer **Geraden** zwischen den Endpunkten. Weil `e_s(T)` "
+          "exponentiell und damit konvex ist, kann diese Gerade über der "
+          "Sättigungskurve liegen -- die Mischung kondensiert, obwohl "
+          "keiner der beiden Ausgangszustände gesättigt war. Gilt nur, "
+          "solange beim Mischen nichts kondensiert; danach biegt der Weg "
+          "auf die Feuchtadiabate ab.",
+          "Mix two air masses and both temperature and vapour pressure go "
+          "linearly with the mixing fraction: the state runs along a "
+          "**straight line** between the end points. Because `e_s(T)` is "
+          "exponential and therefore convex, that line can lie above the "
+          "saturation curve -- the mixture condenses although neither "
+          "original state was saturated. Holds only as long as nothing "
+          "condenses during the mixing; after that the path bends onto "
+          "the moist adiabat."),
+        t("`e` Dampfdruck der Mischung, Pa. `e_U`, `T_U` Dampfdruck und "
+          "Temperatur der Umgebungsluft. `G` Steigung der Geraden, Pa/K. "
+          "`e_s` Sättigungsdampfdruck, Pa.",
+          "`e` vapour pressure of the mixture, Pa. `e_U`, `T_U` vapour "
+          "pressure and temperature of the ambient air. `G` slope of the "
+          "line, Pa/K. `e_s` saturation vapour pressure, Pa.")),
+    formel("G = EI·c_p·p / (ε·Q·(1−η)),   de_s/dT = G",
+        r"$G = \frac{EI\,c_p\,p}{\varepsilon\,Q\,(1-\eta)}, \qquad \left.\frac{de_s}{dT}\right|_{T_c} = G$",
+        t("Schmidt-Appleman-Kriterium",
+          "The Schmidt-Appleman criterion"),
+        t("Die Steigung der Abgas-Mischungsgerade hängt nur an "
+          "Treibstoff und Flugdruck, nicht daran, wie viel Luft "
+          "einmischt -- die Mischungsmasse kürzt sich heraus. Ein "
+          "Kondensstreifen entsteht, wenn die Gerade die "
+          "Sättigungskurve erreicht; der Grenzfall ist die Berührung, "
+          "und sie legt die Schwellentemperatur `T_c` fest. Bei 250 hPa "
+          "ist `G = 1,68 Pa/K` und `T_c = −41,7 °C`, in der "
+          "Standardatmosphäre 8,7 km. Ob der Streifen **bleibt**, sagt "
+          "das Kriterium nicht -- das entscheidet die Eissättigung der "
+          "Umgebung.",
+          "The slope of the exhaust mixing line depends only on fuel and "
+          "flight pressure, not on how much air mixes in -- the mixing "
+          "mass cancels out. A contrail forms when the line reaches the "
+          "saturation curve; the limiting case is tangency, and it fixes "
+          "the threshold temperature `T_c`. At 250 hPa `G = 1.68 Pa/K` "
+          "and `T_c = −41.7 °C`, which is 8.7 km in the standard "
+          "atmosphere. Whether the trail **persists** is not what the "
+          "criterion says -- that is decided by ice saturation in the "
+          "surrounding air."),
+        t("`G` Steigung der Mischungsgerade, Pa/K. `EI` Emissionsindex "
+          "Wasser, 1,25 kg je kg Kerosin. `c_p` 1004 J/(kg K). `p` "
+          "Flugdruck, Pa. `ε` 0,622. `Q` Heizwert, 43 MJ/kg. `η` "
+          "Vortriebswirkungsgrad, 0,2 bis 0,4. `T_c` "
+          "Schwellentemperatur, °C.",
+          "`G` slope of the mixing line, Pa/K. `EI` water emission "
+          "index, 1.25 kg per kg of kerosene. `c_p` 1004 J/(kg K). `p` "
+          "flight pressure, Pa. `ε` 0.622. `Q` heating value, 43 MJ/kg. "
+          "`η` propulsion efficiency, 0.2 to 0.4. `T_c` threshold "
+          "temperature, °C.")),
+],
 }
