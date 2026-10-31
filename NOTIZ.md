@@ -1,4 +1,12 @@
-Meteorologie 1.1 — Meteorologie für Physiker
+Meteorologie 1.1.1 — Meteorologie für Physiker
+
+Behoben in 1.1.1: In den fünf Kapiteln von 1.1 waren 292 Formeln nie
+gesetzt worden -- der Setzer lief vor dem Bau von 1.1 nicht über die neuen
+Kapitel. 284 davon standen deshalb als roher LaTeX-Quelltext im Fließtext
+(`\frac{..}`, `1{,}73`), acht Formelkästen zeigten statt des Bildes ihre
+Textzeile. Jetzt sind alle 1337 Formeln des Kurses als Bild gesetzt. Drei
+brauchten einen Eingriff im Quelltext: matplotlibs mathtext kennt kein
+`\tfrac`.
 
 Neu in 1.1: fünf phänomenologische Kapitel — was draußen zu sehen ist,
 bevor eine Formel kommt. „Spuren am Boden" (Tau, Reif und der Kaltluftsee,

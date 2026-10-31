@@ -923,7 +923,7 @@ KURSFORMELN = {
           "`κ` von Kármán constant, 0.4. `z₀` roughness length, m "
           "(0.03 meadow, 0.5 suburb).")),
     formel("v = 0,836 · B^1,5,   q = ρv²/2",
-        r"$v = 0{,}836\,\frac{\mathrm{m}}{\mathrm{s}}\,B^{3/2}, \qquad q = \tfrac{1}{2}\rho v^2 \propto B^3$",
+        r"$v = 0{,}836\,\frac{\mathrm{m}}{\mathrm{s}}\,B^{3/2}, \qquad q = \frac{1}{2}\rho v^2 \propto B^3$",
         t("Die Beaufort-Leiter", "The Beaufort ladder"),
         t("Beaufort ist eine Skala von Beobachtungen, nicht von "
           "Geschwindigkeiten; die Umrechnung ist eine Anpassung. Der "
@@ -948,7 +948,7 @@ KURSFORMELN = {
 
 "bo-nebel": [
     formel("e_m = ½(e₁+e₂) > e_s(½(T₁+T₂))",
-        r"$e_m = \tfrac{1}{2}(e_1+e_2) \;>\; e_s\!\left(\tfrac{1}{2}(T_1+T_2)\right), \qquad \frac{d^2 e_s}{dT^2} > 0$",
+        r"$e_m = \frac{1}{2}(e_1+e_2) \;>\; e_s\!\left(\frac{1}{2}(T_1+T_2)\right), \qquad \frac{d^2 e_s}{dT^2} > 0$",
         t("Die Mischungsgerade", "The mixing line"),
         t("Beim Mischen zweier Pakete mischen sich T und e linear, die "
           "Mischung liegt also auf der Sehne. Weil e_s(T) konvex ist, "

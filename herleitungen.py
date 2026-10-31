@@ -1256,7 +1256,7 @@ $$v = 0{,}836\ \mathrm{m/s}\cdot B^{3/2}$$
 
 ist genau deshalb keine Physik, sondern eine Anpassung -- aber der Exponent ist einer: Was ein Beobachter sieht, ist die **Kraft** auf Blatt, Zweig und Segel,
 
-$$F = \tfrac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
+$$F = \frac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
 
 Die Skala ist also in der Kraft annähernd gleichabständig, nicht in der Geschwindigkeit. B 6 ($12{,}3$ m/s): $q = \rho v^2/2 = 92$ Pa, auf 1 m² 92 N. B 12 ($34{,}8$ m/s): 740 Pa, achtmal so viel. Deshalb reißt der Sturm, was der frische Wind nur biegt.
 
@@ -1281,7 +1281,7 @@ $$v = 0.836\ \mathrm{m/s}\cdot B^{3/2}$$
 
 is for that very reason not physics but a fit -- yet the exponent is physics: what an observer sees is the **force** on leaf, branch and sail,
 
-$$F = \tfrac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
+$$F = \frac{1}{2}\,c_w\,\rho\,A\,v^2 \quad\Rightarrow\quad F \propto B^3$$
 
 The scale is thus roughly equidistant in force, not in speed. B 6 ($12.3$ m/s): $q = \rho v^2/2 = 92$ Pa, 92 N on 1 m². B 12 ($34.8$ m/s): 740 Pa, eight times as much. That is why the gale tears what a fresh breeze merely bends.
 
